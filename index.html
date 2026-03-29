@@ -1,0 +1,1273 @@
+<!doctype html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studiolpg - Media & Bahan Ajar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { scroll-behavior: smooth; }
+        
+        /* Animations */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); } 50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.6); } }
+        @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        
+        .animate-fadeInUp { animation: fadeInUp 0.8s ease forwards; }
+        .animate-fadeIn { animation: fadeIn 0.6s ease forwards; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-slideUp { animation: slideUp 0.4s ease forwards; }
+        .animate-glow { animation: glow 2s ease-in-out infinite; }
+        .animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
+        
+        .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+        .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+        .stagger-3 { animation-delay: 0.3s; opacity: 0; }
+        
+        /* Custom UI Elements */
+        .nav-link { position: relative; }
+        .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #f59e0b; transition: width 0.3s ease; }
+        .nav-link:hover::after { width: 100%; }
+        
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .gold-gradient { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%); }
+        .silver-gradient { background: linear-gradient(135deg, #e5e7eb 0%, #9ca3af 50%, #6b7280 100%); }
+        .bronze-gradient { background: linear-gradient(135deg, #fdba74 0%, #ea580c 50%, #c2410c 100%); }
+        
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        /* Page Routing */
+        .page-view { display: none; }
+        .page-view.active { display: block; animation: fadeIn 0.4s ease; }
+
+        /* Podium specific */
+        .podium-step { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+        .podium-1 { height: 200px; }
+        .podium-2 { height: 160px; }
+        .podium-3 { height: 130px; }
+
+        /* Modal specific */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+    </style>
+</head>
+<body class="h-full bg-neutral-900 text-white overflow-auto hide-scrollbar">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-neutral-900/95 backdrop-blur-md border-b border-neutral-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+            <div class="flex items-center justify-between">
+                <a href="#" class="text-xl sm:text-2xl font-bold text-white" onclick="navigate('home')">
+                    <span class="text-amber-500">Studio</span>lpg
+                </a>
+                <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
+                    <a href="#" onclick="navigate('home')" class="nav-link text-white/80 hover:text-white text-sm">Beranda</a>
+                    <a href="#about" onclick="navigate('home'); setTimeout(()=>document.getElementById('about').scrollIntoView(), 100);" class="nav-link text-white/80 hover:text-white transition-colors text-sm">Tentang</a>
+					<a href="#" onclick="navigate('home', 'services')" class="nav-link text-white/80 hover:text-white text-sm">Kategori</a>
+                    <a href="#" onclick="navigate('home', 'testimoni')" class="nav-link text-white/80 hover:text-white text-sm">Testimoni</a>
+                    <a href="#" onclick="navigate('kontributor')" class="nav-link text-white/80 hover:text-white text-sm">Kontributor</a>
+                    <a href="#" onclick="openAdminLogin()" class="text-neutral-500 hover:text-amber-500 text-sm transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></a>
+                    <a href="https://s.id/donate-lpg" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-neutral-900 font-semibold px-5 py-2.5 rounded-full text-sm transition-colors">Donate</a>
+                </div>
+                <button class="md:hidden text-white p-2" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+            
+            <div id="mobile-menu" class="md:hidden hidden mt-4 pb-4 border-t border-neutral-800 pt-4 flex flex-col space-y-3">
+                <a href="#" onclick="navigate('home');" class="text-white/80 hover:text-white py-2">Beranda</a>
+                <a href="#" onclick="navigate('home', 'services');" class="text-white/80 hover:text-white py-2">Kategori</a>
+                <a href="#" onclick="navigate('kontributor');" class="text-white/80 hover:text-white py-2">Kontributor</a>
+                <a href="#" onclick="openAdminLogin();" class="text-white/80 hover:text-white py-2">Admin Panel</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN APP CONTAINER -->
+    <main id="app-container" class="pt-16">
+
+        <!-- ==================== HOME PAGE ==================== -->
+        <div id="view-home" class="page-view active">
+            <!-- Hero Section -->
+            <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900">
+                    <div class="absolute inset-0 opacity-30">
+                        <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <defs><pattern id="grid" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M 8 0 L 0 0 0 8" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5" /></pattern></defs>
+                            <rect width="100%" height="100%" fill="url(#grid)" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="absolute top-20 right-10 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl animate-float"></div>
+                
+                <div class="relative z-10 max-w-7xl mx-auto px-4 text-center py-12 mt-10">
+                    <div class="animate-fadeIn"><span class="inline-block px-4 py-2 bg-amber-500/20 text-amber-400 rounded-full text-xs font-medium mb-6"> ✨ Studio Media & Bahan Ajar Gratis </span></div>
+                    <h1 class="text-4xl md:text-6xl font-extrabold mb-6 animate-fadeInUp leading-tight">
+                        <span class="text-white">Akses</span> 
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500"> media pembelajaran</span>
+						<span class="text-white">Digitalmu</span><br>
+                        <span style="color: #FFFFFF" class="text-2xl md:text-4xl font-normal mt-4 block">untuk mendukung proses belajar mengajarmu di kelas</span>
+                    </h1>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fadeInUp stagger-3 mt-10">
+                        <button onclick="navigate('home', 'services')" class="bg-amber-500 hover:bg-amber-600 text-neutral-900 font-bold px-8 py-4 rounded-full text-base transition-all">Lihat Layanan</button>
+                        <button onclick="navigate('kontributor')" class="bg-amber-500 hover:bg-amber-600 text-neutral-900 font-bold px-8 py-4 rounded-full text-base transition-all">Leaderboard</button>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-20 max-w-4xl mx-auto animate-fadeInUp stagger-3 bg-neutral-800/50 p-6 rounded-3xl border border-neutral-700/50 backdrop-blur-sm">
+                        <div class="text-center">
+                            <div id="stat-total" class="text-3xl font-bold text-amber-400">0</div>
+                            <div class="text-white/60 text-xs mt-1">Total Konten</div>
+                        </div>
+                        <div class="text-center">
+                            <div id="stat-kontributor" class="text-3xl font-bold text-amber-400">0</div>
+                            <div class="text-white/60 text-xs mt-1">Kontributor</div>
+                        </div>
+                        <div class="text-center">
+                            <div id="stat-total-point" class="text-3xl font-bold text-amber-400">0</div>
+                            <div class="text-white/60 text-xs mt-1">Total Poin</div>
+                        </div>
+                        <div class="text-center">
+                            <div id="stat-highest-love" class="text-3xl font-bold text-pink-400">0 ❤️</div>
+                            <div class="text-white/60 text-xs mt-1">Love Tertinggi</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section Shortcut -->
+        <section id="about" class="py-24 bg-neutral-900 border-t border-neutral-800">
+             <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+                 <div>
+                    <span class="text-amber-500 font-bold tracking-wider text-sm uppercase mb-2 block">Tentang Kami</span>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">Berkolaborasi Membangun Pendidikan</h2>
+                    <p class="text-white/70 text-lg mb-6 leading-relaxed">Studiolpg mewadahi para pendidik kreatif untuk membagikan karya media dan bahan ajar secara gratis. Setiap kontribusi Anda memberikan poin yang akan menempatkan Anda di Podium Leaderboard kami!</p>
+                    <button onclick="navigate('kontributor')" class="bg-amber-500/10 text-amber-500 border border-amber-500/50 hover:bg-amber-500 hover:text-neutral-900 font-bold px-6 py-3 rounded-xl transition-colors">Lihat  Leaderboard  Kontributor</button>
+                 </div>
+                 <iframe 
+                                            className="w-full h-full absolute top-0 left-0" 
+                                            src="https://www.youtube.com/embed/GCoNenNnOzI?playsinline=1&modestbranding=1&rel=0" 
+                                            title="Video Pembelajaran" 
+                                            frameBorder="0" 
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                            allowFullScreen>
+                                        </iframe>
+             </div>
+        </section>
+		
+		
+		<!-- Kategori / Services Section -->
+            <section id="services" class="py-24 bg-neutral-900 border-t border-neutral-800">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                    <div class="text-center mb-16">
+                        <span class="inline-block px-4 py-2 bg-amber-500/20 text-amber-400 rounded-full text-sm font-medium mb-4">Layanan Kami</span>
+                        <h2 class="text-4xl font-bold text-white mb-4">Kategori Media & Bahan Ajar</h2>
+                        <p class="text-white/70 max-w-3xl mx-auto">Pilih kategori jenjang pendidikan untuk melihat berbagai Media & Bahan Ajar yang kamu butuhkan</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <!-- Generate Category Cards via JS -->
+                        <div onclick="navigate('kategori', 'PAUD/TK')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-pink-400 to-rose-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-pink-500/50 flex flex-col items-center justify-center">
+    <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+        <span class="text-3xl opacity-70">🎨</span>
+    </div>
+    <h3 class="text-white font-bold text-lg text-center">PAUD/TK</h3>
+</div>
+                        <div onclick="navigate('kategori', 'SD')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-orange-400 to-amber-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-orange-500/50 flex flex-col items-center justify-center">
+    <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+        <span class="text-3xl opacity-70">📚</span>
+    </div>
+    <h3 class="text-white font-bold text-lg text-center">SD</h3>
+</div>
+                        <div onclick="navigate('kategori', 'SMP')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-blue-400 to-indigo-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-blue-500/50 flex flex-col items-center justify-center">
+                            <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm"><span class="text-3xl">🏫</span></div>
+                            <h3 class="text-white font-bold text-lg text-center">SMP</h3>
+                        </div>
+                        <div onclick="navigate('kategori', 'SMA')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-emerald-400 to-teal-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/50 flex flex-col items-center justify-center">
+                            <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm"><span class="text-3xl">🎓</span></div>
+                            <h3 class="text-white font-bold text-lg text-center">SMA</h3>
+                        </div>
+                        <div onclick="navigate('kategori', 'SMK')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-purple-400 to-violet-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-purple-500/50 flex flex-col items-center justify-center">
+                            <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm"><span class="text-3xl">🧪</span></div>
+                            <h3 class="text-white font-bold text-lg text-center">SMK</h3>
+                        </div>
+                        <div onclick="navigate('kategori', 'Game PID')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-red-400 to-pink-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-red-500/50 flex flex-col items-center justify-center">
+                            <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm"><span class="text-3xl">🎮</span></div>
+                            <h3 class="text-white font-bold text-lg text-center">Game PID</h3>
+                        </div>
+						<div onclick="navigate('kategori', 'Lab. Maya')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-yellow-500/50 flex flex-col items-center justify-center">
+    <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+        <span class="text-3xl opacity-70">🔬</span>
+    </div>
+    <h3 class="text-white font-bold text-lg text-center">Lab. Maya</h3>
+</div>
+                        <div onclick="navigate('kategori', 'Lainnya')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-slate-500 to-slate-700 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-slate-500/50 flex flex-col items-center justify-center">
+                            <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm"><span class="text-3xl">📁</span></div>
+                            <h3 class="text-white font-bold text-lg text-center">Lainnya</h3>
+                        </div>
+                    </div>
+                </div>
+            </section>
+	
+		<!-- Testimoni Section -->
+            <section id="testimoni" class="py-24 bg-neutral-800">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                    <div class="text-center mb-16">
+                        <span class="inline-block px-4 py-2 bg-amber-500/20 text-amber-400 rounded-full text-sm font-medium mb-4">💬 Testimoni</span>
+                        <h2 class="text-4xl font-bold text-white mb-4">Apa Kata Mereka?</h2>
+                    </div>
+                    
+                    <div id="home-testimoni-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+                        <!-- Injected via JS -->
+                    </div>
+
+                    <div class="text-center">
+                        <button onclick="openModal('modal-add-testimoni')" class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 text-neutral-900 font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-amber-500/30">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+           </svg>Tambah Testimoni
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== KATEGORI DETAILS PAGE ==================== -->
+        <div id="view-kategori" class="page-view py-10 min-h-screen">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                <!-- Header & Toolbar -->
+                <div class="flex flex-col md:flex-row justify-between items-center bg-neutral-800 p-6 rounded-2xl mb-8 shadow-lg border border-neutral-700">
+                    <div>
+                        <button onclick="navigate('home', 'services')" class="text-amber-500 hover:text-amber-400 text-sm mb-2 flex items-center gap-1">← Kembali</button>
+                        <h2 id="cat-page-title" class="text-3xl font-bold text-white">Kategori: -</h2>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-4 mt-4 md:mt-0">
+                        <div class="flex items-center gap-2 bg-neutral-900 px-3 py-2 rounded-lg border border-neutral-700">
+                            <label class="text-sm text-neutral-400">Tampilkan:</label>
+                            <select id="cat-per-page" onchange="changeCatPageSize()" class="bg-transparent text-white outline-none text-sm">
+                                <option value="6">6</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <button onclick="toggleFullScreen()" class="bg-neutral-700 hover:bg-neutral-600 text-white p-2.5 rounded-lg transition-colors" title="Full Screen">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grid Konten -->
+                <div id="cat-content-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Cards injected via JS -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between bg-neutral-800 p-4 rounded-xl border border-neutral-700">
+                    <button id="cat-btn-prev" onclick="changeCatPage(-1)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg disabled:opacity-50 transition-colors">Previous</button>
+                    <div id="cat-page-info" class="text-white text-sm font-medium">Halaman 1 dari 1</div>
+                    <button id="cat-btn-next" onclick="changeCatPage(1)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg disabled:opacity-50 transition-colors">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== KONTRIBUTOR PAGE ==================== -->
+        <div id="view-kontributor" class="page-view py-10 min-h-screen">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-white mb-4">Leaderboard Kontributor</h2>
+                    <p class="text-white/70 max-w-3xl mx-auto mb-8 animate-fadeInUp stagger-1">Inilah para kontributor terbaik minggu ini! Peringkat ditentukan dari poin yang dikumpulkan lewat konten keren dan konsistensi. Terus upload dan jadilah kontributor yang berikutnya berada di podium.</p>
+                </div>
+
+                <!-- Podium Top 3 -->
+                <div id="podium-container" class="flex justify-center items-end h-72 gap-2 sm:gap-6 mb-16 mx-auto max-w-3xl">
+                    <!-- Injected via JS -->
+                </div>
+
+                <!-- List Sisa Kontributor -->
+                <div class="bg-neutral-800 rounded-2xl border border-neutral-700 overflow-hidden shadow-xl max-w-4xl mx-auto">
+                    <div class="p-6 border-b border-neutral-700 bg-neutral-800/50">
+                        <h3 class="text-xl font-bold text-white">Peringkat 4+</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-neutral-300">
+                            <thead class="bg-neutral-900/50 text-xs uppercase text-neutral-400 border-b border-neutral-700">
+                                <tr>
+                                    <th class="px-6 py-4">Rank</th>
+                                    <th class="px-6 py-4">Kontributor</th>
+                                    <th class="px-6 py-4">Instansi</th>
+                                    <th class="px-6 py-4 text-right">Poin</th>
+                                </tr>
+                            </thead>
+                            <tbody id="kontributor-list-table" class="divide-y divide-neutral-700/50">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== ADMIN PANEL ==================== -->
+        <div id="view-admin" class="page-view py-6 min-h-screen">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                <div class="flex items-center justify-between mb-8 bg-neutral-800 p-6 rounded-2xl border border-neutral-700">
+                    <h2 class="text-2xl font-bold text-amber-500">🛡️ Admin Panel</h2>
+                    <button onclick="navigate('home')" class="text-white hover:text-amber-400 bg-neutral-700 px-4 py-2 rounded-lg text-sm transition-colors">Keluar Admin</button>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex flex-wrap gap-2 mb-6 border-b border-neutral-700 pb-4">
+                    <button onclick="switchAdminTab('konten')" id="tab-konten" class="admin-tab bg-amber-500 text-neutral-900 px-4 py-2 rounded-lg font-semibold text-sm transition-colors">Kelola Konten</button>
+                    <button onclick="switchAdminTab('kontributor')" id="tab-kontributor" class="admin-tab bg-neutral-800 hover:bg-neutral-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors">Kelola Kontributor</button>
+                    <button onclick="switchAdminTab('testimoni')" id="tab-testimoni" class="admin-tab bg-neutral-800 hover:bg-neutral-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors">Kelola Testimoni</button>
+                    <button onclick="switchAdminTab('love')" id="tab-love" class="admin-tab bg-neutral-800 hover:bg-neutral-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors">Kelola Love</button>
+                    <button onclick="switchAdminTab('laporan')" id="tab-laporan" class="admin-tab bg-neutral-800 hover:bg-neutral-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors">Kelola Laporan</button>
+                </div>
+
+                <!-- Admin Tab Contents -->
+                <div class="bg-neutral-800 rounded-2xl border border-neutral-700 p-6 shadow-xl">
+                    
+                    <!-- KONTEN -->
+                    <div id="admin-sec-konten" class="admin-section block">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Daftar Konten</h3>
+                            <button onclick="openFormModal('modal-form-konten', resetKontenForm)" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold">+ Tambah Konten</button>
+                        </div>
+                        <div class="overflow-x-auto rounded-lg border border-neutral-700">
+                            <table class="w-full text-left text-sm text-neutral-300">
+                                <thead class="bg-neutral-900 text-xs uppercase text-neutral-400">
+                                    <tr>
+                                        <th class="px-4 py-3">Judul</th>
+                                        <th class="px-4 py-3">Kategori</th>
+                                        <th class="px-4 py-3">Kontributor</th>
+                                        <th class="px-4 py-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-konten" class="divide-y divide-neutral-700 bg-neutral-800"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- KONTRIBUTOR -->
+                    <div id="admin-sec-kontributor" class="admin-section hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Daftar Kontributor</h3>
+                            <button onclick="openFormModal('modal-form-kontributor', resetKontributorForm)" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold">+ Tambah Kontributor</button>
+                        </div>
+                        <div class="overflow-x-auto rounded-lg border border-neutral-700">
+                            <table class="w-full text-left text-sm text-neutral-300">
+                                <thead class="bg-neutral-900 text-xs uppercase text-neutral-400">
+                                    <tr>
+                                        <th class="px-4 py-3">Nama</th>
+                                        <th class="px-4 py-3">Instansi</th>
+                                        <th class="px-4 py-3">Provinsi</th>
+                                        <th class="px-4 py-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-kontributor" class="divide-y divide-neutral-700 bg-neutral-800"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- TESTIMONI -->
+                    <div id="admin-sec-testimoni" class="admin-section hidden">
+                        <h3 class="text-xl font-bold text-white mb-6">Kelola Testimoni</h3>
+                        <div class="overflow-x-auto rounded-lg border border-neutral-700">
+                            <table class="w-full text-left text-sm text-neutral-300">
+                                <thead class="bg-neutral-900 text-xs uppercase text-neutral-400">
+                                    <tr>
+                                        <th class="px-4 py-3">Nama</th>
+                                        <th class="px-4 py-3">Pesan</th>
+                                        <th class="px-4 py-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-testimoni" class="divide-y divide-neutral-700 bg-neutral-800"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- LOVE -->
+                    <div id="admin-sec-love" class="admin-section hidden">
+                        <h3 class="text-xl font-bold text-white mb-6">Kelola Data Love (Popularitas)</h3>
+                        <div class="overflow-x-auto rounded-lg border border-neutral-700">
+                            <table class="w-full text-left text-sm text-neutral-300">
+                                <thead class="bg-neutral-900 text-xs uppercase text-neutral-400">
+                                    <tr>
+                                        <th class="px-4 py-3">Konten</th>
+                                        <th class="px-4 py-3">Jumlah Love ❤️</th>
+                                        <th class="px-4 py-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-love" class="divide-y divide-neutral-700 bg-neutral-800"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- LAPORAN -->
+                    <div id="admin-sec-laporan" class="admin-section hidden">
+                        <h3 class="text-xl font-bold text-white mb-6">Kelola Laporan User</h3>
+                        <div class="overflow-x-auto rounded-lg border border-neutral-700">
+                            <table class="w-full text-left text-sm text-neutral-300">
+                                <thead class="bg-neutral-900 text-xs uppercase text-neutral-400">
+                                    <tr>
+                                        <th class="px-4 py-3">Tanggal</th>
+                                        <th class="px-4 py-3">Pelapor</th>
+                                        <th class="px-4 py-3">Konten Terkait</th>
+                                        <th class="px-4 py-3">Alasan</th>
+                                        <th class="px-4 py-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-laporan" class="divide-y divide-neutral-700 bg-neutral-800"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+     <footer class="bg-neutral-950 border-t border-neutral-800"><!-- Main Footer -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12"><!-- Brand Column -->
+        <div class="lg:col-span-1"><a href="#home" onclick="showPage('home')" class="inline-block text-2xl font-bold text-white mb-4"> <span class="text-amber-500">Studio</span>lpg </a>
+         <p class="text-white/60 text-sm leading-relaxed mb-6">Studiolpg adalah platform media &amp; bahan ajar gratis untuk mendukung pembelajaran yang kreatif dan menyenangkan.</p><!-- Social Media -->
+         <div class="flex items-center gap-3"><a href="https://s.id/youtube-noviyalpg" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-neutral-800 hover:bg-red-600 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300" title="YouTube">
+           <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+           </svg></a> <a href="https://s.id/ig-noviyalpg" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-neutral-800 hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300" title="Instagram">
+           <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+           </svg></a> <a href="https://www.tiktok.com/@noviya.lpg?_t=ZS-8tafgg6Eeyl&amp;_r=1" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-neutral-800 hover:bg-black flex items-center justify-center text-white/60 hover:text-white transition-all duration-300 hover:ring-2 hover:ring-cyan-400" title="TikTok">
+           <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+           </svg></a> <a href="https://www.facebook.com/noviyalpg/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-neutral-800 hover:bg-blue-600 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300" title="Facebook">
+           <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+           </svg></a>
+         </div>
+    </div><!-- Quick Links -->
+        <div>
+         <h4 class="text-white font-bold text-lg mb-4">Menu Utama</h4>
+         <ul class="space-y-3">
+          <li><a href="#home" onclick="showPage('home')" class="text-white/60 hover:text-amber-400 transition-colors text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>Beranda</a></li>
+          <li><a href="#services" onclick="scrollToSection('services')" class="text-white/60 hover:text-amber-400 transition-colors text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>Kategori</a></li>
+          <li><a href="#" onclick="showPage('kontributor'); return false;" class="text-white/60 hover:text-amber-400 transition-colors text-sm flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>Kontributor</a></li>
+         </ul>
+        </div><!-- Contact & CTA -->
+        <div>
+         <h4 class="text-white font-bold text-lg mb-4">Hubungi Kami</h4>
+         <div class="space-y-4">
+          <div class="flex items-start gap-3">
+           <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+           </div>
+           <div>
+            <p class="text-white/40 text-xs mb-1">Email</p><a href="mailto:noviyachannel@gmail.com" class="text-white/80 hover:text-amber-400 text-sm transition-colors">noviyachannel@gmail.com</a>
+           </div>
+          </div>
+          <div class="flex items-start gap-3">
+           <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+           </div>
+           <div>
+            <p class="text-white/40 text-xs mb-1">Lokasi</p>
+            <p class="text-white/80 text-sm">Lampung, Indonesia</p>
+           </div>
+          </div>
+         </div>
+		</div>
+		
+		<!-- CTA Button -->
+                 <div>
+				 <h4 class="text-white font-bold mb-4">Jadilah Kontributor</h4>
+		 <ul class="space-y-4">
+		  <div class="mt-6"><a href="https://datapercobaan.my.canva.site/fitur-ajukan-konten" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-neutral-900 font-bold px-5 py-3 rounded-xl text-sm transition-all shadow-lg shadow-amber-500/20">Pusat Bantuan </a>
+		   
+		 <ul class="space-y-3">
+		  <div class="mt-6"><a href="https://s.id/kontribusi-noviyalpg-studio" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-neutral-900 font-bold px-5 py-3 rounded-xl text-sm transition-all shadow-lg shadow-amber-500/20">Kontribusi Sekarang </a>
+         </div>
+        </div>
+       </div>
+       </div>
+	          </div>
+	   
+	  <!-- Bottom Footer -->
+      <div class="border-t border-neutral-800">
+       <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+         <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+          <p class="text-white/40 text-sm">© 2025 Studiolpg. All rights reserved.</p><span class="hidden sm:inline text-white/20">|</span>
+          <p class="text-white/40 text-xs">Made in Lampung, Indonesia ❤️</p>
+         </div>
+         <div class="flex items-center gap-4"><a href="https://datapercobaan.my.canva.site/kebijakan-privasi-aplikasi-noviyalpg-studio" target="_blank" rel="noopener noreferrer" class="text-white/40 hover:text-white/70 text-xs transition-colors">Kebijakan Privasi</a> <span class="text-white/20">|</span> <a href="https://datapercobaan.my.canva.site/syarat-dan-ketentuan-noviyalpg-studio" target="_blank" rel="noopener noreferrer" class="text-white/40 hover:text-white/70 text-xs transition-colors">Syarat &amp; Ketentuan</a>
+         </div>
+        </div>
+       </div>
+      </div>
+     </footer>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Admin Login Modal -->
+    <div id="modal-admin-login" class="modal-overlay">
+        <div class="bg-neutral-800 p-8 rounded-2xl w-full max-w-sm border border-neutral-700 shadow-2xl relative">
+            <button onclick="closeModal('modal-admin-login')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
+            <h3 class="text-2xl font-bold text-white mb-6 text-center">Admin Login</h3>
+            <input type="password" id="admin-pwd" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-3 rounded-xl mb-4 focus:outline-none focus:border-amber-500" placeholder="Masukkan Password">
+            <button onclick="checkAdminPassword()" class="w-full bg-amber-500 hover:bg-amber-600 text-neutral-900 font-bold py-3 rounded-xl transition-colors">Masuk</button>
+        </div>
+    </div>
+
+    <!-- Add Report Modal -->
+    <div id="modal-report" class="modal-overlay">
+        <div class="bg-neutral-800 p-8 rounded-2xl w-full max-w-md border border-neutral-700 shadow-2xl relative">
+            <button onclick="closeModal('modal-report')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
+            <h3 class="text-xl font-bold text-white mb-6">Laporkan Konten</h3>
+            <input type="hidden" id="report-content-id">
+            <div class="space-y-4">
+                <input type="text" id="report-name" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-amber-500" placeholder="Nama Anda" required>
+                <input type="text" id="report-origin" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-amber-500" placeholder="Asal/Instansi" required>
+                <textarea id="report-reason" rows="3" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-amber-500" placeholder="Apa yang ingin Anda laporkan?" required></textarea>
+                <button onclick="submitReport()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors">Kirim Laporan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Testimoni Modal (Public) -->
+    <div id="modal-add-testimoni" class="modal-overlay">
+        <div class="bg-neutral-800 p-8 rounded-2xl w-full max-w-md border border-neutral-700 shadow-2xl relative">
+            <button onclick="closeModal('modal-add-testimoni')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
+            <h3 class="text-xl font-bold text-white mb-6">Tambah Testimoni</h3>
+            <div class="space-y-4">
+                <input type="text" id="pub-testi-name" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2.5 rounded-lg" placeholder="Nama Anda" required>
+                <input type="text" id="pub-testi-role" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2.5 rounded-lg" placeholder="Peran (Guru/Siswa/Ortu)" required>
+                <textarea id="pub-testi-msg" rows="3" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2.5 rounded-lg" placeholder="Pesan testimoni" required></textarea>
+                <button onclick="submitPublicTestimoni()" class="w-full bg-amber-500 hover:bg-amber-600 text-neutral-900 font-bold py-3 rounded-xl transition-colors">Kirim</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Form Modal: Kontributor -->
+    <div id="modal-form-kontributor" class="modal-overlay">
+        <div class="bg-neutral-800 p-8 rounded-2xl w-full max-w-lg border border-neutral-700 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+            <button onclick="closeModal('modal-form-kontributor')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
+            <h3 id="form-title-kontributor" class="text-xl font-bold text-white mb-6">Tambah Kontributor</h3>
+            <input type="hidden" id="form-kontrib-id">
+            <div class="space-y-4 text-sm">
+                <div><label class="block text-neutral-400 mb-1">Nama Lengkap</label><input type="text" id="form-kontrib-name" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
+                <div><label class="block text-neutral-400 mb-1">Asal Instansi</label><input type="text" id="form-kontrib-instansi" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
+                <div><label class="block text-neutral-400 mb-1">Provinsi</label><input type="text" id="form-kontrib-provinsi" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
+                <div><label class="block text-neutral-400 mb-1">Jabatan</label><input type="text" id="form-kontrib-jabatan" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
+                <div><label class="block text-neutral-400 mb-1">Link Profil Imgur (Opsional)</label><input type="url" id="form-kontrib-img" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
+                <button onclick="saveKontributor()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl mt-4">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Form Modal: Konten -->
+    <div id="modal-form-konten" class="modal-overlay">
+        <div class="bg-neutral-800 p-8 rounded-2xl w-full max-w-2xl border border-neutral-700 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
+            <button onclick="closeModal('modal-form-konten')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
+            <h3 id="form-title-konten" class="text-xl font-bold text-white mb-6">Tambah Konten Baru</h3>
+            <input type="hidden" id="form-konten-id">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div class="md:col-span-2"><label class="block text-neutral-400 mb-1">Judul Konten</label><input type="text" id="form-konten-title" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
+                
+                <div>
+                    <label class="block text-neutral-400 mb-1">Kontributor</label>
+                    <select id="form-konten-kontributor" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></select>
+                </div>
+                <div>
+                    <label class="block text-neutral-400 mb-1">Jenjang</label>
+                    <select id="form-konten-level" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg">
+                        <option value="PAUD/TK">PAUD/TK</option><option value="SD">SD</option><option value="SMP">SMP</option>
+                        <option value="SMA">SMA</option><option value="SMK">SMK</option><option value="Game PID">Game PID</option><option value="Lab. Maya">Lab. Maya</option><option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-neutral-400 mb-1">Jenis Konten</label>
+                    <select id="form-konten-type" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg">
+                        <option value="Media Ajar">Media Ajar</option><option value="Video Pembelajaran">Video Pembelajaran</option>
+                        <option value="Bahan Ajar">Bahan Ajar</option><option value="Infografis">Infografis</option>
+                        <option value="Augmented Reality">Augmented Reality</option><option value="Game/Permainan">Game/Permainan</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-neutral-400 mb-1">Fase</label>
+                    <select id="form-konten-phase" onchange="updateMataPelajaran()" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg">
+                        <option value="Fondasi">Fondasi</option><option value="A">A</option><option value="B">B</option>
+                        <option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                    </select>
+                </div>
+                
+                <div><label class="block text-neutral-400 mb-1">Mata Pelajaran</label><select id="form-konten-subject" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></select></div>
+                <div><label class="block text-neutral-400 mb-1">Kelas</label><select id="form-konten-class" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></select></div>
+                
+                <div><label class="block text-neutral-400 mb-1">Rating Bintang (1-5)</label><input type="number" min="1" max="5" id="form-konten-rating" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg" value="5"></div>
+                <div><label class="block text-neutral-400 mb-1">Link Thumbnail (Imgur - Opsional)</label><input type="url" id="form-konten-thumb" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
+                
+                <div class="md:col-span-2"><label class="block text-neutral-400 mb-1">Link Akses Konten</label><input type="url" id="form-konten-link" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
+                
+                <div class="md:col-span-2"><button onclick="saveKonten()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl mt-4">Simpan</button></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== LOGIC & DATA ==================== -->
+    <script>
+        // CONFIG
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbyaZhRMHiy52m9ADp78JuXD6-xb6w_QKCQJyhM8A-g1wfCCoi67P0NFuR7M0KYRs7XoIg/exec";
+        const ADMIN_PWD = "iatah";
+
+        // MOCK DATA (Initial State while loading from backend, or fallback)
+        let state = {
+            contributors: [
+                { id: "c1", name: "Budi Santoso", instansi: "SDN 1 Lampung", provinsi: "Lampung", jabatan: "Guru", profileLink: "" },
+                { id: "c2", name: "Ani Yudhoyono", instansi: "SMP 2 Jakarta", provinsi: "DKI Jakarta", jabatan: "Guru Penggerak", profileLink: "" },
+                { id: "c3", name: "Siti Aminah", instansi: "SMA 1 Bandung", provinsi: "Jawa Barat", jabatan: "Kepala Sekolah", profileLink: "" },
+                { id: "c4", name: "Joko Widodo", instansi: "SMK Bisa", provinsi: "Jawa Tengah", jabatan: "Guru Produktif", profileLink: "" }
+            ],
+            contents: [
+                { id: "k1", title: "Media Interaktif IPA Kelas 4", contributorId: "c1", level: "SD", type: "Media Ajar", phase: "B", subject: "Ilmu Pengetahuan Alam", class: "4", link: "#", thumbnail: "", rating: 5, loves: 120 },
+                { id: "k2", title: "Video Sejarah Kemerdekaan", contributorId: "c2", level: "SMP", type: "Video Pembelajaran", phase: "D", subject: "IPS", class: "8", link: "#", thumbnail: "", rating: 4, loves: 45 },
+                { id: "k3", title: "AR Anatomi Tubuh Manusia", contributorId: "c3", level: "SMA", type: "Augmented Reality", phase: "F", subject: "Biologi", class: "11", link: "#", thumbnail: "", rating: 5, loves: 200 },
+                { id: "k4", title: "Game Edukasi Mengurutkan Angka", contributorId: "c1", level: "PAUD/TK", type: "Game/Permainan", phase: "Fondasi", subject: "Tematik", class: "TK B", link: "#", thumbnail: "", rating: 5, loves: 88 }
+            ],
+            testimonials: [
+                { id: "t1", name: "Rina", role: "Guru SD", message: "Studiolpg sangat membantu saya mendapatkan inspirasi mengajar!" },
+                { id: "t2", name: "Doni", role: "Siswa SMA", message: "Gamenya seru banget buat belajar biologi." }
+            ],
+            reports: [],
+            
+            // Pagination state
+            catCurrentPage: 1,
+            catItemsPerPage: 6,
+            catCurrentLevel: "SD"
+        };
+
+        // PHASE MAPPING DYNAMICS
+        const phaseMap = {
+            "Fondasi": { subjects: ["Literasi Dasar", "Numerasi Dasar", "Nilai Agama & Budi Pekerti", "Jati Diri", "Dasar-dasar Sains, Teknologi, Rekayasa, & Seni", "Lainnya" ], classes: ["PAUD", "TK A", "TK B"] },
+            "A": { subjects: ["Pendidikan Agama & Budi Pekerti", "Pendidikan Pancasila", "Matematika", "B. Indonesia", "Seni & Budaya", "IPAS", "PJOK", "B. Inggris", "B. Lampung", "Lainnya"], classes: ["1", "2"] },
+            "B": { subjects: ["Pendidikan Agama & Budi Pekerti", "Pendidikan Pancasila", "Matematika", "B. Indonesia", "Seni & Budaya", "IPAS", "PJOK", "B. Inggris", "B. Lampung", "Lainnya"], classes: ["3", "4"] },
+            "C": { subjects: ["Pendidikan Agama & Budi Pekerti", "Pendidikan Pancasila", "Matematika", "B. Indonesia", "Seni & Budaya", "IPAS", "PJOK", "B. Inggris", "B. Lampung", "Lainnya"], classes: ["5", "6"] },
+            "D": { subjects: ["Pendidikan Agama & Budi Pekerti", "Pendidikan Pancasila", "Matematika", "B. Indonesia", "Seni & Budaya", "IPAS", "PJOK", "B. Inggris", "B. Lampung", "Informatika", "PAK", "Lainnya"], classes: ["7", "8", "9"] },
+            "E": { subjects: ["Pendidikan Agama & Budi Pekerti", "Pendidikan Pancasila", "Matematika", "B. Indonesia", "Seni & Budaya", "IPAS", "PJOK", "B. Inggris", "B. Lampung","Biologi", "Fisika", "Kimia", "Sejarah", "Sosiologi", "Ekonomi", "Geografi", "Projek Kreatif dan Kewirausahaan", "Informatika", "PAK", "Dasar-dasar Keahlian", "Lainnya"], classes: ["10"] },
+            "F": { subjects: ["Pendidikan Agama & Budi Pekerti", "Pendidikan Pancasila", "Matematika", "B. Indonesia", "Seni & Budaya", "IPAS", "PJOK", "B. Inggris", "B. Lampung","Biologi", "Fisika", "Kimia", "Sejarah", "Sosiologi", "Antropologi", "Ekonomi", "Geografi", "Projek Kreatif dan Kewirausahaan", "Informatika", "PAK", "Dasar-dasar Keahlian", "Konsentrasi Keahlian", "Lainnya"], classes: ["11", "12"] }
+        };
+
+        // ================= UTILS & INIT =================
+        
+        async function init() {
+            try {
+                console.log("Sedang menarik data dari backend GAS...");
+                
+                // Memanggil URL GAS dengan metode GET. 
+                // Kita tambahkan parameter ?action=getData agar backend tahu ini permintaan penarikan data
+                const response = await fetch(GAS_URL + "?action=getData");
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Timpa state lokal dengan data dari backend jika data tersedia
+                    if (data.contents) state.contents = data.contents;
+                    if (data.contributors) state.contributors = data.contributors;
+                    if (data.testimonials) state.testimonials = data.testimonials;
+                    if (data.reports) state.reports = data.reports;
+                    
+                    console.log("Berhasil memuat data dari backend!", data);
+                } else {
+                    console.warn("Backend merespon namun tidak OK. Tetap menggunakan data sementara.");
+                }
+            } catch (error) {
+                console.error("Gagal terhubung ke GAS (mungkin CORS atau backend belum siap). Tetap menggunakan data sementara.", error);
+            }
+
+            // Setelah data siap (baik dari backend maupun data sementara), perbarui tampilan
+            calculatePoints();
+            updateStats();
+            renderHomeTestimoni();
+        }
+
+        function navigate(pageId, subParam = null) {
+            document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+            document.getElementById(`view-${pageId}`).classList.add('active');
+            window.scrollTo(0,0);
+
+            if(pageId === 'home' && subParam) {
+                setTimeout(() => document.getElementById(subParam).scrollIntoView(), 100);
+            }
+            if(pageId === 'kategori') {
+                state.catCurrentLevel = subParam;
+                state.catCurrentPage = 1;
+                document.getElementById('cat-page-title').innerText = `Kategori: ${subParam}`;
+                renderKategori();
+            }
+            if(pageId === 'kontributor') {
+                renderLeaderboard();
+            }
+            if(pageId === 'admin') {
+                updateAdminDropdowns();
+                switchAdminTab('konten'); // Default tab
+            }
+        }
+
+        function calculatePoints() {
+            state.contributors.forEach(c => {
+                let pts = 0;
+                state.contents.forEach(k => {
+                    if(k.contributorId === c.id) {
+                        pts += (k.rating * 2); // 5 stars = 10 pts, 4 stars = 8 pts
+                    }
+                });
+                c.points = pts;
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').innerText = state.contents.length;
+            document.getElementById('stat-kontributor').innerText = state.contributors.length;
+            const totalPoints = state.contributors.reduce((acc, curr) => acc + (curr.points || 0), 0);
+            document.getElementById('stat-total-point').innerText = totalPoints;
+            const highestLove = state.contents.reduce((max, curr) => curr.loves > max ? curr.loves : max, 0);
+            document.getElementById('stat-highest-love').innerText = `${highestLove} ❤️`;
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Error: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // ================= MODALS =================
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // ================= KATEGORI PAGE =================
+        function renderKategori() {
+            const grid = document.getElementById('cat-content-grid');
+            
+            // Filter by level, sort by Loves (Popular first)
+            let filtered = state.contents.filter(c => c.level === state.catCurrentLevel);
+            filtered.sort((a, b) => b.loves - a.loves);
+
+            // Pagination logic
+            const totalItems = filtered.length;
+            const totalPages = Math.ceil(totalItems / state.catItemsPerPage) || 1;
+            
+            if(state.catCurrentPage > totalPages) state.catCurrentPage = totalPages;
+            
+            const startIdx = (state.catCurrentPage - 1) * state.catItemsPerPage;
+            const paginated = filtered.slice(startIdx, startIdx + state.catItemsPerPage);
+
+            grid.innerHTML = '';
+            if(paginated.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center text-white/50 py-10">Belum ada konten di kategori ini.</div>`;
+            }
+
+            paginated.forEach(c => {
+                const author = state.contributors.find(k => k.id === c.contributorId);
+                const authorName = author ? author.name : 'Unknown';
+                const thumb = c.thumbnail ? c.thumbnail : `https://placehold.co/600x400/3b3b3b/ffffff?text=${encodeURIComponent(c.title)}`;
+                
+                grid.innerHTML += `
+                    <div class="bg-neutral-800 rounded-2xl overflow-hidden border border-neutral-700 hover:border-amber-500/50 transition-all group flex flex-col">
+                        <div class="h-48 overflow-hidden relative">
+                            <img src="${thumb}" alt="${c.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-xs text-white border border-white/10">${c.type}</div>
+                        </div>
+                        <div class="p-5 flex-1 flex flex-col">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-white line-clamp-2">${c.title}</h3>
+                            </div>
+                            <div class="text-sm text-neutral-400 mb-4 flex items-center gap-2">
+                                <span class="w-6 h-6 bg-neutral-700 rounded-full flex items-center justify-center text-xs">👤</span>
+                                ${authorName}
+                            </div>
+                            <div class="mt-auto flex justify-between items-center pt-4 border-t border-neutral-700/50">
+                                <div class="flex gap-2">
+                                    <button onclick="addLove('${c.id}')" class="text-sm px-3 py-1.5 bg-neutral-700 hover:bg-pink-500/20 hover:text-pink-400 rounded-lg transition-colors flex items-center gap-1">
+                                        ❤️ ${c.loves}
+                                    </button>
+                                    <button onclick="openReportModal('${c.id}')" class="text-sm px-3 py-1.5 bg-neutral-700 hover:bg-red-500/20 hover:text-red-400 rounded-lg transition-colors">
+                                        ⚠️ Lapor
+                                    </button>
+                                </div>
+                                <a href="${c.link}" target="_blank" class="bg-amber-500 text-neutral-900 px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-amber-600 transition-colors">Akses</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Update Pagination UI
+            document.getElementById('cat-page-info').innerText = `Halaman ${state.catCurrentPage} dari ${totalPages}`;
+            document.getElementById('cat-btn-prev').disabled = state.catCurrentPage === 1;
+            document.getElementById('cat-btn-next').disabled = state.catCurrentPage === totalPages;
+        }
+
+        function changeCatPageSize() {
+            state.catItemsPerPage = parseInt(document.getElementById('cat-per-page').value);
+            state.catCurrentPage = 1;
+            renderKategori();
+        }
+
+        function changeCatPage(dir) {
+            state.catCurrentPage += dir;
+            renderKategori();
+        }
+
+        function addLove(contentId) {
+            const content = state.contents.find(c => c.id === contentId);
+            if(content) {
+                content.loves += 1;
+                // Simulasikan panggil backend
+                syncDataToGAS('addLove', { contentId: contentId });
+                renderKategori();
+            }
+        }
+
+        function openReportModal(contentId) {
+            document.getElementById('report-content-id').value = contentId;
+            document.getElementById('report-name').value = '';
+            document.getElementById('report-origin').value = '';
+            document.getElementById('report-reason').value = '';
+            openModal('modal-report');
+        }
+
+        function submitReport() {
+            const rId = 'r' + Date.now();
+            const r = {
+                id: rId,
+                contentId: document.getElementById('report-content-id').value,
+                reporterName: document.getElementById('report-name').value,
+                reporterOrigin: document.getElementById('report-origin').value,
+                reason: document.getElementById('report-reason').value,
+                date: new Date().toLocaleDateString('id-ID')
+            };
+            if(!r.reporterName || !r.reporterOrigin || !r.reason) return alert("Lengkapi semua form lapor!");
+            
+            state.reports.push(r);
+            syncDataToGAS('addReport', r);
+            closeModal('modal-report');
+            alert("Laporan berhasil dikirim!");
+        }
+
+        // ================= KONTRIBUTOR LEADERBOARD =================
+        function renderLeaderboard() {
+            calculatePoints();
+            let sorted = [...state.contributors].sort((a,b) => b.points - a.points);
+            
+            const podium = document.getElementById('podium-container');
+            const list = document.getElementById('kontributor-list-table');
+            
+            podium.innerHTML = '';
+            list.innerHTML = '';
+
+            // Render Podium (Top 3)
+            const top3 = sorted.slice(0, 3);
+            
+            // Urutan podium visual: 2, 1, 3
+            if(top3[1]) podium.innerHTML += createPodiumCard(top3[1], 2, 'podium-2', 'silver-gradient', 'scale-90');
+            if(top3[0]) podium.innerHTML += createPodiumCard(top3[0], 1, 'podium-1', 'gold-gradient', 'scale-110 z-10 shadow-2xl animate-glow');
+            if(top3[2]) podium.innerHTML += createPodiumCard(top3[2], 3, 'podium-3', 'bronze-gradient', 'scale-90');
+
+            // Render Sisa
+            const rest = sorted.slice(3);
+            rest.forEach((c, idx) => {
+                list.innerHTML += `
+                    <tr class="hover:bg-neutral-700/30 transition-colors">
+                        <td class="px-6 py-4 font-bold text-neutral-500">#${idx + 4}</td>
+                        <td class="px-6 py-4">
+                            <div class="font-semibold text-white">${c.name}</div>
+                            <div class="text-xs text-neutral-400">${c.jabatan}</div>
+                        </td>
+                        <td class="px-6 py-4 text-neutral-400">${c.instansi}, ${c.provinsi}</td>
+                        <td class="px-6 py-4 text-right font-bold text-amber-500">${c.points} Poin</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function createPodiumCard(c, rank, hClass, gradClass, extraClass) {
+            const img = c.profileLink || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=random`;
+            return `
+                <div class="podium-step w-1/3 max-w-[140px] text-center ${extraClass} transition-transform hover:scale-105">
+                    <img src="${img}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-neutral-800 object-cover mb-[-20px] z-10 shadow-lg mx-auto bg-neutral-700">
+                    <div class="w-full ${hClass} ${gradClass} rounded-t-2xl flex flex-col justify-end pb-4 px-2 text-neutral-900 shadow-inner">
+                        <div class="text-3xl font-black mb-1 opacity-80">${rank}</div>
+                        <div class="text-xs font-bold leading-tight line-clamp-1">${c.name}</div>
+                        <div class="text-[10px] font-semibold opacity-80 mt-1">${c.points} Pts</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================= TESTIMONI =================
+        function renderHomeTestimoni() {
+            const grid = document.getElementById('home-testimoni-grid');
+            grid.innerHTML = '';
+            state.testimonials.forEach(t => {
+                grid.innerHTML += `
+                    <div class="bg-neutral-900/50 border border-neutral-700 p-6 rounded-2xl">
+                        <p class="text-white/80 italic mb-4">"${t.message}"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center text-amber-500 font-bold">${t.name.charAt(0)}</div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">${t.name}</h4>
+                                <p class="text-white/50 text-xs">${t.role}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function submitPublicTestimoni() {
+            const t = {
+                id: 't' + Date.now(),
+                name: document.getElementById('pub-testi-name').value,
+                role: document.getElementById('pub-testi-role').value,
+                message: document.getElementById('pub-testi-msg').value
+            };
+            if(!t.name || !t.role || !t.message) return alert("Lengkapi form!");
+            state.testimonials.push(t);
+            syncDataToGAS('addTestimoni', t);
+            closeModal('modal-add-testimoni');
+            renderHomeTestimoni();
+            alert("Testimoni dikirim! Terima kasih.");
+        }
+
+
+        // ================= ADMIN PANEL LOGIC =================
+        function openAdminLogin() {
+            document.getElementById('admin-pwd').value = '';
+            openModal('modal-admin-login');
+        }
+
+        function checkAdminPassword() {
+            const pwd = document.getElementById('admin-pwd').value;
+            if(pwd === ADMIN_PWD) {
+                closeModal('modal-admin-login');
+                navigate('admin');
+            } else {
+                alert("Password Salah!");
+            }
+        }
+
+        function switchAdminTab(tabId) {
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.admin-tab').forEach(t => { t.classList.remove('bg-amber-500', 'text-neutral-900'); t.classList.add('bg-neutral-800', 'text-white'); });
+            
+            document.getElementById(`admin-sec-${tabId}`).classList.remove('hidden');
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            activeTab.classList.remove('bg-neutral-800', 'text-white');
+            activeTab.classList.add('bg-amber-500', 'text-neutral-900');
+
+            if(tabId === 'konten') renderAdminKonten();
+            if(tabId === 'kontributor') renderAdminKontributor();
+            if(tabId === 'testimoni') renderAdminTestimoni();
+            if(tabId === 'love') renderAdminLove();
+            if(tabId === 'laporan') renderAdminLaporan();
+        }
+
+        function updateAdminDropdowns() {
+            // Update Select Kontributor di Form Konten
+            const sel = document.getElementById('form-konten-kontributor');
+            sel.innerHTML = state.contributors.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            updateMataPelajaran();
+        }
+
+        function updateMataPelajaran() {
+            const phase = document.getElementById('form-konten-phase').value;
+            const subSel = document.getElementById('form-konten-subject');
+            const clsSel = document.getElementById('form-konten-class');
+            
+            if(phaseMap[phase]) {
+                subSel.innerHTML = phaseMap[phase].subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+                clsSel.innerHTML = phaseMap[phase].classes.map(c => `<option value="${c}">${c}</option>`).join('');
+            }
+        }
+
+        function openFormModal(modalId, resetFn) {
+            resetFn();
+            openModal(modalId);
+        }
+
+        // --- ADMIN: KONTEN ---
+        function renderAdminKonten() {
+            const tbody = document.getElementById('table-konten');
+            tbody.innerHTML = '';
+            state.contents.forEach(c => {
+                const author = state.contributors.find(k => k.id === c.contributorId)?.name || 'Unknown';
+                tbody.innerHTML += `
+                    <tr class="hover:bg-neutral-700/50">
+                        <td class="px-4 py-3 font-semibold">${c.title}</td>
+                        <td class="px-4 py-3">${c.level} <br><span class="text-xs text-neutral-500">${c.type}</span></td>
+                        <td class="px-4 py-3">${author}</td>
+                        <td class="px-4 py-3 text-right">
+                            <button onclick="editKonten('${c.id}')" class="text-blue-400 hover:text-blue-300 mr-2 text-sm">Edit</button>
+                            <button onclick="deleteItem('contents', '${c.id}')" class="text-red-400 hover:text-red-300 text-sm">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function resetKontenForm() {
+            document.getElementById('form-title-konten').innerText = "Tambah Konten Baru";
+            document.getElementById('form-konten-id').value = '';
+            document.getElementById('form-konten-title').value = '';
+            document.getElementById('form-konten-link').value = '';
+            document.getElementById('form-konten-thumb').value = '';
+        }
+
+        function editKonten(id) {
+            const c = state.contents.find(x => x.id === id);
+            if(!c) return;
+            document.getElementById('form-title-konten').innerText = "Edit Konten";
+            document.getElementById('form-konten-id').value = c.id;
+            document.getElementById('form-konten-title').value = c.title;
+            document.getElementById('form-konten-kontributor').value = c.contributorId;
+            document.getElementById('form-konten-level').value = c.level;
+            document.getElementById('form-konten-type').value = c.type;
+            document.getElementById('form-konten-phase').value = c.phase;
+            updateMataPelajaran(); // trigger re-render dropdown mapel & kelas
+            setTimeout(() => {
+                document.getElementById('form-konten-subject').value = c.subject;
+                document.getElementById('form-konten-class').value = c.class;
+            }, 50);
+            document.getElementById('form-konten-rating').value = c.rating;
+            document.getElementById('form-konten-thumb').value = c.thumbnail || '';
+            document.getElementById('form-konten-link').value = c.link || '';
+            openModal('modal-form-konten');
+        }
+
+        function saveKonten() {
+            const id = document.getElementById('form-konten-id').value || 'k' + Date.now();
+            const payload = {
+                id: id,
+                title: document.getElementById('form-konten-title').value,
+                contributorId: document.getElementById('form-konten-kontributor').value,
+                level: document.getElementById('form-konten-level').value,
+                type: document.getElementById('form-konten-type').value,
+                phase: document.getElementById('form-konten-phase').value,
+                subject: document.getElementById('form-konten-subject').value,
+                class: document.getElementById('form-konten-class').value,
+                rating: parseInt(document.getElementById('form-konten-rating').value),
+                thumbnail: document.getElementById('form-konten-thumb').value,
+                link: document.getElementById('form-konten-link').value,
+                loves: 0 // default for new
+            };
+
+            const idx = state.contents.findIndex(x => x.id === id);
+            if(idx >= 0) {
+                payload.loves = state.contents[idx].loves; // preserve loves
+                state.contents[idx] = payload;
+            } else {
+                state.contents.push(payload);
+            }
+            
+            syncDataToGAS('saveKonten', payload);
+            closeModal('modal-form-konten');
+            renderAdminKonten();
+            updateStats();
+        }
+
+        // --- ADMIN: KONTRIBUTOR ---
+        function renderAdminKontributor() {
+            const tbody = document.getElementById('table-kontributor');
+            tbody.innerHTML = '';
+            state.contributors.forEach(c => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-neutral-700/50">
+                        <td class="px-4 py-3 font-semibold">${c.name}</td>
+                        <td class="px-4 py-3">${c.instansi}</td>
+                        <td class="px-4 py-3">${c.provinsi}</td>
+                        <td class="px-4 py-3 text-right">
+                            <button onclick="editKontributor('${c.id}')" class="text-blue-400 hover:text-blue-300 mr-2 text-sm">Edit</button>
+                            <button onclick="deleteItem('contributors', '${c.id}')" class="text-red-400 hover:text-red-300 text-sm">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function resetKontributorForm() {
+            document.getElementById('form-title-kontributor').innerText = "Tambah Kontributor";
+            document.getElementById('form-kontrib-id').value = '';
+            ['name', 'instansi', 'provinsi', 'jabatan', 'img'].forEach(id => document.getElementById(`form-kontrib-${id}`).value = '');
+        }
+
+        function editKontributor(id) {
+            const c = state.contributors.find(x => x.id === id);
+            if(!c) return;
+            document.getElementById('form-title-kontributor').innerText = "Edit Kontributor";
+            document.getElementById('form-kontrib-id').value = c.id;
+            document.getElementById('form-kontrib-name').value = c.name;
+            document.getElementById('form-kontrib-instansi').value = c.instansi;
+            document.getElementById('form-kontrib-provinsi').value = c.provinsi;
+            document.getElementById('form-kontrib-jabatan').value = c.jabatan;
+            document.getElementById('form-kontrib-img').value = c.profileLink || '';
+            openModal('modal-form-kontributor');
+        }
+
+        function saveKontributor() {
+            const id = document.getElementById('form-kontrib-id').value || 'c' + Date.now();
+            const payload = {
+                id: id,
+                name: document.getElementById('form-kontrib-name').value,
+                instansi: document.getElementById('form-kontrib-instansi').value,
+                provinsi: document.getElementById('form-kontrib-provinsi').value,
+                jabatan: document.getElementById('form-kontrib-jabatan').value,
+                profileLink: document.getElementById('form-kontrib-img').value,
+                points: 0
+            };
+
+            const idx = state.contributors.findIndex(x => x.id === id);
+            if(idx >= 0) {
+                payload.points = state.contributors[idx].points;
+                state.contributors[idx] = payload;
+            } else {
+                state.contributors.push(payload);
+            }
+
+            syncDataToGAS('saveKontributor', payload);
+            closeModal('modal-form-kontributor');
+            renderAdminKontributor();
+            updateAdminDropdowns();
+            updateStats();
+        }
+
+        // --- ADMIN: TESTIMONI ---
+        function renderAdminTestimoni() {
+            const tbody = document.getElementById('table-testimoni');
+            tbody.innerHTML = '';
+            state.testimonials.forEach(t => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-neutral-700/50">
+                        <td class="px-4 py-3 font-semibold">${t.name} <br><span class="text-xs text-neutral-500">${t.role}</span></td>
+                        <td class="px-4 py-3 text-sm max-w-xs truncate">${t.message}</td>
+                        <td class="px-4 py-3 text-right">
+                            <button onclick="deleteItem('testimonials', '${t.id}')" class="text-red-400 hover:text-red-300 text-sm">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- ADMIN: LOVE ---
+        function renderAdminLove() {
+            const tbody = document.getElementById('table-love');
+            tbody.innerHTML = '';
+            // Sort by highest love for admin view
+            [...state.contents].sort((a,b) => b.loves - a.loves).forEach(c => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-neutral-700/50">
+                        <td class="px-4 py-3 font-semibold">${c.title}</td>
+                        <td class="px-4 py-3 text-pink-400 font-bold">${c.loves} ❤️</td>
+                        <td class="px-4 py-3 text-right">
+                            <button onclick="resetLove('${c.id}')" class="text-amber-400 hover:text-amber-300 text-sm">Reset 0</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function resetLove(id) {
+            if(confirm("Yakin mereset Love konten ini ke 0?")) {
+                const c = state.contents.find(x => x.id === id);
+                if(c) c.loves = 0;
+                renderAdminLove();
+            }
+        }
+
+        // --- ADMIN: LAPORAN ---
+        function renderAdminLaporan() {
+            const tbody = document.getElementById('table-laporan');
+            tbody.innerHTML = '';
+            state.reports.forEach(r => {
+                const c = state.contents.find(x => x.id === r.contentId);
+                const cTitle = c ? c.title : 'Konten terhapus';
+                tbody.innerHTML += `
+                    <tr class="hover:bg-neutral-700/50">
+                        <td class="px-4 py-3 text-xs whitespace-nowrap">${r.date}</td>
+                        <td class="px-4 py-3 font-semibold">${r.reporterName} <br><span class="text-xs text-neutral-500">${r.reporterOrigin}</span></td>
+                        <td class="px-4 py-3 text-amber-400 text-sm">${cTitle}</td>
+                        <td class="px-4 py-3 text-sm text-white/80">${r.reason}</td>
+                        <td class="px-4 py-3 text-right">
+                            <button onclick="deleteItem('reports', '${r.id}')" class="text-red-400 hover:text-red-300 text-sm">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            if(state.reports.length === 0) tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-neutral-500">Belum ada laporan.</td></tr>`;
+        }
+
+        // --- GLOBAL DELETE ACTION ---
+        function deleteItem(collection, id) {
+            if(confirm('Yakin ingin menghapus data ini?')) {
+                state[collection] = state[collection].filter(x => x.id !== id);
+                
+                // Re-render appropriate view
+                if(collection === 'contents') renderAdminKonten();
+                if(collection === 'contributors') renderAdminKontributor();
+                if(collection === 'testimonials') renderAdminTestimoni();
+                if(collection === 'reports') renderAdminLaporan();
+                
+                updateStats();
+                syncDataToGAS('delete', { collection, id });
+            }
+        }
+
+        // ================= GOOGLE APPS SCRIPT SYNC (Dummy/Wrapper) =================
+        function syncDataToGAS(action, payload) {
+            console.log(`📡 Sinkronisasi ke GAS [${action}]:`, payload);
+            
+            // Menggunakan mode no-cors jika GAS belum dikonfigurasi CORS (preflight handling)
+            // Catatan: response akan opaque jika no-cors, jadi kita tidak bisa baca body response
+            // Tapi data akan terkirim. Local state tetap terupdate sehingga UI tidak freeze.
+            fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action, data: payload })
+            }).catch(e => {
+                console.error("Gagal sinkronisasi dengan GAS (Normal jika mode dev lokal/CORS strict):", e);
+            });
+        }
+
+        // Start Application
+        init();
+
+    </script>
+</body>
+</html>
