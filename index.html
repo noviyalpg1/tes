@@ -9,7 +9,8 @@
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #000; overflow: hidden;
+            background-color: #5c94fc; 
+            overflow: hidden; 
             font-family: 'Fredoka One', cursive, sans-serif;
         }
 
@@ -20,8 +21,8 @@
             display: none; flex-direction: column; justify-content: center; align-items: center;
             text-align: center; padding: 20px; box-sizing: border-box;
         }
-        #portrait-warning h1 { font-size: 30px; margin-bottom: 10px; text-shadow: 2px 2px 0px #000; }
-        #portrait-warning p { font-family: sans-serif; font-size: 18px; line-height: 1.5; font-weight: bold;}
+        #portrait-warning h1 { font-size: clamp(24px, 5vw, 30px); margin-bottom: 10px; text-shadow: 2px 2px 0px #000; }
+        #portrait-warning p { font-family: sans-serif; font-size: clamp(14px, 3vw, 18px); line-height: 1.5; font-weight: bold;}
         .rotate-icon { font-size: 60px; animation: spin 2s infinite ease-in-out; margin-bottom: 20px;}
         
         @media screen and (orientation: portrait) { 
@@ -30,22 +31,19 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } 100% { transform: rotate(0deg); } }
 
-        /* --- GAME CONTAINER & SCALABLE WRAPPER --- */
+        /* --- GAME CONTAINER --- */
         #game-container {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             display: flex; justify-content: center; align-items: center;
-            background-color: #000; overflow: auto;
+            background-color: #5c94fc; 
         }
         
         #game-wrapper {
-            position: relative; 
-            width: 1280px; height: 720px; 
-            background-color: #5c94fc; 
-            transform-origin: center center;
-            overflow: hidden;
+            position: absolute; 
+            top: 0; left: 0; width: 100%; height: 100%; 
         }
 
-        canvas { display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+        canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
 
         /* --- UI OVERLAYS --- */
         .overlay {
@@ -61,40 +59,41 @@
             background-size: cover; background-color: #5c94fc; 
         }
 
-        /* Prevent touch action only on interactive UI elements to allow native zooming elsewhere */
         #touch-controls, #hud, .box-ui {
-            touch-action: none; user-select: none; -webkit-user-select: none;
+            touch-action: manipulation; user-select: none; -webkit-user-select: none;
         }
 
-        /* Login & Boxes (Upscaled for 720p Canvas) */
+        /* Login & Boxes */
         .box-ui {
-            background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px; text-align: center;
-            width: 80%; max-width: 600px; border: 6px solid #fbd000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: rgba(255, 255, 255, 0.95); padding: clamp(20px, 4vw, 40px); border-radius: 20px; text-align: center;
+            width: 85%; max-width: 600px; border: 6px solid #fbd000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-height: 90vh; overflow-y: auto;
         }
-        .box-ui h2 { color: #e52521; margin-top: 0; font-size: 38px; }
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; font-size: 20px; color: #333; margin-bottom: 8px; font-family: sans-serif; font-weight: bold;}
+        .box-ui h2 { color: #e52521; margin-top: 0; font-size: clamp(24px, 4vw, 38px); }
+        .input-group { margin-bottom: clamp(10px, 2vw, 20px); text-align: left; }
+        .input-group label { display: block; font-size: clamp(14px, 2.5vw, 20px); color: #333; margin-bottom: 8px; font-family: sans-serif; font-weight: bold;}
         .input-field {
-            width: 100%; padding: 15px; border: 4px solid #ccc; border-radius: 12px;
-            font-size: 22px; font-family: sans-serif; box-sizing: border-box; outline: none;
+            width: 100%; padding: clamp(10px, 2vw, 15px); border: 4px solid #ccc; border-radius: 12px;
+            font-size: clamp(16px, 3vw, 22px); font-family: sans-serif; box-sizing: border-box; outline: none;
         }
         .input-field:focus { border-color: #4caf50; }
-        .error-text { color: #e52521; font-family: sans-serif; font-size: 18px; margin-bottom: 15px; display: none; font-weight: bold;}
+        .error-text { color: #e52521; font-family: sans-serif; font-size: clamp(14px, 2vw, 18px); margin-bottom: 15px; display: none; font-weight: bold;}
 
         /* Main Menu */
         #title-img {
-            max-width: 70%; height: auto; margin-top: 5vh; margin-bottom: 0px; 
+            max-width: 80%; width: clamp(300px, 50vw, 800px); height: auto; margin-top: 5vh; margin-bottom: 0px; 
             filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); animation: float 3s ease-in-out infinite; position: relative; z-index: 1;
         }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
         .small-title {
-            font-size: 40px; color: #FFFF00; margin-top: -10px; margin-bottom: 30px; letter-spacing: 2px; text-align: center;
+            font-size: clamp(24px, 5vw, 40px); color: #FFFF00; margin-top: -10px; margin-bottom: 30px; letter-spacing: 2px; text-align: center;
             text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 0 20px rgba(255, 255, 255, 1); 
             position: relative; z-index: 2;
         }
         
         .btn {
-            background: #e52521; color: white; border: 5px solid #fff; padding: 18px 40px; font-size: 28px; font-family: inherit;
+            background: #e52521; color: white; border: 5px solid #fff; padding: clamp(12px, 2vw, 18px) clamp(20px, 4vw, 40px); 
+            font-size: clamp(18px, 4vw, 28px); font-family: inherit;
             border-radius: 40px; cursor: pointer; transition: transform 0.1s; width: 100%; box-sizing: border-box; text-align: center;
             box-shadow: 0 6px 0 #8a0000, 0 0 20px rgba(255, 255, 255, 0.8); margin-bottom: 15px;
         }
@@ -103,76 +102,86 @@
         .btn-blue:active { box-shadow: 0 0 0 #0b7dda; }
 
         /* HUD */
-        #hud { position: absolute; top: 20px; left: 25px; right: 25px; display: flex; justify-content: space-between; pointer-events: none; z-index: 50; }
+        #hud { position: absolute; top: clamp(10px, 2vw, 20px); left: clamp(10px, 3vw, 25px); right: clamp(10px, 3vw, 25px); display: flex; justify-content: space-between; pointer-events: none; z-index: 50; }
         .stats {
-            background: rgba(0, 0, 0, 0.6); color: white; padding: 10px 25px; border-radius: 20px; font-size: 24px; 
-            border: 3px solid #fff; text-shadow: 2px 2px 0 #000; display: flex; gap: 12px; align-items: center;
+            background: rgba(0, 0, 0, 0.6); color: white; padding: clamp(6px, 1.5vw, 10px) clamp(10px, 2.5vw, 25px); border-radius: 20px; font-size: clamp(14px, 3vw, 24px); 
+            border: 3px solid #fff; text-shadow: 2px 2px 0 #000; display: flex; gap: clamp(6px, 1.5vw, 12px); align-items: center;
         }
-        .coin-icon { display: inline-block; width: 18px; height: 24px; background: #fbd000; border: 3px solid #fff; border-radius: 50%; position: relative;}
-        .top-buttons { display: flex; gap: 15px; pointer-events: auto; }
+        .coin-icon { display: inline-block; width: clamp(12px, 2vw, 18px); height: clamp(16px, 2.5vw, 24px); background: #fbd000; border: 3px solid #fff; border-radius: 50%; position: relative;}
+        .top-buttons { display: flex; gap: clamp(5px, 2vw, 15px); pointer-events: auto; }
         .hud-btn {
-            background: #fbd000; color: #d13a00; border: 4px solid #fff; padding: 12px 20px; font-size: 24px; 
+            background: #fbd000; color: #d13a00; border: 4px solid #fff; padding: clamp(6px, 1.5vw, 12px) clamp(10px, 2vw, 20px); font-size: clamp(14px, 3vw, 24px); 
             border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 #c28700; font-family: inherit;
         }
         .hud-btn.active-bgm { background: #4caf50; color: white; box-shadow: 0 5px 0 #2e7d32; }
         .hud-btn:active { transform: translateY(5px); box-shadow: none; }
 
-        /* Touch Controls (Upscaled for wrapper) */
+        /* Touch Controls */
         #touch-controls { 
-            position: absolute; bottom: 25px; left: 0; width: 100%; height: 130px; 
-            display: flex; justify-content: space-between; padding: 0 40px; box-sizing: border-box; pointer-events: none; z-index: 50; 
+            position: absolute; bottom: clamp(15px, 3vw, 25px); left: 0; width: 100%; height: clamp(80px, 15vw, 130px); 
+            display: flex; justify-content: space-between; padding: 0 clamp(20px, 5vw, 40px); box-sizing: border-box; pointer-events: none; z-index: 50; 
         }
-        .touch-group { display: flex; gap: 20px; align-items: flex-end; pointer-events: auto; }
+        .touch-group { display: flex; gap: clamp(10px, 2vw, 20px); align-items: flex-end; pointer-events: auto; }
         .t-btn { 
-            width: 100px; height: 100px; background: rgba(255, 255, 255, 0.4); border: 5px solid rgba(255, 255, 255, 0.8); 
-            border-radius: 50%; color: #000; font-size: 20px; font-weight: bold; display: flex; justify-content: center; align-items: center; 
+            width: clamp(65px, 10vw, 100px); height: clamp(65px, 10vw, 100px); background: rgba(255, 255, 255, 0.4); border: 5px solid rgba(255, 255, 255, 0.8); 
+            border-radius: 50%; color: #000; font-size: clamp(12px, 2vw, 20px); font-weight: bold; display: flex; justify-content: center; align-items: center; 
             box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px #fff; user-select: none; cursor: pointer;
         }
         .t-btn:active { background: rgba(255, 255, 255, 0.8); transform: scale(0.95); }
-        .t-btn-jump { width: 120px; height: 120px; background: rgba(229, 37, 33, 0.6); color: white; font-size: 24px; border-color: #ffcccc; text-shadow: 1px 1px 2px #000;}
+        .t-btn-jump { width: clamp(80px, 13vw, 120px); height: clamp(80px, 13vw, 120px); background: rgba(229, 37, 33, 0.6); color: white; font-size: clamp(14px, 2.5vw, 24px); border-color: #ffcccc; text-shadow: 1px 1px 2px #000;}
         .t-btn-jump:active { background: rgba(229, 37, 33, 1); }
         
-        #t-down { height: 80px; margin-bottom: 5px; }
+        #t-down { height: clamp(55px, 8vw, 80px); margin-bottom: 5px; }
 
         /* Quiz Box */
-        .quiz-box { max-width: 800px; width: 90%; font-family: sans-serif; pointer-events: auto; max-height: 90vh; overflow-y: auto;}
-        .quiz-box h2 { font-family: 'Fredoka One'; margin-bottom: 10px; font-size: 32px;}
+        .quiz-box { font-family: sans-serif; pointer-events: auto; }
+        .quiz-box h2 { font-family: 'Fredoka One'; margin-bottom: 10px; font-size: clamp(20px, 4vw, 32px);}
         .quiz-options { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-        .q-btn { background: #4caf50; color: white; border: none; padding: 15px; font-size: 20px; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #2e7d32;}
+        .q-btn { background: #4caf50; color: white; border: none; padding: clamp(10px, 2vw, 15px); font-size: clamp(16px, 3vw, 20px); border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #2e7d32;}
         .q-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #2e7d32; }
 
         /* Kuis Susun Kata & Drag Drop */
         .word-pool { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 20px; min-height: 60px; padding: 15px; background: #eee; border-radius: 12px;}
-        .word-chip { background: #2196F3; color: white; padding: 12px 20px; border-radius: 25px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #0b7dda;}
+        .word-chip { background: #2196F3; color: white; padding: 12px 20px; border-radius: 25px; font-size: clamp(14px, 2.5vw, 20px); font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #0b7dda;}
         .word-chip:active { transform: translateY(4px); box-shadow: 0 0 0 #0b7dda;}
         .match-container { display: flex; justify-content: space-between; gap: 15px; text-align: left; }
         .match-col { flex: 1; display: flex; flex-direction: column; gap: 15px; }
-        .match-item { background: #f9f9f9; border: 3px solid #ccc; padding: 15px; border-radius: 10px; cursor: pointer; font-size: 18px; text-align: center; transition: all 0.2s;}
+        .match-item { background: #f9f9f9; border: 3px solid #ccc; padding: 15px; border-radius: 10px; cursor: pointer; font-size: clamp(14px, 2.5vw, 18px); text-align: center; transition: all 0.2s;}
         .match-item.selected { border-color: #2196F3; background: #e3f2fd; transform: scale(1.05); }
         .match-item.matched { background: #c8e6c9; border-color: #4caf50; pointer-events: none; color: #2e7d32;}
 
         /* Materi Modal */
         #materi-content {
-            background: #fff; border-radius: 15px; padding: 25px; text-align: left; font-family: sans-serif;
-            height: 50vh; overflow-y: auto; border: 4px solid #2196F3; margin-bottom: 20px; font-size: 20px; line-height: 1.6;
+            background: #fff; border-radius: 15px; padding: clamp(15px, 3vw, 25px); text-align: left; font-family: sans-serif;
+            height: 50vh; overflow-y: auto; border: 4px solid #2196F3; margin-bottom: 20px; font-size: clamp(14px, 2.5vw, 20px); line-height: 1.6;
         }
         #materi-content h3 { color: #e52521; border-bottom: 3px solid #fbd000; padding-bottom: 8px; margin-top: 25px;}
         #materi-content ul { padding-left: 25px; }
 
         /* Leaderboard */
         .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 30px 0; height: 160px; font-family: sans-serif;}
-        .podium { width: 30%; text-align: center; border-radius: 15px 15px 0 0; color: white; font-weight: bold; padding-top: 15px; position: relative; font-size: 20px;}
-        .podium .name { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; position: absolute; top: -30px; left: 0; width: 100%; color:#333;}
+        .podium { width: 30%; text-align: center; border-radius: 15px 15px 0 0; color: white; font-weight: bold; padding-top: 15px; position: relative; font-size: clamp(14px, 2.5vw, 20px);}
+        .podium .name { font-size: clamp(12px, 2vw, 16px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; position: absolute; top: -30px; left: 0; width: 100%; color:#333;}
         .p1 { height: 140px; background: #FFD700; }
         .p2 { height: 105px; background: #C0C0C0; }
         .p3 { height: 70px; background: #cd7f32; }
         .lb-list { max-height: 200px; overflow-y: auto; text-align: left; font-family: sans-serif; border: 3px solid #eee; padding: 15px; border-radius: 15px;}
-        .lb-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 2px solid #eee; font-size: 18px;}
+        .lb-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 2px solid #eee; font-size: clamp(14px, 2.5vw, 18px);}
 
-        /* Transition Overlays */
+        /* Transition Overlays (Victory Screen) */
         #transition-overlay { background: rgba(0,0,0,0.85); flex-direction: column;}
-        #transition-overlay h1 { font-size: 60px; color: #fbd000; text-shadow: 4px 4px 0 #000; margin-bottom: 15px; text-align: center;}
-        #transition-overlay p { color: white; font-family: sans-serif; font-size: 28px; margin-bottom: 40px;}
+        #transition-overlay h1 { font-size: clamp(30px, 8vw, 60px); color: #fbd000; text-shadow: 4px 4px 0 #000; margin-bottom: 15px; text-align: center;}
+        #transition-overlay p { color: white; font-family: sans-serif; font-size: clamp(18px, 4vw, 28px); margin-bottom: 30px; text-align: center; padding: 0 20px;}
+        #trans-img {
+            width: clamp(180px, 35vw, 350px);
+            margin-bottom: 20px;
+            border-radius: 15px;
+            border: 5px solid #fbd000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: none;
+            animation: popIn 0.5s ease-out;
+        }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -185,7 +194,7 @@
 
 <div id="game-container">
     <div id="game-wrapper">
-        <canvas id="gameCanvas" width="1280" height="720"></canvas>
+        <canvas id="gameCanvas"></canvas>
 
         <!-- Login Menu -->
         <div id="login-menu" class="overlay">
@@ -245,19 +254,16 @@
         <div id="quiz-modal" class="overlay hidden" style="background: rgba(0,0,0,0.8);">
             <div class="box-ui quiz-box">
                 <h2 id="qz-title">Kuis (Lv. <span id="qz-lvl-text"></span>)</h2>
-                <p id="quiz-question" style="font-size: 22px; color:#333; margin-bottom: 20px; font-weight: bold;"></p>
-                
-                <!-- Area dinamis kuis -->
+                <p id="quiz-question" style="font-size: clamp(16px, 3vw, 22px); color:#333; margin-bottom: 20px; font-weight: bold;"></p>
                 <div id="quiz-dynamic-area"></div>
-                
-                <p id="quiz-feedback" style="margin-top: 20px; font-size:20px; font-weight: bold; display: none;"></p>
+                <p id="quiz-feedback" style="margin-top: 20px; font-size: clamp(16px, 3vw, 20px); font-weight: bold; display: none;"></p>
             </div>
         </div>
 
-        <!-- Materi Modal (Level 1 Pipe) -->
+        <!-- Materi Modal -->
         <div id="materi-modal" class="overlay hidden" style="background: rgba(0,0,0,0.9);">
             <div class="box-ui" style="max-width: 1000px; width: 95%;">
-                <h2 style="font-size: 45px;">📚 Materi Puasa</h2>
+                <h2 style="font-size: clamp(28px, 5vw, 45px);">📚 Materi Puasa</h2>
                 <div id="materi-content">
                     <h3>1. Pengertian Puasa</h3>
                     <p>Secara bahasa (etimologi), puasa (Ash-Shiyam) berarti "menahan". Secara istilah (terminologi), puasa adalah menahan diri dari makan, minum, dan segala hal yang membatalkannya mulai dari terbit fajar (waktu subuh) hingga terbenam matahari (waktu magrib) disertai dengan niat karena Allah SWT.</p>
@@ -300,7 +306,7 @@
         <div id="leaderboard-modal" class="overlay hidden">
             <div class="box-ui">
                 <h2>🏆 Papan Skor Peringkat</h2>
-                <div id="lb-loading" style="font-size:18px;">Memuat data dari server...</div>
+                <div id="lb-loading" style="font-size: clamp(14px, 2.5vw, 18px);">Memuat data dari server...</div>
                 <div class="podium-container hidden" id="podium-container">
                     <div class="podium p2"><div class="name" id="pod-2-name">-</div><div id="pod-2-score">-</div></div>
                     <div class="podium p1"><div class="name" id="pod-1-name">-</div><div id="pod-1-score">-</div></div>
@@ -311,9 +317,10 @@
             </div>
         </div>
 
-        <!-- Transition Overlay -->
+        <!-- Transition Overlay / Victory Screen -->
         <div id="transition-overlay" class="overlay hidden">
             <h1 id="trans-title">Selamat!</h1>
+            <img id="trans-img" src="https://imgur.com/6pdmDqZ.png" alt="Victory">
             <p id="trans-desc">Kamu berhasil menyelesaikan Level 1</p>
             <button class="btn" id="trans-btn" style="max-width:400px;">Lanjut Level 2</button>
         </div>
@@ -328,7 +335,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const GAS_URL = "https://script.google.com/macros/s/AKfycbweBUj24ZH6syZAf83BoKrzHMQ6-jUFrIVuzxs23mgx4rn3VOoRUzYvwe8MHcKBoNhF/exec";
 
-let gameState = 'login'; 
+let gameState = 'login'; // login, menu, playing, flag_slide, transition, quiz, materi, dead
 let requestID;
 let currentPlayer = { name: '', school: '' };
 
@@ -365,13 +372,14 @@ assets.player.crossOrigin = "Anonymous"; assets.player.src = "https://i.imgur.co
 assets.flag.crossOrigin = "Anonymous"; assets.flag.src = "https://i.imgur.com/nlCH2HZ.png";
 assets.enemy.crossOrigin = "Anonymous"; assets.enemy.src = "https://i.imgur.com/sjcux6J.png";
 
-// Responsive Scaling (Membungkus 1280x720 menjadi Auto Scale di Layar manapun)
+// Responsivitas Dinamis
 function resizeCanvas() {
-    let wrapper = document.getElementById('game-wrapper');
-    let scaleX = window.innerWidth / 1280;
-    let scaleY = window.innerHeight / 720;
-    let scale = Math.min(scaleX, scaleY);
-    wrapper.style.transform = `scale(${scale})`;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    let currentMapHeight = mapHeight > 0 ? mapHeight : 14; 
+    groundOffset = canvas.height - (currentMapHeight * TILE_SIZE) - (canvas.height * 0.08); 
+    if(groundOffset < 0) groundOffset = 0;
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas(); 
@@ -448,7 +456,7 @@ const bgmNotes = [
 ];
 let bgmStep = 0;
 function playBGM() {
-    if (!bgmEnabled || gameState !== 'playing' || !audioCtx) return;
+    if (!bgmEnabled || (gameState !== 'playing' && gameState !== 'flag_slide') || !audioCtx) return;
     let note = bgmNotes[bgmStep];
     if (note.f > 0 && player.powerUpTimer <= 0) { 
         let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
@@ -456,7 +464,6 @@ function playBGM() {
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + note.d);
     } else if (player.powerUpTimer > 0) {
-        // BGM Star (Cepat dan nada tinggi)
         let f = (frameCount % 10 < 5) ? 800 : 1000;
         let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
         osc.type = 'square'; osc.frequency.value = f; gain.gain.value = 0.05;
@@ -521,17 +528,18 @@ class Player {
         let maxSpeed = 4;
         let accel = 1.0; 
 
-        if (!this.isCrouching) {
-            if (keys.right) { this.vx += accel; this.dir = 1; }
-            if (keys.left) { this.vx -= accel; this.dir = -1; }
+        // Memungkinkan gerakan walau sedang menunduk
+        if (keys.right) { this.vx += accel; this.dir = 1; }
+        if (keys.left) { this.vx -= accel; this.dir = -1; }
+
+        // Membatasi kecepatan agar seolah sedang berjalan pelan/merangkak
+        if (this.isCrouching) {
+            maxSpeed = 2.5;
         }
 
         this.vx *= FRICTION;
         
-        // Momentum Lari
-        if (Math.abs(this.vx) > 2.0 && (keys.left || keys.right)) {
-             maxSpeed = 8; 
-        }
+        if (Math.abs(this.vx) > 2.0 && (keys.left || keys.right) && !this.isCrouching) { maxSpeed = 8; }
         
         if (this.vx > maxSpeed) this.vx = maxSpeed;
         if (this.vx < -maxSpeed) this.vx = -maxSpeed;
@@ -542,25 +550,20 @@ class Player {
 
         this.vy += GRAVITY;
         
-        // Lompatan tinggi jika sedang lari kencang
         if (keys.jump && this.grounded && !this.isCrouching) {
             let jumpStrength = -11; 
-            if (Math.abs(this.vx) > 4.5) jumpStrength = -15; // Super jump!
+            if (Math.abs(this.vx) > 4.5) jumpStrength = -15; 
             this.vy = jumpStrength; 
             this.grounded = false;
             playSound('jump');
         }
 
-        // Terbang konstan jika punya Bintang (Star)
-        if(keys.jump && this.powerUpTimer > 0) {
-            this.vy = -6; 
-        }
+        if(keys.jump && this.powerUpTimer > 0) { this.vy = -6; }
 
         this.y += this.vy;
         this.grounded = false;
         this.checkCollisions('y');
 
-        // Dimensi saat membesar dan Nunduk
         let expectedHeight = 30;
         if (this.isBig && !this.isCrouching) expectedHeight = 60;
         else if (this.isBig && this.isCrouching) expectedHeight = 30;
@@ -604,7 +607,6 @@ class Player {
                  } else if (axis === 'y') {
                      if (this.vy > 0) { 
                         this.y = p.y - this.height; this.grounded = true; this.vy = 0; 
-                        // Masuk Pipa jika nunduk
                         if(this.isCrouching && p.isEntrance) enterPipe();
                      }
                      else if (this.vy < 0) { this.y = p.y + p.height; this.vy = 0; }
@@ -619,7 +621,11 @@ class Player {
             playSound('pipe'); this.isBig = false; this.invincibleTimer = 60; return;
         }
         if(!this.dead) {
-            this.dead = true; this.vy = -10; playSound('dead'); lives--;
+            this.dead = true; 
+            this.vy = -10; 
+            stopBGM(); // Matikan BGM ketika kehilangan nyawa agar suara tidak bertabrakan!
+            playSound('dead'); 
+            lives--;
             updateHUD();
             setTimeout(() => {
                 if(lives <= 0) gameOver();
@@ -650,10 +656,56 @@ class Player {
     }
 }
 
+// FLAG POLE KUSTOM
+class FlagPole {
+    constructor(x, y) {
+        this.x = x;
+        this.baseY = y;
+        this.height = TILE_SIZE * 8; // Tiang tinggi
+        this.y = y - this.height + TILE_SIZE; // Titik paling atas
+        this.width = 10;
+        this.flagY = this.y; // Bendera mulai di puncak
+        this.touched = false;
+        this.finishDelay = 60;
+    }
+    update() {
+        if (this.touched) {
+            if (this.flagY < this.baseY - TILE_SIZE) {
+                this.flagY += 4; // Animasi turun
+            } else {
+                this.finishDelay--;
+                if (this.finishDelay <= 0 && gameState === 'flag_slide') {
+                    levelComplete();
+                }
+            }
+        }
+    }
+    draw() {
+        ctx.save();
+        // Tiang
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(this.x - camera.x, this.y - camera.y + groundOffset, this.width, this.height);
+        // Pentol tiang
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.arc(this.x - camera.x + 5, this.y - camera.y + groundOffset - 5, 8, 0, Math.PI*2);
+        ctx.fill();
+        
+        // Bendera di sebelah kiri tiang
+        if (assets.flag.complete && assets.flag.naturalWidth > 0) {
+            ctx.drawImage(assets.flag, this.x - camera.x - 30, this.flagY - camera.y + groundOffset, 40, 40); 
+        } else {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(this.x - camera.x - 30, this.flagY - camera.y + groundOffset, 40, 30);
+        }
+        ctx.restore();
+    }
+}
+
 class Block {
     constructor(x, y, type) {
         this.x = x; this.y = y; this.width = TILE_SIZE; this.height = TILE_SIZE;
-        this.type = type; // G(Ground), B(Brick), ?(Question), Q(Quiz), M(Hidden), S(Star)
+        this.type = type; 
         this.active = (type !== 'G'); 
         this.hidden = (type === 'M');
         this.hitY = 0;
@@ -679,7 +731,7 @@ class Block {
         if (this.type === 'G') {
             ctx.fillStyle = '#8B4513'; ctx.fillRect(0,0,this.width,this.height);
             ctx.fillStyle = '#228B22'; ctx.fillRect(0,0,this.width,5);
-        } else if (!this.active && this.type !== 'B') { // Kosong/Sudah Disundul
+        } else if (!this.active && this.type !== 'B') { 
             ctx.fillStyle = '#B8860B'; ctx.fillRect(0,0,this.width,this.height);
             ctx.strokeStyle = '#000'; ctx.strokeRect(0,0,this.width,this.height);
         } else if (this.type === 'B') { 
@@ -755,15 +807,12 @@ class Item {
         ctx.translate(this.x - camera.x, this.y - camera.y + groundOffset);
         
         if (this.type === 'mushGrow' || this.type === 'mushLife') {
-            // Batang jamur
             ctx.fillStyle = '#ffdfba';
             ctx.fillRect(10, 15, 10, 15);
-            // Kepala jamur
             ctx.fillStyle = this.type === 'mushGrow' ? '#e52521' : '#4caf50';
             ctx.beginPath();
             ctx.arc(15, 15, 15, Math.PI, 0);
             ctx.fill();
-            // Polkadot jamur
             ctx.fillStyle = '#fff';
             ctx.beginPath(); ctx.arc(8, 8, 4, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(22, 8, 4, 0, Math.PI*2); ctx.fill();
@@ -781,7 +830,6 @@ class Item {
             ctx.closePath();
             ctx.fill();
             ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.stroke();
-            // Mata bintang
             ctx.fillStyle = '#000';
             ctx.fillRect(-3, -3, 2, 6); ctx.fillRect(3, -3, 2, 6);
         }
@@ -832,13 +880,12 @@ class Enemy {
             }
         }
 
-        // Patrol logic (jangan jatuh dari tebing)
         if(onGround) {
             let checkX = this.vx > 0 ? this.x + this.width + 5 : this.x - 5;
             let checkY = this.y + this.height + 5;
             let safe = false;
             for(let b of blocks) {
-                if(!b.active || b.hidden) continue;
+                if(b.hidden && b.active) continue; // Perbaikan: Blok tanah (Ground) kini terdeteksi sebagai pijakan yang aman
                 if(checkX > b.x && checkX < b.x+b.width && checkY > b.y && checkY < b.y+b.height) { safe = true; break; }
             }
             for(let p of pipes) {
@@ -948,10 +995,10 @@ class Scenery {
 }
 
 /** ==============================
- * MAP PARSER
+ * MAP PARSER (Dipastikan hanya 1 Bendera '|')
  * ============================== */
 const maps = {
-    1: [ // Level 1 - Mudah (Belajar dasar)
+    1: [ // Level 1
         "                                                                     ",
         "                                                                     ",
         "                                                                     ",
@@ -960,13 +1007,12 @@ const maps = {
         "                                   B?B                               ",
         "                                                                     ",
         "             M                                                       ",
-        "                        B?Q?B                      B?S           |   ",
-        "     @       C                                                   |   ",
+        "                        B?Q?B                      B?S               ",
+        "     @       C                                                       ",
         "             C    P                            E                 |   ",
-        "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
         "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
     ],
-    2: [ // Level 2 - Sempit & Susun Kalimat (Pipa ke ruang koin)
+    2: [ // Level 2 
         "                                                                              ",
         "                                                                              ",
         "                                                                              ",
@@ -974,14 +1020,13 @@ const maps = {
         "                                                                              ",
         "                                  BBBBB                                       ",
         "                                 B     B           E          M               ",
-        "                                B       B         B?Q         B           |   ",
-        "            B?B?S               B   C   B                                 |   ",
-        "      @                  E      B       B   Q    P         BBBB           |   ",
+        "                                B       B         B?Q         B               ",
+        "            B?B?S               B   C   B                                     ",
+        "      @                  E      B       B   Q    P         BBBB               ",
         "                            E   B       B                                 |   ",
-        "GGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGG",
         "GGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGG"
     ],
-    3: [ // Level 3 - Sulit (Banyak rintangan)
+    3: [ // Level 3 
         "                                                                                        ",
         "                                                                                        ",
         "                                                                                        ",
@@ -989,11 +1034,10 @@ const maps = {
         "                                        ?B?               P                             ",
         "                                                                             BMB        ",
         "           B?Q                       BBBBBBB               E                            ",
-        "      @               BB                                 BBBBB                     |    ",
-        "                             E                                                     |    ",
-        "                            BB                                        Q            |    ",
+        "      @               BB                                 BBBBB                          ",
+        "                             E                                                          ",
+        "                            BB                                        Q                 ",
         "                          BBBB                  E                   BBBB           |    ",
-        "GGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
         "GGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
     ],
     secret1: [ // Materi Room
@@ -1004,7 +1048,6 @@ const maps = {
         "                                ",
         "                                ",
         "           P                    ",
-        "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
         "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
     ],
     secret2: [ // Coin Room Lv 2
@@ -1015,7 +1058,6 @@ const maps = {
         "        B  B  B  B  B           ",
         "                                ",
         "                    P           ",
-        "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
         "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
     ],
     secret3: [ // Super Room Lv 3
@@ -1026,7 +1068,6 @@ const maps = {
         "           C  C  C              ",
         "                                ",
         "                    P           ",
-        "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
         "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
     ]
 };
@@ -1043,10 +1084,7 @@ function loadMap(mapLevel, isSecret = false) {
     }
     
     mapHeight = mapData.length; mapWidth = mapData[0].length;
-    
-    // Fit to bottom perfectly based on map height
-    groundOffset = 720 - (mapHeight * TILE_SIZE) - 60;
-    if(groundOffset < 0) groundOffset = 0;
+    resizeCanvas(); // Auto fit map height
 
     blocks = []; items = []; enemies = []; particles = []; floatingTexts = []; coins = []; scenery = []; pipes = []; flags = [];
     
@@ -1073,11 +1111,10 @@ function loadMap(mapLevel, isSecret = false) {
             else if (char === 'E') enemies.push(new Enemy(x, y));
             else if (char === 'C') coins.push({x:x+10, y:y+10, collected:false});
             else if (char === 'P') {
-                // Buat corong lebih ramping (width 60, di-center)
                 pipes.push({x:x+10, y:y-TILE_SIZE, width:TILE_SIZE*1.5, height:TILE_SIZE*2, isEntrance:true});
                 if(isSecret) floatingTexts.push(new FloatingText(x, y-50, "Nunduk Keluar!"));
             }
-            else if (char === '|') flags.push({x:x, y:y, width:10, height:TILE_SIZE});
+            else if (char === '|') flags.push(new FlagPole(x, y));
             else if (char === '@' && !isSecret && (!inSecretArea)) { 
                 player = new Player(x, y); 
                 if(mapLevel === 3) player.isBig = false; 
@@ -1092,7 +1129,6 @@ function enterPipe() {
     if(!inSecretArea) { 
         returnPosX = player.x; returnPosY = player.y;
         
-        // Simpan Dunia Utama beserta dimensi (Fixed Error Out-of-bounds)
         savedMapState = {
             blocks: blocks, items: items, enemies: enemies, coins: coins, 
             flags: flags, scenery: scenery, pipes: pipes,
@@ -1109,9 +1145,7 @@ function enterPipe() {
             setTimeout(() => { document.getElementById('materi-modal').classList.remove('hidden'); }, 500);
         }
     } else { 
-        // Keluar dari ruang rahasia, kembalikan dunia utama
         inSecretArea = false; 
-        
         blocks = savedMapState.blocks; items = savedMapState.items; 
         enemies = savedMapState.enemies; coins = savedMapState.coins;
         flags = savedMapState.flags; scenery = savedMapState.scenery; 
@@ -1119,9 +1153,7 @@ function enterPipe() {
         quizzesTotal = savedMapState.qTot; quizzesAnswered = savedMapState.qAns;
         mapWidth = savedMapState.mWidth; mapHeight = savedMapState.mHeight;
 
-        // Auto center map vertically 
-        groundOffset = 720 - (mapHeight * TILE_SIZE) - 60;
-        if(groundOffset < 0) groundOffset = 0;
+        resizeCanvas();
 
         player.x = returnPosX + TILE_SIZE*2; player.y = returnPosY - TILE_SIZE; 
     }
@@ -1266,6 +1298,30 @@ function handleQuizAnswer(isCorrect) {
  * GAME LOOP & RENDERING
  * ============================== */
 function update() {
+    if (gameState === 'flag_slide') {
+        player.vx = 0;
+        player.vy = 4; // Mario meluncur ke bawah
+        player.y += player.vy;
+        player.isCrouching = false;
+        player.height = player.isBig ? 60 : 30;
+        player.checkCollisions('y'); 
+        
+        flags.forEach(f => f.update());
+        
+        let targetCamX = player.x - canvas.width / 2 + player.width / 2;
+        if(targetCamX < 0) targetCamX = 0;
+        if(targetCamX > (mapWidth * TILE_SIZE) - canvas.width) targetCamX = (mapWidth * TILE_SIZE) - canvas.width;
+        camera.x += (targetCamX - camera.x) * 0.1;
+        
+        scenery.forEach(s => s.update());
+        particles.forEach(p => p.update());
+        particles = particles.filter(p => p.life > 0);
+        floatingTexts.forEach(t => t.update());
+        floatingTexts = floatingTexts.filter(t => t.life > 0);
+        frameCount++;
+        return; 
+    }
+
     if (gameState !== 'playing') return;
 
     player.update();
@@ -1292,12 +1348,23 @@ function update() {
         }
     });
 
-    // Syarat Menuju Level Berikutnya
+    // Syarat Menuju Level Berikutnya (Menyentuh Tiang Bendera)
     flags.forEach(f => {
         if(player.x < f.x+f.width && player.x+player.width > f.x && player.y < f.y+f.height && player.y+player.height > f.y) {
-            if(!player.dead) {
+            if(!player.dead && !f.touched) {
                 if (quizzesAnswered >= quizzesTotal) {
-                    levelComplete();
+                    f.touched = true;
+                    gameState = 'flag_slide'; // Aktifkan animasi meluncur
+                    stopBGM();
+                    playSound('pipe'); 
+                    
+                    player.x = f.x - player.width + 5;
+                    player.vx = 0;
+                    
+                    // Bonus poin semakin tinggi melompat
+                    let heightBonus = Math.max(10, Math.floor((f.baseY - player.y) / TILE_SIZE) * 100);
+                    addScore(heightBonus);
+                    floatingTexts.push(new FloatingText(player.x, player.y, `+${heightBonus}`));
                 } else {
                     if (frameCount % 60 === 0) {
                         floatingTexts.push(new FloatingText(player.x, player.y - 20, "Jawab semua Kuis!"));
@@ -1322,38 +1389,21 @@ function draw() {
     pipes.forEach(p => {
         let px = p.x - camera.x;
         let py = p.y - camera.y + groundOffset;
-        let pw = p.width; // 60
-        let ph = p.height; // 80
+        let pw = p.width;
+        let ph = p.height; 
 
-        // Pipe Body
         ctx.fillStyle = '#00aa00'; 
         ctx.fillRect(px + 4, py + 20, pw - 8, ph - 20);
         ctx.strokeStyle = '#000'; ctx.lineWidth = 2; 
         ctx.strokeRect(px + 4, py + 20, pw - 8, ph - 20);
+        ctx.fillStyle = '#55ff55'; ctx.fillRect(px + 12, py + 20, 8, ph - 20);
 
-        // Highlight body
-        ctx.fillStyle = '#55ff55';
-        ctx.fillRect(px + 12, py + 20, 8, ph - 20);
-
-        // Pipe Lip
-        ctx.fillStyle = '#00cc00';
-        ctx.fillRect(px, py, pw, 20); 
+        ctx.fillStyle = '#00cc00'; ctx.fillRect(px, py, pw, 20); 
         ctx.strokeRect(px, py, pw, 20);
-        
-        // Highlight lip
-        ctx.fillStyle = '#55ff55';
-        ctx.fillRect(px + 8, py + 2, 8, 16);
+        ctx.fillStyle = '#55ff55'; ctx.fillRect(px + 8, py + 2, 8, 16);
     });
     
-    flags.forEach(f => {
-        ctx.fillStyle = '#fff'; ctx.fillRect(f.x - camera.x, f.y - camera.y + groundOffset, 4, f.height);
-        if (assets.flag.complete && assets.flag.naturalWidth > 0) {
-            ctx.drawImage(assets.flag, f.x - camera.x, f.y - camera.y + groundOffset, 40, 40); 
-        } else {
-            ctx.fillStyle = 'red';
-            ctx.fillRect(f.x - camera.x, f.y - camera.y + groundOffset, 30, 20);
-        }
-    });
+    flags.forEach(f => f.draw());
 
     coins.forEach(c => {
         if(!c.collected) {
@@ -1415,6 +1465,7 @@ function levelComplete() {
     
     let tOverlay = document.getElementById('transition-overlay');
     document.getElementById('trans-title').innerText = "Hebat!";
+    document.getElementById('trans-img').style.display = 'block'; // Tampilkan gambar kemenangan
     document.getElementById('trans-desc').innerText = `Kamu berhasil menyelesaikan Level ${currentLevel}\nSkor: ${score}`;
     let btn = document.getElementById('trans-btn');
     
@@ -1422,6 +1473,7 @@ function levelComplete() {
     
     btn.onclick = () => {
         tOverlay.classList.add('hidden');
+        document.getElementById('trans-img').style.display = 'none'; // Sembunyikan untuk layar lain
         currentLevel++;
         if(currentLevel > Object.keys(puasaQuizzes).length) {
             finishGame();
@@ -1437,6 +1489,7 @@ function gameOver() {
     document.getElementById('trans-title').innerText = "Game Over!";
     document.getElementById('trans-title').style.color = "#e52521";
     document.getElementById('trans-desc').innerText = "Jangan menyerah, coba lagi!";
+    document.getElementById('trans-img').style.display = 'none';
     let btn = document.getElementById('trans-btn');
     btn.innerText = "Kirim Skor & Kembali";
     tOverlay.classList.remove('hidden');
@@ -1450,11 +1503,12 @@ function finishGame() {
     document.getElementById('trans-title').innerText = "TAMAT!";
     document.getElementById('trans-title').style.color = "#4caf50";
     document.getElementById('trans-desc').innerText = `Luar Biasa!\nSkor Akhir: ${score}`;
+    document.getElementById('trans-img').style.display = 'block'; // Tampilkan gambar kemenangan di akhir
     let btn = document.getElementById('trans-btn');
     btn.innerText = "Kirim Skor ke Leaderboard";
     tOverlay.classList.remove('hidden');
     
-    btn.onclick = () => { tOverlay.classList.add('hidden'); submitScore(); };
+    btn.onclick = () => { tOverlay.classList.add('hidden'); document.getElementById('trans-img').style.display = 'none'; submitScore(); };
 }
 
 /** ==============================
@@ -1483,8 +1537,10 @@ setupTouch('t-right', 'right');
 setupTouch('t-jump', 'jump');
 setupTouch('t-down', 'down');
 
-// Cegah double tap zoom di mobile untuk tombol-tombol
-document.addEventListener('dblclick', function(event) { event.preventDefault(); }, { passive: false });
+// Mencegah zoom berulang kali pada tombol namun memperbolehkan pada kanvas luar (layar sentuh)
+document.addEventListener('dblclick', function(event) { 
+    if(event.target.tagName !== 'CANVAS') event.preventDefault(); 
+}, { passive: false });
 
 /** ==============================
  * LEADERBOARD (Google Apps Script)
