@@ -22,9 +22,7 @@
             #game-wrapper { display: none !important; } 
         }
 
-        /* Menggunakan vw dan vh agar pasti penuh selayar */
         #game-wrapper { width: 100vw; height: 100vh; position: relative;}
-        
         #game-container { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background-color: #5c94fc; overflow: hidden; }
         canvas { display: block; width: 100%; height: 100%; object-fit: cover; }
 
@@ -56,23 +54,32 @@
         .hud-btn { background: #fbd000; color: #d13a00; border: 3px solid #fff; padding: 10px; font-size: 16px; font-family: inherit; border-radius: 15px; cursor: pointer; box-shadow: 0 4px 0 #c28700; white-space: nowrap;}
         .hud-btn.active-bgm { background: #4caf50; color: white; border-color: white; box-shadow: 0 4px 0 #2e7d32; }
 
-        /* TOUCH CONTROLS - FIXED AGAR TAHAN ZOOM */
+        /* TOUCH CONTROLS */
         #touch-controls { position: fixed; bottom: 30px; left: 0; width: 100%; height: 120px; display: flex; justify-content: space-between; padding: 0 30px; box-sizing: border-box; pointer-events: none; z-index: 1050; }
         .touch-group { display: flex; gap: 15px; align-items: flex-end; pointer-events: auto; }
         .t-btn { width: 70px; height: 70px; background: rgba(255, 255, 255, 0.4); border: 4px solid rgba(255, 255, 255, 0.8); border-radius: 50%; color: #333; font-size: 14px; font-weight: bold; display: flex; justify-content: center; align-items: center; user-select: none; cursor: pointer; }
         .t-btn:active, .t-btn.active { background: rgba(255, 255, 255, 0.9); transform: scale(0.95); }
         .t-btn-jump { width: 85px; height: 85px; background: rgba(229, 37, 33, 0.6); color: white; border-color: rgba(255,255,255,0.9); }
 
-        /* MODALS (KUIS & LIBRARY) */
+        /* MODALS */
         #quiz-modal, #library-modal { background: rgba(0, 0, 0, 0.85); z-index: 1200; }
         .quiz-box, .library-box { background: #fff; padding: 25px; border-radius: 20px; text-align: center; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; border: 5px solid #fbd000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: sans-serif; }
         .library-box { border-color: #4caf50; }
         .quiz-box h2, .library-box h2 { color: #e52521; margin-top: 0; font-size: 24px; font-family: 'Fredoka One', cursive;}
         
-        /* Quiz Elements */
-        .q-btn { background: #4caf50; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; transition: background 0.2s;}
-        .q-btn:hover { background: #388e3c; }
+        /* Quiz Kustom UI */
+        .q-btn { background: #4caf50; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; transition: transform 0.1s, background 0.2s;}
+        .q-btn:active { transform: scale(0.95); }
         .answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        
+        .word-bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 15px; padding: 15px; background: #f0f0f0; border-radius: 10px;}
+        .word-chip { background: #2196F3; color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; user-select: none; box-shadow: 0 3px 0 #0b7dda; display: inline-block; transition: transform 0.1s; font-size: 15px;}
+        .word-chip:active { transform: translateY(3px); box-shadow: 0 0 0; }
+        .word-chip.used { opacity: 0.3; pointer-events: none; }
+        
+        .answer-area { min-height: 60px; border: 3px dashed #ccc; border-radius: 10px; padding: 15px; margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; background: #fafafa;}
+        .answer-slot { display: inline-block; min-width: 60px; height: 35px; border-bottom: 3px solid #333; margin: 0 5px; text-align: center; color: #e52521; font-weight: bold; cursor: pointer; line-height: 35px; padding: 0 10px;}
+        .answer-slot.filled { border-bottom: 3px solid #4caf50; color: #4caf50; }
 
         /* Papan Skor Baru & Podium */
         .box-ui { background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 20px; border: 5px solid #fbd000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 500px; font-family: sans-serif; max-height: 90vh; overflow-y: auto;}
@@ -80,9 +87,9 @@
         .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 5px; margin: 20px 0; height: 120px; }
         .podium { color: #000; border-radius: 10px 10px 0 0; width: 30%; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 5px; font-weight: bold; font-size: 14px; box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2);}
         .podium .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 5px; }
-        .p1 { height: 110px; background: #FFD700; font-size: 16px; border: 2px solid #B8860B;} /* Emas */
-        .p2 { height: 85px; background: #C0C0C0; border: 2px solid #808080;} /* Perak */
-        .p3 { height: 60px; background: #CD7F32; border: 2px solid #8B4513;} /* Perunggu */
+        .p1 { height: 110px; background: #FFD700; font-size: 16px; border: 2px solid #B8860B;} 
+        .p2 { height: 85px; background: #C0C0C0; border: 2px solid #808080;} 
+        .p3 { height: 60px; background: #CD7F32; border: 2px solid #8B4513;} 
         
         .lb-list { background: rgba(0,0,0,0.05); border-radius: 15px; padding: 10px; text-align: left; margin-bottom: 15px; max-height: 180px; overflow-y: auto;}
         .lb-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid rgba(0,0,0,0.1); }
@@ -92,7 +99,20 @@
         .lb-pts { font-weight: bold; color: #4caf50; font-size: 16px;}
         #lb-loading { text-align: center; font-style: italic; color: #666; padding: 20px 0;}
 
-        /* Responsif HP Potret (Layar Sempit) */
+        /* Efek UI Victory & Game Over Baru */
+        .victory-box { border-color: #4CAF50; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: linear-gradient(to bottom, #fff, #e8f5e9); }
+        .victory-img { max-width: 100%; height: 180px; object-fit: contain; margin-bottom: -10px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3)); animation: float 3s ease-in-out infinite; }
+        .victory-title { font-size: 36px !important; color: #4CAF50 !important; text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1); margin-bottom: 10px;}
+        .score-display { background: #fbd000; border: 4px solid #fff; border-radius: 15px; padding: 15px; box-shadow: 0 5px 0 #c28700; color: #d13a00; }
+        .score-display span { font-weight: bold; font-size: 16px; display: block; }
+        .score-display h3 { margin: 0; font-size: 40px; font-family: 'Fredoka One', cursive; text-shadow: 2px 2px 0px #fff; }
+
+        .message-box { border-color: #e52521; background: linear-gradient(to bottom, #fff, #ffebee); animation: shake 0.5s ease-in-out; }
+        .message-title { font-family: 'Fredoka One', cursive; font-size: 32px; color: #e52521; text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1); margin-top: 10px;}
+
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 75% { transform: translateX(-10px); } }
+
         @media screen and (orientation: portrait) {
             #touch-controls { bottom: 10px; padding: 0 10px; }
             .t-btn { width: 60px; height: 60px; font-size: 12px; }
@@ -176,14 +196,16 @@
         </div>
     </div>
 
-    <!-- Modal Kuis -->
+    <!-- Modal Kuis Terintegrasi -->
     <div id="quiz-modal" class="overlay hidden">
         <div class="quiz-box">
-            <h2>Kuis Wawasan!</h2>
-            <p id="quiz-question" style="font-size: 18px; color:#333; margin-bottom: 15px; font-weight:bold;"></p>
-            <div id="quiz-interactive-area" class="answer-grid">
-                <!-- Buttons will be injected here -->
-            </div>
+            <h2 id="quiz-title">Kuis Wawasan!</h2>
+            <p id="quiz-question" style="font-size: 18px; color:#333; margin-bottom: 10px; font-weight:bold;"></p>
+            
+            <!-- Tempat merender UI Kuis secara dinamis -->
+            <div id="quiz-interactive-area"></div>
+            
+            <button class="btn btn-blue hidden" id="btn-submit-quiz" style="margin-top: 15px;">Cek Jawaban</button>
         </div>
     </div>
 
@@ -203,17 +225,22 @@
 
     <!-- Modal Victory -->
     <div id="victory-modal" class="overlay hidden" style="z-index: 1300;">
-        <div class="box-ui">
-            <img src="https://imgur.com/6pdmDqZ.png" alt="Victory" style="max-width: 100%; border-radius: 10px; margin-bottom: 10px;">
-            <h2>Level Selesai!</h2>
-            <p style="font-size: 20px; font-weight: bold; color: #4caf50;">Skor Kamu: <span id="victory-score">0</span></p>
-            <button class="btn btn-blue" id="btn-next-level" style="margin-top: 15px;">Lanjut Level Berikutnya</button>
+        <div class="box-ui victory-box">
+            <img src="https://imgur.com/x1XOhm6.png" alt="Victory" class="victory-img">
+            <h2 class="victory-title">LEVEL SELESAI!</h2>
+            <div class="score-display">
+                <span>SKOR KAMU</span>
+                <h3 id="victory-score">0</h3>
+            </div>
+            <button class="btn btn-blue" id="btn-next-level" style="margin-top: 20px; font-size: 22px; padding: 15px 40px;">Lanjut Level Berikutnya</button>
         </div>
     </div>
 
-    <div id="message-overlay" class="overlay hidden">
-        <h1 id="message-text">Game Over</h1>
-        <button class="btn" id="msg-btn" style="max-width:200px;">Lanjut</button>
+    <div id="message-overlay" class="overlay hidden" style="z-index: 1300;">
+        <div class="box-ui message-box">
+            <h1 id="message-text" class="message-title">Game Over</h1>
+            <button class="btn" id="msg-btn" style="margin-top: 20px; font-size: 20px; padding: 15px 30px;">Lanjut</button>
+        </div>
     </div>
 </div>
 
@@ -225,7 +252,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const GAS_URL = "https://script.google.com/macros/s/AKfycbweBUj24ZH6syZAf83BoKrzHMQ6-jUFrIVuzxs23mgx4rn3VOoRUzYvwe8MHcKBoNhF/exec";
 
-let gameState = 'login'; // login, menu, playing, transition, quiz, materi, dead
+let gameState = 'login'; 
 let requestID;
 let currentPlayer = { name: '', school: '' };
 
@@ -246,9 +273,11 @@ let coins = [];
 let inSecretArea = false;
 let returnPosX = 0;
 let returnPosY = 0;
-
 let frameCount = 0;
+
 let totalQuestions = 0, answeredQuestions = 0, warningTimer = 0;
+let specialPoints = {};
+let clouds = [], birds = [], bgMountains = [], bgTrees = [];
 
 function resizeCanvas() { 
     canvas.width = window.innerWidth; 
@@ -309,18 +338,19 @@ document.getElementById('bgm-btn').addEventListener('click', function() {
  * G = Ground, B = Brick, ? = Koin, Q = Kuis, S = Flag/Finish, M = Jamur, E = Enemy
  * P = Pipa Atas Masuk (Ke Bawah), X = Pipa Bawah Keluar (Ke Atas), U = Tempat Keluar
  * L = Pipa Library
+ * N = Jamur Nyawa (1-UP) Tersembunyi di dalam Bata
  */
 const maps = [
-    [ // LEVEL 1
+    [ // LEVEL 1: Mudah (Soal Pilihan Ganda)
         "                                                                 ",
         "                                                                 ",
         "                                                                 ",
         "                                                               B ",
         "                                                               B ",
         "                                                               B ",
-        "                                         S                     B ",
+        "                                         S   Q                 B ",
         "                        B?M                                    B ",
-        "      M      Q                               Q                 B ",
+        "      M      Q                                                 B ",
         "                  B?Q?BBBBB                BBBBB               B ",
         "         E              BB                               Q     B ",
         "      B?B   L           BB      E      P                       B ",
@@ -330,14 +360,14 @@ const maps = [
         "                                                                 ",
         "                          U                                      ",
         "                          u                                      ",
-        "                        BBBBB  BBBBBB                            ",
+        "                        NBBBB  BBBBBB                            ",
         "                        B  Q        B                            ",
         "                        B     M                                  ",
         "                        B  E     E  O                            ",
         "                        GGGGGGGGGGGGGGG                          ",
         "                                                                 "
     ],
-    [ // LEVEL 2
+    [ // LEVEL 2: Sedang (Soal Susun Kalimat)
         "                                                                                                 ",
         "                                                                                                 ",
         "                                                                                                 ",
@@ -348,7 +378,7 @@ const maps = [
         "      Q                         Q            E                                   GGGGGGGGGGB     ",
         "         E     BB   B?Q?BBBBB                BBBBB?BB                    E             B         ",
         "     BBSBB    BBB                        BQB                 Q       BB?BB         B             ",
-        "             BBBB             P          B?B       X                             B               ",
+        "             NBBB             P          B?B       X                             B               ",
         " R            BBBBB   E    B  p     E              X  E                  RR        B           ",
         "GGGGGGGGGGGG  GGGGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGG             ",
         "                                                                                                 ",
@@ -361,10 +391,34 @@ const maps = [
         "                        GGG  E     E           BB    O     ",
         "                        GGGGGGGGGGGGGGGGG   GGGGGGGGGGG    ",
         "                                                           "
+    ],
+    [ // LEVEL 3: Sulit (Soal Drag & Drop / Isi Rumpang)
+        "                                                                                                                       ",
+        "                                                                                                                       ",
+        "                                                                                                                       ",
+        "                                                                                                                Q      ",
+        "                                          M            Q                                                      BBB      ",
+        "                      Q             BBBBBBBBBBB      BBBBB                                        S          B         ",
+        "                   BBBBB?BB                          B   B                     M                            B          ",
+        "         E                                           B Q B    E     E     BBBBBBBB             BB?BB       B           ",
+        "       NBBBB                    E                    BBBBB   BBBB  BBBB                        B          B            ",
+        "                            BBBBBBB                                                            B         B             ",
+        "   Q           B?B                        P                                              B?B   B        B              ",
+        "  BBB          BBB       E                p                E             X       E             B       B               ",
+        "GGGGGGG   GGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGGGGGG                ",
+        "                                                                                                                       ",
+        "                                                                                                                       ",
+        "                                     U                                                                                 ",
+        "                                     u                                                                                 ",
+        "                                   BBBBBBB   BBBBBB                                                                    ",
+        "                                                 B       M                                                             ",
+        "                                       Q         B     BBBBB     Q                                                     ",
+        "                                   B             B               B          O                                          ",
+        "                                   B   E     E   B   E        E  B          O                                          ",
+        "                                   GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG                                          ",
+        "                                                                                                                       "
     ]
 ];
-
-let specialPoints = {};
 
 /** PLAYER LOGIC */
 const player = {
@@ -373,7 +427,19 @@ const player = {
     reset: function() { this.x = 50; this.y = 100; this.vx = 0; this.vy = 0; this.isBig = false; this.originalHeight = 40; this.crouchHeight = 24; this.height = this.originalHeight; this.width = 30; this.isCrouching = false; this.invincibleTimer = 0; this.finishedLevel = false; this.isJumping = false; this.jumpHoldTimer = 0; this.pipeState = null; this.dead = false; camera.x = 0; camera.y = 0; },
     makeBig: function() { if (!this.isBig) { this.isBig = true; this.y -= 15; this.originalHeight = 55; this.height = this.originalHeight; this.width = 35; this.crouchHeight = 30; spawnParticles(this.x + this.width/2, this.y + this.height/2, '#fff'); spawnFloatingText("MANTAP!", this.x, this.y-20, '#4caf50'); } },
     shrink: function() { if (this.isBig) { this.isBig = false; this.originalHeight = 40; this.height = this.originalHeight; this.width = 30; this.crouchHeight = 24; this.y += 15; this.invincibleTimer = 2; playSound('pipe'); spawnParticles(this.x + this.width/2, this.y + this.height/2, '#ddd'); } },
-    die: function() { if(this.dead) return; this.dead = true; stopBGM(); playSound('dead'); this.vy = -12; this.vx = 0; lives--; updateHUD(); setTimeout(() => { if(lives > 0) { loadLevel(currentLevel); } else { showGameOver(); } }, 2000); },
+    die: function() { 
+        if(this.dead) return; 
+        this.dead = true; stopBGM(); playSound('dead'); 
+        this.vy = -12; this.vx = 0; lives--; updateHUD(); 
+        setTimeout(() => { 
+            if(lives > 0) { 
+                this.reset(); 
+                startBGM(); 
+            } else { 
+                showGameOver(); 
+            } 
+        }, 2000); 
+    },
     update: function() {
         if(this.dead) { this.vy += GRAVITY; this.y += this.vy; return; }
         if(this.finishedLevel || this.pipeState) return;
@@ -396,7 +462,7 @@ const player = {
         // Side Pipe Interactions
         if(keys.right && this.grounded) {
             let rightCol = Math.floor((this.x + this.width + 2) / TILE_SIZE), midRow = Math.floor((this.y + this.height/2) / TILE_SIZE);
-            if(mapTiles[midRow] && mapTiles[midRow][rightCol] && mapTiles[midRow][rightCol].type === 12) { // 12 adalah Pipa 'O'
+            if(mapTiles[midRow] && mapTiles[midRow][rightCol] && mapTiles[midRow][rightCol].type === 12) { 
                  this.pipeState = 'entering_side'; this.pipeTargetType = 'X'; this.pipeTimer = 0; gameState = 'pipe_transition'; playSound('pipe'); return;
             }
         }
@@ -418,8 +484,8 @@ const player = {
         if (this.vx > this.speed) this.vx = this.speed; if (this.vx < -this.speed) this.vx = -this.speed;
         if (!keys.left && !keys.right) { this.vx *= FRICTION; if (Math.abs(this.vx) < 0.1) this.vx = 0; }
 
-        // Jump
-        if (keys.jump && this.grounded && !this.isJumping && !this.isCrouching) {
+        // Jump (Sekarang bisa melompat saat menunduk)
+        if (keys.jump && this.grounded && !this.isJumping) {
             let speedRatio = Math.abs(this.vx) / this.speed, momentumBonus = Math.pow(speedRatio, 2) * 2; 
             this.vy = -(this.jumpPower + momentumBonus); this.grounded = false; this.isJumping = true; this.jumpHoldTimer = 10; playSound('jump');
         }
@@ -448,20 +514,16 @@ const player = {
 
         // Camera Update
         camera.x = Math.max(0, this.x - canvas.width / 2 + this.width/2);
-        // Map Bound Camera
         if(camera.x > mapWidth*TILE_SIZE - canvas.width) camera.x = mapWidth*TILE_SIZE - canvas.width;
         if(camera.x < 0) camera.x = 0;
         
-        // Perbaikan Kamera Vertikal (agar tidak goyang saat melompat)
+        // Perbaikan Kamera Vertikal (Deadzone)
         let playerScreenY = this.y - camera.y;
-        // Hanya gerakkan kamera Y jika pemain mendekati 30% batas atas atau 70% batas bawah layar
         if (playerScreenY < canvas.height * 0.3) {
             camera.y -= (canvas.height * 0.3 - playerScreenY) * 0.15;
         } else if (playerScreenY > canvas.height * 0.7) {
             camera.y += (playerScreenY - canvas.height * 0.7) * 0.15;
         }
-        
-        // Batasi kamera agar tidak keluar dari map
         if (camera.y < 0) camera.y = 0;
         let maxCamY = mapHeight * TILE_SIZE - canvas.height;
         if (maxCamY > 0 && camera.y > maxCamY) camera.y = maxCamY;
@@ -469,7 +531,7 @@ const player = {
 };
 
 /** COLLISIONS & BLOCKS */
-function isSolid(type) { return [1, 2, 3, 4, 5, 6, 10, 11, 12, 13, 14, 15, 16].includes(type); }
+function isSolid(type) { return [1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 16].includes(type); }
 
 function checkCollisions(isX) {
     let leftCol = Math.floor((player.x + 4) / TILE_SIZE);
@@ -490,7 +552,7 @@ function checkCollisions(isX) {
                     if (answeredQuestions < totalQuestions) {
                         if (warningTimer <= 0) {
                             spawnFloatingText("Jawab Semua Kuis Dulu!", player.x, player.y - 30, '#e52521');
-                            warningTimer = 60; // cooldown sekitar 1 detik agar teks tidak menumpuk
+                            warningTimer = 60; 
                         }
                     } else {
                         if (!player.grounded && !specialPoints.flag.sliding) {
@@ -521,22 +583,27 @@ function checkCollisions(isX) {
 
 function hitBlock(r, c) {
     let tile = mapTiles[r][c];
-    if (tile.type === 2) { // Brick
+    if (tile.type === 2) { 
         if (player.isBig) { mapTiles[r][c] = { type: 0, bumpY: 0 }; playSound('bump'); spawnParticles(c * TILE_SIZE + 20, r * TILE_SIZE + 20, '#a0522d'); } 
         else { tile.bumpY = -10; playSound('bump'); }
-    } else if (tile.type === 3) { // Coin Block
+    } else if (tile.type === 3) { 
         tile.type = 6; tile.bumpY = -10; score += 10; updateHUD(); playSound('coin'); items.push(new Coin(c * TILE_SIZE + 10, r * TILE_SIZE));
-    } else if (tile.type === 4) { // Quiz Block
+    } else if (tile.type === 4) { 
         playSound('bump'); 
         triggerQuiz(r, c);
-    } else if (tile.type === 5) { // Mushroom Block
-        tile.type = 6; tile.bumpY = -10; playSound('powerup'); items.push(new Mushroom(c * TILE_SIZE, r * TILE_SIZE - TILE_SIZE));
+    } else if (tile.type === 5) { 
+        tile.type = 6; tile.bumpY = -10; playSound('powerup'); items.push(new Mushroom(c * TILE_SIZE, r * TILE_SIZE - TILE_SIZE, 'big'));
+    } else if (tile.type === 7) { 
+        tile.type = 6; tile.bumpY = -10; playSound('powerup'); items.push(new Mushroom(c * TILE_SIZE, r * TILE_SIZE - TILE_SIZE, '1up'));
     }
 }
 
 /** ENTITIES */
 class Mushroom {
-    constructor(x, y) { this.x = x; this.y = y; this.w = 30; this.h = 30; this.vx = 2; this.vy = 0; this.active = true; }
+    constructor(x, y, type = 'big') { 
+        this.x = x; this.y = y; this.w = 30; this.h = 30; this.vx = 2; this.vy = 0; this.active = true; 
+        this.type = type;
+    }
     update() {
         if(!this.active) return;
         this.vy += GRAVITY; this.x += this.vx;
@@ -547,36 +614,33 @@ class Mushroom {
         let rowBottom = Math.floor((this.y+this.h)/TILE_SIZE);
         if(this.vy > 0 && isSolid(mapTiles[rowBottom]?.[Math.floor(this.x/TILE_SIZE)]?.type)) { this.vy=0; this.y = rowBottom*TILE_SIZE - this.h; }
         
-        // Player collect
         if (player.x < this.x + this.w && player.x + player.width > this.x && player.y < this.y + this.h && player.y + player.height > this.y) {
-            playSound('powerup'); player.makeBig(); score += 50; updateHUD(); this.active = false;
+            playSound('powerup'); 
+            if (this.type === 'big') {
+                player.makeBig(); 
+                score += 50; 
+            } else if (this.type === '1up') {
+                lives++; 
+                score += 100;
+                spawnFloatingText("1-UP", player.x, player.y - 20, '#4caf50');
+            }
+            updateHUD(); 
+            this.active = false;
         }
     }
     draw(ctx) { 
         if(!this.active) return;
         ctx.save();
         ctx.translate(this.x, this.y);
+        ctx.fillStyle = '#fceee6'; ctx.fillRect(7, 15, 16, 15);
+        ctx.fillStyle = '#000'; ctx.fillRect(11, 18, 2, 5); ctx.fillRect(17, 18, 2, 5);
         
-        // Batang Jamur (Putih/Krem)
-        ctx.fillStyle = '#fceee6';
-        ctx.fillRect(7, 15, 16, 15);
-        // Mata Jamur
-        ctx.fillStyle = '#000';
-        ctx.fillRect(11, 18, 2, 5);
-        ctx.fillRect(17, 18, 2, 5);
-        
-        // Topi Jamur (Merah)
-        ctx.fillStyle = '#e52521';
-        ctx.beginPath();
-        ctx.arc(15, 15, 15, Math.PI, 0);
-        ctx.fill();
-        
-        // Bintik Putih Jamur
+        ctx.fillStyle = this.type === '1up' ? '#4caf50' : '#e52521';
+        ctx.beginPath(); ctx.arc(15, 15, 15, Math.PI, 0); ctx.fill();
         ctx.fillStyle = '#fff';
         ctx.beginPath(); ctx.arc(7, 7, 4, 0, Math.PI*2); ctx.fill();
         ctx.beginPath(); ctx.arc(23, 7, 4, 0, Math.PI*2); ctx.fill();
         ctx.beginPath(); ctx.arc(15, 3, 4, 0, Math.PI*2); ctx.fill();
-        
         ctx.restore();
     }
 }
@@ -602,13 +666,10 @@ class Enemy {
         let rowBottom = Math.floor((this.y+this.h)/TILE_SIZE);
         if(this.vy > 0 && isSolid(mapTiles[rowBottom]?.[Math.floor((this.x+this.w/2)/TILE_SIZE)]?.type)) { this.vy=0; this.y = rowBottom*TILE_SIZE - this.h; }
         
-        // Player Collision
         if (!player.dead && !player.pipeState && player.x < this.x + this.w && player.x + player.width > this.x && player.y < this.y + this.h && player.y + player.height > this.y) {
             if (player.vy > 0 && player.y + player.height < this.y + this.h/2) {
-                // Stomp
                 this.dead = true; playSound('bump'); player.vy = -8; score += 20; updateHUD(); spawnFloatingText("20", this.x, this.y, '#fff');
             } else {
-                // Hurt
                 if (player.invincibleTimer <= 0) {
                     if (player.isBig) { player.shrink(); } else { player.die(); }
                 }
@@ -640,6 +701,7 @@ function spawnFloatingText(text, x, y, color='#fff') {
 
 /** SYSTEM UPDATE & DRAW */
 function updateGame() {
+    frameCount++;
     if (warningTimer > 0) warningTimer--;
     
     player.update();
@@ -648,13 +710,18 @@ function updateGame() {
     particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life--; });
     floatingTexts.forEach(ft => { ft.y -= 1; ft.life--; });
     
-    // Cleanup
+    // Gerakkan awan dan burung
+    clouds.forEach(c => { c.x += c.speed; if(c.x > mapWidth*TILE_SIZE) c.x = -200; });
+    birds.forEach(b => { 
+        b.x += b.speed; b.y += Math.sin(frameCount * 0.1) * 0.5; 
+        if(b.x > mapWidth*TILE_SIZE) { b.x = -50; b.y = Math.random() * 300; }
+    });
+
     items = items.filter(i => i.active);
     enemies = enemies.filter(e => e.deadTimer <= 30);
     particles = particles.filter(p => p.life > 0);
     floatingTexts = floatingTexts.filter(ft => ft.life > 0);
 
-    // Bump Animation Return
     for(let r=0; r<mapHeight; r++) {
         for(let c=0; c<mapWidth; c++) {
             if(mapTiles[r][c].bumpY < 0) mapTiles[r][c].bumpY += 1;
@@ -662,36 +729,103 @@ function updateGame() {
     }
 }
 
+function drawDecorations() {
+    // Gunung Rumput Bulat (Parallax efek)
+    ctx.save();
+    let paraX = camera.x * 0.5; // Bergerak lebih lambat
+    bgMountains.forEach(m => {
+        let drawX = m.x + paraX;
+        if (drawX > camera.x - m.r && drawX < camera.x + canvas.width + m.r) {
+            ctx.fillStyle = '#388E3C';
+            // Gunung berpijak tepat di atas tanah (y = 13 * TILE_SIZE)
+            ctx.beginPath(); ctx.arc(drawX, 13 * TILE_SIZE, m.r, Math.PI, 0); ctx.fill();
+            ctx.fillStyle = '#4CAF50';
+            ctx.beginPath(); ctx.arc(drawX, 13 * TILE_SIZE, m.r * 0.8, Math.PI, 0); ctx.fill();
+        }
+    });
+    ctx.restore();
+
+    // Awan
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    clouds.forEach(c => {
+        if(c.x > camera.x - 200 && c.x < camera.x + canvas.width + 200) {
+            ctx.beginPath();
+            ctx.arc(c.x, c.y, 30 * c.scale, Math.PI * 0.5, Math.PI * 1.5);
+            ctx.arc(c.x + 30 * c.scale, c.y - 20 * c.scale, 40 * c.scale, Math.PI * 1, Math.PI * 2);
+            ctx.arc(c.x + 60 * c.scale, c.y, 30 * c.scale, Math.PI * 1.5, Math.PI * 0.5);
+            ctx.fill();
+        }
+    });
+
+    // Burung
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    birds.forEach(b => {
+        if(b.x > camera.x - 50 && b.x < camera.x + canvas.width + 50) {
+            let wingY = Math.sin(frameCount * 0.3) * 10;
+            ctx.beginPath();
+            ctx.moveTo(b.x, b.y); ctx.quadraticCurveTo(b.x + 10, b.y + wingY, b.x + 20, b.y);
+            ctx.moveTo(b.x + 20, b.y); ctx.quadraticCurveTo(b.x + 30, b.y + wingY, b.x + 40, b.y);
+            ctx.stroke();
+        }
+    });
+
+    // Pohon
+    bgTrees.forEach(t => {
+        if(t.x > camera.x - 100 && t.x < camera.x + canvas.width + 100) {
+            // Batang
+            ctx.fillStyle = '#795548';
+            ctx.fillRect(t.x + 15, t.y - 60, 10, 60);
+            // Daun
+            ctx.fillStyle = '#2E7D32';
+            ctx.beginPath(); ctx.arc(t.x + 20, t.y - 60, 25, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(t.x + 5, t.y - 45, 20, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(t.x + 35, t.y - 45, 20, 0, Math.PI*2); ctx.fill();
+        }
+    });
+}
+
 function drawGame() {
-    // Sky or Cave Background
     ctx.fillStyle = player.y > 13 * TILE_SIZE ? '#000' : '#5c94fc';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.save();
     ctx.translate(-camera.x, -camera.y);
 
-    // Draw Tiles
+    if (player.y <= 13 * TILE_SIZE) drawDecorations(); // Gambar alam di-translate agar posisinya pas di dunia
+
     for (let r = 0; r < mapHeight; r++) {
         for (let c = 0; c < mapWidth; c++) {
             let tile = mapTiles[r][c];
             if (tile.type > 0) {
                 let tx = c * TILE_SIZE, ty = r * TILE_SIZE + tile.bumpY;
                 
-                if (tile.type === 1) { // Ground
+                if (tile.type === 1) { 
                     ctx.fillStyle = player.y > 13*TILE_SIZE ? '#444' : '#8B4513'; ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
                     ctx.fillStyle = player.y > 13*TILE_SIZE ? '#666' : '#228B22'; ctx.fillRect(tx, ty, TILE_SIZE, 8);
-                } else if (tile.type === 2) { // Brick
-                    ctx.fillStyle = '#A0522D'; ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
-                    ctx.strokeStyle = '#000'; ctx.strokeRect(tx, ty, TILE_SIZE, TILE_SIZE);
-                } else if (tile.type === 3 || tile.type === 4 || tile.type === 5) { // ? / Q / M Block
+                } else if (tile.type === 2 || tile.type === 5 || tile.type === 7) { 
+                    // Desain Batu Bata Klasik Mario (menyembunyikan jamur)
+                    ctx.fillStyle = '#cc4a14'; ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
+                    
+                    ctx.strokeStyle = '#5a1b04'; ctx.lineWidth = 2;
+                    ctx.beginPath(); ctx.moveTo(tx, ty + TILE_SIZE/2); ctx.lineTo(tx + TILE_SIZE, ty + TILE_SIZE/2); ctx.stroke(); // Tengah Horizontal
+                    ctx.beginPath(); ctx.moveTo(tx + TILE_SIZE/2, ty); ctx.lineTo(tx + TILE_SIZE/2, ty + TILE_SIZE/2); ctx.stroke(); // Vertikal Atas
+                    ctx.beginPath(); ctx.moveTo(tx + TILE_SIZE/4, ty + TILE_SIZE/2); ctx.lineTo(tx + TILE_SIZE/4, ty + TILE_SIZE); ctx.stroke(); // Vertikal Kiri Bawah
+                    ctx.beginPath(); ctx.moveTo(tx + TILE_SIZE*3/4, ty + TILE_SIZE/2); ctx.lineTo(tx + TILE_SIZE*3/4, ty + TILE_SIZE); ctx.stroke(); // Vertikal Kanan Bawah
+                    
+                    ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.strokeRect(tx, ty, TILE_SIZE, TILE_SIZE);
+                    
+                    // Efek Highlight agar lebih 3D
+                    ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(tx, ty, TILE_SIZE, 2);
+                } else if (tile.type === 3 || tile.type === 4) { 
                     ctx.fillStyle = tile.type === 4 ? '#2196F3' : '#FBD000'; ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
                     ctx.fillStyle = '#000'; ctx.font = "bold 24px Arial"; ctx.textAlign="center"; ctx.textBaseline="middle";
                     ctx.fillText(tile.type === 4 ? "Q" : "?", tx + TILE_SIZE/2, ty + TILE_SIZE/2);
                     ctx.strokeStyle = '#000'; ctx.strokeRect(tx, ty, TILE_SIZE, TILE_SIZE);
-                } else if (tile.type === 6) { // Used Block
+                } else if (tile.type === 6) { 
                     ctx.fillStyle = '#8B4513'; ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
                     ctx.strokeStyle = '#000'; ctx.strokeRect(tx, ty, TILE_SIZE, TILE_SIZE);
-                } else if ([10,11,12,13,14,15,16].includes(tile.type)) { // Pipes
+                } else if ([10,11,12,13,14,15,16].includes(tile.type)) { 
                     let isPurple = (tile.type === 15 || tile.type === 16);
                     let baseColor = isPurple ? '#9C27B0' : '#00C853';
                     let lightColor = isPurple ? '#E1BEE7' : '#B9F6CA';
@@ -705,36 +839,35 @@ function drawGame() {
                     hGradient.addColorStop(0, darkColor); hGradient.addColorStop(0.3, lightColor);
                     hGradient.addColorStop(0.6, baseColor); hGradient.addColorStop(1, darkColor);
 
-                    if (tile.type === 11 || tile.type === 16) { // Pipe body
+                    if (tile.type === 11 || tile.type === 16) { 
                         ctx.fillStyle = gradient; ctx.fillRect(tx + 2, ty, TILE_SIZE - 4, TILE_SIZE);
                         ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.strokeRect(tx + 2, ty, TILE_SIZE - 4, TILE_SIZE);
-                    } else if (tile.type === 10 || tile.type === 14 || tile.type === 15) { // Pipe Top
+                    } else if (tile.type === 10 || tile.type === 14 || tile.type === 15) { 
                         ctx.fillStyle = gradient; ctx.fillRect(tx + 2, ty + 15, TILE_SIZE - 4, TILE_SIZE - 15);
                         ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.strokeRect(tx + 2, ty + 15, TILE_SIZE - 4, TILE_SIZE - 15);
                         ctx.fillStyle = gradient; ctx.fillRect(tx - 2, ty, TILE_SIZE + 4, 15);
                         ctx.strokeRect(tx - 2, ty, TILE_SIZE + 4, 15);
                         ctx.fillStyle = '#000'; ctx.fillRect(tx + 4, ty, TILE_SIZE - 8, 10);
-                    } else if (tile.type === 12) { // O - Side Entry (Opening faces left)
+                    } else if (tile.type === 12) { 
                         ctx.fillStyle = hGradient; ctx.fillRect(tx + 15, ty + 2, TILE_SIZE - 15, TILE_SIZE - 4);
                         ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.strokeRect(tx + 15, ty + 2, TILE_SIZE - 15, TILE_SIZE - 4);
                         ctx.fillStyle = hGradient; ctx.fillRect(tx, ty - 2, 15, TILE_SIZE + 4);
                         ctx.strokeRect(tx, ty - 2, 15, TILE_SIZE + 4);
                         ctx.fillStyle = '#000'; ctx.fillRect(tx, ty + 4, 10, TILE_SIZE - 8);
-                    } else if (tile.type === 13) { // X - Side Exit (Opening faces right)
+                    } else if (tile.type === 13) { 
                         ctx.fillStyle = hGradient; ctx.fillRect(tx, ty + 2, TILE_SIZE - 15, TILE_SIZE - 4);
                         ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.strokeRect(tx, ty + 2, TILE_SIZE - 15, TILE_SIZE - 4);
                         ctx.fillStyle = hGradient; ctx.fillRect(tx + TILE_SIZE - 15, ty - 2, 15, TILE_SIZE + 4);
                         ctx.strokeRect(tx + TILE_SIZE - 15, ty - 2, 15, TILE_SIZE + 4);
                         ctx.fillStyle = '#000'; ctx.fillRect(tx + TILE_SIZE - 10, ty + 4, 10, TILE_SIZE - 8);
                     }
-                } else if (tile.type === 20) { // Rock BG
+                } else if (tile.type === 20) { 
                     ctx.fillStyle = '#555'; ctx.beginPath(); ctx.moveTo(tx+TILE_SIZE/2, ty); ctx.lineTo(tx+TILE_SIZE, ty+TILE_SIZE); ctx.lineTo(tx, ty+TILE_SIZE); ctx.fill();
                 }
             }
         }
     }
 
-    // Flag pole
     if(specialPoints.flag) {
         ctx.fillStyle = '#fff'; ctx.fillRect(specialPoints.flag.x + 18, specialPoints.flag.y, 4, 10*TILE_SIZE);
         ctx.fillStyle = '#fbd000'; ctx.beginPath(); ctx.arc(specialPoints.flag.x + 20, specialPoints.flag.y - 10, 12, 0, Math.PI*2); ctx.fill();
@@ -747,7 +880,6 @@ function drawGame() {
     items.forEach(i => i.draw(ctx));
     enemies.forEach(e => e.draw(ctx));
     
-    // Draw Player
     if (!player.dead || player.vy < 0) {
         ctx.save();
         if(player.invincibleTimer > 0 && Math.floor(Date.now() / 100) % 2 === 0) ctx.globalAlpha = 0.5;
@@ -765,15 +897,13 @@ function drawGame() {
         }
 
         if (assets.player.complete && assets.player.naturalHeight !== 0) {
-            // Animasi jalan sederhana naik turun
             let animY = (!player.grounded) ? -2 : (Math.sin(player.runFrame) * 2);
             if(player.isCrouching) {
-                ctx.drawImage(assets.player, drawX, drawY+animY, player.width, player.height); // squish
+                ctx.drawImage(assets.player, drawX, drawY+animY, player.width, player.height); 
             } else {
                 ctx.drawImage(assets.player, drawX, drawY+animY, player.width, player.height);
             }
         } else {
-            // Fallback red box
             ctx.fillStyle = '#e52521';
             ctx.fillRect(drawX, drawY, player.width, player.height);
         }
@@ -786,7 +916,7 @@ function drawGame() {
     ctx.restore();
 }
 
-/** PIPA TRANSITION */
+/** PIPA & FLAG TRANSITIONS */
 function updatePipe() {
     player.pipeTimer++;
     if(player.pipeTimer < 30) {
@@ -799,7 +929,7 @@ function updatePipe() {
             teleportToTile(player.pipeTargetType === 'U' ? 14 : 13);
             player.pipeState = player.pipeTargetType === 'U' ? 'exiting' : 'exiting_side';
             if(player.pipeTargetType === 'X') {
-                player.x -= TILE_SIZE; // Posisi sedikit di dalam pipa untuk efek keluar
+                player.x -= TILE_SIZE;
             }
         }
     } else if(player.pipeTimer < 60) {
@@ -809,7 +939,6 @@ function updatePipe() {
         gameState = 'playing'; player.pipeState = null;
     }
     
-    // Keep camera on player during pipe
     camera.x = Math.max(0, player.x - canvas.width / 2 + player.width/2);
     camera.y = Math.max(0, player.y - canvas.height / 2 + 50);
 }
@@ -840,7 +969,6 @@ function updateFlagSlide() {
         levelComplete();
     }
     
-    // Update camera and particles
     camera.x = Math.max(0, player.x - canvas.width / 2 + player.width/2);
     if(camera.x > mapWidth*TILE_SIZE - canvas.width) camera.x = mapWidth*TILE_SIZE - canvas.width;
     
@@ -867,16 +995,38 @@ function teleportToTile(typeId) {
     }
 }
 
-/** MAP LOADING */
+/** MAP & ASSET LOADING */
+function generateNature() {
+    clouds = []; birds = []; bgMountains = []; bgTrees = [];
+    // Gunung
+    for(let i=0; i<15; i++) bgMountains.push({ x: Math.random() * mapWidth * TILE_SIZE * 0.8, r: 150 + Math.random() * 200 });
+    // Awan
+    for(let i=0; i<20; i++) clouds.push({ x: Math.random() * mapWidth * TILE_SIZE, y: 50 + Math.random() * 200, scale: 0.5 + Math.random()*1, speed: 0.2 + Math.random()*0.5 });
+    // Burung
+    for(let i=0; i<10; i++) birds.push({ x: Math.random() * mapWidth * TILE_SIZE, y: 100 + Math.random() * 200, speed: 1 + Math.random()*2 });
+    
+    // Auto-generate pohon di atas tanah yang rata
+    for(let c=5; c<mapWidth-5; c+=3) {
+        for(let r=5; r<mapHeight; r++) {
+            if(mapTiles[r][c].type === 1 && Math.random() > 0.6) { // Jika tanah
+                // Cek apakah di atasnya kosong
+                if(mapTiles[r-1] && mapTiles[r-1][c].type === 0 && mapTiles[r-2] && mapTiles[r-2][c].type === 0) {
+                    bgTrees.push({ x: c * TILE_SIZE, y: r * TILE_SIZE });
+                    break;
+                }
+            }
+        }
+    }
+}
+
 function loadLevel(lvlIndex) {
     currentLevel = lvlIndex; mapTiles = []; enemies = []; items = []; particles = []; floatingTexts = []; specialPoints = {};
     totalQuestions = 0; answeredQuestions = 0; warningTimer = 0;
     
     let rawMap = maps[lvlIndex - 1];
-    
     if(!rawMap) { 
         submitScoreToGAS();
-        showMessage("Selamat! Kamu Tamat!", "Kembali ke Menu", () => showMainMenu()); 
+        showMessage("Selamat! Semua Level Selesai!", "Kembali ke Menu", () => showMainMenu()); 
         return; 
     }
 
@@ -889,6 +1039,7 @@ function loadLevel(lvlIndex) {
             if(char === 'G') type = 1; else if(char === 'B') type = 2; else if(char === '?') type = 3; 
             else if(char === 'Q') { type = 4; totalQuestions++; }
             else if(char === 'M') type = 5; 
+            else if(char === 'N') type = 7; 
             else if(char === 'P') type = 10; 
             else if(char === 'p' || char === 'u') type = 11; 
             else if(char === 'O') type = 12;
@@ -904,6 +1055,8 @@ function loadLevel(lvlIndex) {
         }
         mapTiles.push(row);
     }
+    
+    generateNature();
     player.reset(); updateHUD(); gameState = 'playing'; startBGM();
 }
 
@@ -934,42 +1087,120 @@ function showMessage(msg, btnText, callback) {
     document.getElementById('message-overlay').classList.remove('hidden');
 }
 
-/** KUIS & LIBRARY */
-const quizDB = [
+/** DATABASE KUIS BERDASARKAN LEVEL */
+const quizLevel1 = [
     { q: "Apa nama ibukota negara Indonesia?", a: ["Jakarta", "Bandung", "Surabaya", "Medan"], correct: 0 },
     { q: "Berapa hasil dari 8 x 7?", a: ["45", "54", "56", "64"], correct: 2 },
     { q: "Hewan apa yang bernapas dengan insang?", a: ["Kucing", "Ikan", "Burung", "Ular"], correct: 1 },
-    { q: "Siapa penemu lampu pijar?", a: ["Einstein", "Newton", "Edison", "Tesla"], correct: 2 }
 ];
+
+const quizLevel2 = [
+    { words: ["Saya", "suka", "belajar", "matematika"], correct: "Saya suka belajar matematika" },
+    { words: ["Bumi", "mengelilingi", "matahari"], correct: "Bumi mengelilingi matahari" },
+    { words: ["Rajin", "pangkal", "pandai"], correct: "Rajin pangkal pandai" },
+];
+
+const quizLevel3 = [
+    { text: "Indonesia terletak di benua ", answer: "Asia", options: ["Eropa", "Asia", "Afrika", "Amerika"] },
+    { text: "Simbol sila ke-3 Pancasila adalah ", answer: "Pohon Beringin", options: ["Bintang", "Rantai", "Pohon Beringin", "Padi"] },
+    { text: "Benda yang dapat ditarik magnet disebut benda ", answer: "Magnetis", options: ["Isolator", "Magnetis", "Cair", "Gas"] },
+];
+
+let activeQuizTargetR = 0, activeQuizTargetC = 0;
 
 function triggerQuiz(r, c) {
     gameState = 'quiz'; keys.right=false; keys.left=false; keys.jump=false;
-    const qData = quizDB[Math.floor(Math.random() * quizDB.length)];
-    document.getElementById('quiz-question').innerText = qData.q;
+    activeQuizTargetR = r; activeQuizTargetC = c;
     const area = document.getElementById('quiz-interactive-area');
     area.innerHTML = "";
-    
-    qData.a.forEach((ans, idx) => {
-        let btn = document.createElement('button');
-        btn.className = 'q-btn'; btn.innerText = ans;
-        btn.onclick = () => {
-            document.getElementById('quiz-modal').classList.add('hidden');
-            if (idx === qData.correct) {
-                playSound('powerup'); score += 100; updateHUD(); spawnFloatingText("BENAR! +100", player.x, player.y-20, '#4caf50');
-                mapTiles[r][c].type = 6; // Set blok jadi kotak mati
-                mapTiles[r][c].bumpY = -10;
-                answeredQuestions++; // Tambah skor pertanyaan selesai
-            } else {
-                playSound('bump'); spawnFloatingText("SALAH!", player.x, player.y-20, '#e52521');
-                mapTiles[r][c].bumpY = -10; // Blok masih bisa dipukul ulang jika salah
-            }
-            gameState = 'playing';
+    document.getElementById('btn-submit-quiz').classList.add('hidden');
+
+    if (currentLevel === 1) {
+        document.getElementById('quiz-title').innerText = "Kuis Pilihan Ganda";
+        const qData = quizLevel1[Math.floor(Math.random() * quizLevel1.length)];
+        document.getElementById('quiz-question').innerText = qData.q;
+        
+        let grid = document.createElement('div'); grid.className = 'answer-grid';
+        qData.a.forEach((ans, idx) => {
+            let btn = document.createElement('button'); btn.className = 'q-btn'; btn.innerText = ans;
+            btn.onclick = () => validateQuiz(idx === qData.correct);
+            grid.appendChild(btn);
+        });
+        area.appendChild(grid);
+    } 
+    else if (currentLevel === 2) {
+        document.getElementById('quiz-title').innerText = "Susun Kalimat!";
+        document.getElementById('quiz-question').innerText = "Ketuk kata-kata di bawah ini secara berurutan:";
+        const qData = quizLevel2[Math.floor(Math.random() * quizLevel2.length)];
+        let shuffled = [...qData.words].sort(() => Math.random() - 0.5);
+        
+        let answerArea = document.createElement('div'); answerArea.className = 'answer-area';
+        let wordBank = document.createElement('div'); wordBank.className = 'word-bank';
+        let currentAnswer = [];
+
+        const updateUI = () => {
+            answerArea.innerHTML = "";
+            currentAnswer.forEach((w, index) => {
+                let chip = document.createElement('div'); chip.className = 'word-chip'; chip.innerText = w;
+                chip.onclick = () => { currentAnswer.splice(index, 1); updateUI(); };
+                answerArea.appendChild(chip);
+            });
+            wordBank.innerHTML = "";
+            shuffled.forEach(w => {
+                let chip = document.createElement('div'); chip.className = 'word-chip'; chip.innerText = w;
+                if(currentAnswer.includes(w)) chip.classList.add('used');
+                else chip.onclick = () => { currentAnswer.push(w); updateUI(); };
+                wordBank.appendChild(chip);
+            });
+            let btn = document.getElementById('btn-submit-quiz');
+            if(currentAnswer.length === qData.words.length) {
+                btn.classList.remove('hidden');
+                btn.onclick = () => validateQuiz(currentAnswer.join(" ") === qData.correct);
+            } else { btn.classList.add('hidden'); }
         };
-        area.appendChild(btn);
-    });
+        area.appendChild(answerArea); area.appendChild(wordBank); updateUI();
+    }
+    else if (currentLevel === 3) {
+        document.getElementById('quiz-title').innerText = "Lengkapi Kalimat!";
+        const qData = quizLevel3[Math.floor(Math.random() * quizLevel3.length)];
+        document.getElementById('quiz-question').innerHTML = qData.text + " <span class='answer-slot' id='q3-slot'>...</span>";
+        
+        let wordBank = document.createElement('div'); wordBank.className = 'word-bank';
+        let shuffled = [...qData.options].sort(() => Math.random() - 0.5);
+        let selectedAns = "";
+
+        shuffled.forEach(w => {
+            let chip = document.createElement('div'); chip.className = 'word-chip'; chip.innerText = w;
+            chip.onclick = () => {
+                selectedAns = w;
+                document.getElementById('q3-slot').innerText = w;
+                document.getElementById('q3-slot').classList.add('filled');
+                document.getElementById('btn-submit-quiz').classList.remove('hidden');
+                document.getElementById('btn-submit-quiz').onclick = () => validateQuiz(selectedAns === qData.answer);
+            };
+            wordBank.appendChild(chip);
+        });
+        area.appendChild(wordBank);
+    }
+
     document.getElementById('quiz-modal').classList.remove('hidden');
 }
 
+function validateQuiz(isCorrect) {
+    document.getElementById('quiz-modal').classList.add('hidden');
+    if (isCorrect) {
+        playSound('powerup'); score += 100; updateHUD(); spawnFloatingText("BENAR! +100", player.x, player.y-20, '#4caf50');
+        mapTiles[activeQuizTargetR][activeQuizTargetC].type = 6; 
+        mapTiles[activeQuizTargetR][activeQuizTargetC].bumpY = -10;
+        answeredQuestions++; 
+    } else {
+        playSound('bump'); spawnFloatingText("SALAH!", player.x, player.y-20, '#e52521');
+        mapTiles[activeQuizTargetR][activeQuizTargetC].bumpY = -10; 
+    }
+    gameState = 'playing';
+}
+
+/** LIBRARY SYSTEM */
 const libPages = [
     "Selamat datang di Ruang Baca! Membaca adalah jendela dunia.",
     "Bermain game memang seru, tapi jangan lupa kewajiban belajar ya.",
@@ -995,29 +1226,30 @@ document.getElementById('lib-next').onclick = () => { if(currentLibPage<libPages
 document.getElementById('lib-close').onclick = () => { 
     document.getElementById('library-modal').classList.add('hidden'); 
     player.pipeState = 'exiting'; 
-    player.pipeTimer = 30; // Set timer ke titik tengah animasi agar karakter bergerak keluar pipa
-    teleportToTile(14); // exit via 'U' tile
-    score += 50; updateHUD(); // Bonus for reading
-    gameState = 'pipe_transition'; // Mengembalikan state agar game kembali berjalan
+    player.pipeTimer = 30; 
+    teleportToTile(14); 
+    score += 50; updateHUD();
+    gameState = 'pipe_transition'; 
 };
 
 /** MENGIRIM SKOR KE GAS */
 function submitScoreToGAS() {
     if(score > 0 && currentPlayer.name !== '') {
-        const formData = new FormData();
-        formData.append('name', currentPlayer.name);
-        formData.append('school', currentPlayer.school);
-        formData.append('score', score);
+        const data = new URLSearchParams();
+        data.append('name', currentPlayer.name);
+        data.append('school', currentPlayer.school);
+        data.append('score', score);
         
-        fetch(GAS_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: formData
-        }).catch(e => console.error("Gagal menyimpan skor:", e));
+        fetch(GAS_URL, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: data 
+        }).catch(e => console.error("Error mengirim skor:", e));
     }
 }
 
-/** LEADERBOARD TERHUBUNG KE GAS */
+/** LEADERBOARD */
 function showLeaderboard() {
     document.getElementById('main-menu').classList.add('hidden');
     document.getElementById('leaderboard-modal').classList.remove('hidden');
@@ -1026,48 +1258,33 @@ function showLeaderboard() {
     const podiumContainer = document.getElementById('podium-container');
     const lbList = document.getElementById('lb-list');
     
-    lbLoading.style.display = 'block';
-    lbLoading.innerText = 'Memuat data dari server...';
-    podiumContainer.classList.add('hidden');
-    lbList.classList.add('hidden');
-    lbList.innerHTML = '';
+    lbLoading.style.display = 'block'; lbLoading.innerText = 'Memuat data dari server...';
+    podiumContainer.classList.add('hidden'); lbList.classList.add('hidden'); lbList.innerHTML = '';
     
     fetch(GAS_URL)
         .then(res => res.json())
         .then(data => {
             lbLoading.style.display = 'none';
             if (data && data.length > 0) {
-                // Pastikan data diurutkan berdasarkan skor tertinggi
                 data.sort((a,b) => b.score - a.score);
-                
                 podiumContainer.classList.remove('hidden');
                 if(data[0]) { document.getElementById('pod-1-name').innerText = data[0].name || '-'; document.getElementById('pod-1-score').innerText = data[0].score || '-'; }
                 if(data[1]) { document.getElementById('pod-2-name').innerText = data[1].name || '-'; document.getElementById('pod-2-score').innerText = data[1].score || '-'; }
                 if(data[2]) { document.getElementById('pod-3-name').innerText = data[2].name || '-'; document.getElementById('pod-3-score').innerText = data[2].score || '-'; }
-                
                 let html = "";
                 for(let i=3; i<data.length; i++) {
                     let isMe = data[i].name === currentPlayer.name ? "style='background:rgba(76,175,80,0.2);'" : "";
                     html += `<div class='lb-item' ${isMe}><span class='lb-rank'>#${i+1}</span><div class='lb-name'>${data[i].name}<span class='lb-school'>${data[i].school}</span></div><span class='lb-pts'>${data[i].score}</span></div>`;
                 }
-                lbList.innerHTML = html;
-                lbList.classList.remove('hidden');
-            } else {
-                lbLoading.style.display = 'block';
-                lbLoading.innerText = 'Belum ada data skor.';
-            }
+                lbList.innerHTML = html; lbList.classList.remove('hidden');
+            } else { lbLoading.style.display = 'block'; lbLoading.innerText = 'Belum ada data skor.'; }
         })
-        .catch(err => {
-            lbLoading.style.display = 'block';
-            lbLoading.innerText = 'Gagal terhubung ke server.';
-            console.error(err);
-        });
+        .catch(err => { lbLoading.style.display = 'block'; lbLoading.innerText = 'Gagal terhubung ke server.'; });
 }
-
 document.getElementById('leaderboard-btn').onclick = showLeaderboard;
 document.getElementById('btn-close-lb').onclick = () => { document.getElementById('leaderboard-modal').classList.add('hidden'); document.getElementById('main-menu').classList.remove('hidden'); };
 
-/** UI LOGIC */
+/** UI LOGIC & EVENTS */
 function updateHUD() {
     document.getElementById('ui-lives').innerText = lives;
     document.getElementById('ui-score').innerText = score;
@@ -1082,17 +1299,13 @@ document.getElementById('login-submit-btn').onclick = () => {
         document.getElementById('login-menu').classList.add('hidden');
         document.getElementById('main-menu').classList.remove('hidden');
         document.getElementById('welcome-name').innerText = n;
-        initAudio(); // Initialize audio on first user interaction
+        initAudio(); 
     } else { document.getElementById('login-error').style.display = 'block'; }
 };
 
-// Fullscreen Button Logic
 function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(e => console.log(e));
-    } else {
-        if(document.exitFullscreen) document.exitFullscreen();
-    }
+    if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(e => console.log(e)); } 
+    else { if(document.exitFullscreen) document.exitFullscreen(); }
 }
 document.getElementById('fs-btn-login').addEventListener('click', toggleFullscreen);
 document.getElementById('fullscreen-hud-btn').addEventListener('click', toggleFullscreen);
@@ -1111,7 +1324,6 @@ document.getElementById('start-btn').onclick = () => {
     score = 0; lives = 3; loadLevel(1);
 };
 
-/** INPUTS */
 window.addEventListener('keydown', e => {
     if(gameState !== 'playing') return;
     if(e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
@@ -1133,24 +1345,14 @@ const bindTouch = (id, key) => {
 };
 bindTouch('t-left', 'left'); bindTouch('t-right', 'right'); bindTouch('t-jump', 'jump'); bindTouch('t-down', 'down');
 
-/** MAIN LOOP */
 function loop() {
-    if (gameState === 'playing') {
-        updateGame();
-        drawGame();
-    } else if (gameState === 'flag_slide') {
-        updateFlagSlide();
-        drawGame();
-    } else if (gameState === 'level_complete') {
-        drawGame(); 
-    } else if (gameState === 'pipe_transition') {
-        updatePipe();
-        drawGame();
-    }
+    if (gameState === 'playing') { updateGame(); drawGame(); } 
+    else if (gameState === 'flag_slide') { updateFlagSlide(); drawGame(); } 
+    else if (gameState === 'level_complete') { drawGame(); } 
+    else if (gameState === 'pipe_transition') { updatePipe(); drawGame(); }
     requestAnimationFrame(loop);
 }
 
-// Start visual loop
 loop();
 
 </script>
