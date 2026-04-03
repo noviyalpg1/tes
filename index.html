@@ -1,1273 +1,1352 @@
-<!doctype html>
-<html lang="id" class="h-full">
+<!DOCTYPE html>
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Studiolpg - Media & Bahan Ajar</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Petualangan Fikih</title>
     <style>
-        body { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        * { scroll-behavior: smooth; }
-        
-        /* Animations */
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); } 50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.6); } }
-        @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        
-        .animate-fadeInUp { animation: fadeInUp 0.8s ease forwards; }
-        .animate-fadeIn { animation: fadeIn 0.6s ease forwards; }
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        .animate-slideUp { animation: slideUp 0.4s ease forwards; }
-        .animate-glow { animation: glow 2s ease-in-out infinite; }
-        .animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
-        
-        .stagger-1 { animation-delay: 0.1s; opacity: 0; }
-        .stagger-2 { animation-delay: 0.2s; opacity: 0; }
-        .stagger-3 { animation-delay: 0.3s; opacity: 0; }
-        
-        /* Custom UI Elements */
-        .nav-link { position: relative; }
-        .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #f59e0b; transition: width 0.3s ease; }
-        .nav-link:hover::after { width: 100%; }
-        
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .gold-gradient { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%); }
-        .silver-gradient { background: linear-gradient(135deg, #e5e7eb 0%, #9ca3af 50%, #6b7280 100%); }
-        .bronze-gradient { background: linear-gradient(135deg, #fdba74 0%, #ea580c 50%, #c2410c 100%); }
-        
-        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        
-        /* Page Routing */
-        .page-view { display: none; }
-        .page-view.active { display: block; animation: fadeIn 0.4s ease; }
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
-        /* Podium specific */
-        .podium-step { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
-        .podium-1 { height: 200px; }
-        .podium-2 { height: 160px; }
-        .podium-3 { height: 130px; }
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #000; overflow: hidden;
+            font-family: 'Fredoka One', cursive, sans-serif;
+            touch-action: none; user-select: none; -webkit-user-select: none;
+        }
 
-        /* Modal specific */
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center; }
-        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+        #game-container {
+            position: relative; width: 100vw; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background-color: #5c94fc; overflow: hidden;
+        }
+        canvas { display: block; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+
+        /* --- UI OVERLAYS --- */
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: rgba(92, 148, 252, 0.95); z-index: 100; transition: opacity 0.3s;
+        }
+        .hidden { display: none !important; opacity: 0; pointer-events: none;}
+
+        #login-menu, #main-menu {
+            background-image: url('https://i.imgur.com/Xo82qhB.png');
+            background-repeat: no-repeat; background-position: center bottom;
+            background-size: cover; background-color: #5c94fc; 
+        }
+
+        /* Portrait Warning */
+        #portrait-warning {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #e52521; color: white; z-index: 9999;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 20px; box-sizing: border-box;
+        }
+        #portrait-warning h1 { font-size: 30px; margin-bottom: 10px; text-shadow: 2px 2px 0px #000; }
+        #portrait-warning p { font-family: sans-serif; font-size: 18px; line-height: 1.5; font-weight: bold;}
+        .rotate-icon { font-size: 60px; animation: spin 2s infinite ease-in-out; margin-bottom: 20px;}
+        
+        @media screen and (orientation: portrait) { #portrait-warning { display: flex; } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } 100% { transform: rotate(0deg); } }
+
+        /* Login & Boxes */
+        .box-ui {
+            background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 20px; text-align: center;
+            width: 80%; max-width: 400px; border: 5px solid #fbd000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .box-ui h2 { color: #e52521; margin-top: 0; font-size: 28px; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; font-size: 14px; color: #333; margin-bottom: 5px; font-family: sans-serif; font-weight: bold;}
+        .input-field {
+            width: 100%; padding: 12px; border: 3px solid #ccc; border-radius: 10px;
+            font-size: 16px; font-family: sans-serif; box-sizing: border-box; outline: none;
+        }
+        .input-field:focus { border-color: #4caf50; }
+        .error-text { color: #e52521; font-family: sans-serif; font-size: 14px; margin-bottom: 15px; display: none; font-weight: bold;}
+
+        /* Main Menu */
+        #title-img {
+            max-width: 70%; height: auto; margin-top: 5vh; margin-bottom: 0px; 
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); animation: float 3s ease-in-out infinite; position: relative; z-index: 1;
+        }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
+        .small-title {
+            font-size: 28px; color: #FFFF00; margin-top: -10px; margin-bottom: 20px; letter-spacing: 2px; text-align: center;
+            text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 0 15px rgba(255, 255, 255, 1); 
+            position: relative; z-index: 2;
+        }
+        
+        .btn {
+            background: #e52521; color: white; border: 4px solid #fff; padding: 12px 30px; font-size: 20px; font-family: inherit;
+            border-radius: 30px; cursor: pointer; transition: transform 0.1s; width: 100%; box-sizing: border-box; text-align: center;
+            box-shadow: 0 5px 0 #8a0000, 0 0 20px rgba(255, 255, 255, 0.8); margin-bottom: 10px;
+        }
+        .btn:active { transform: translateY(5px); box-shadow: 0 0 0 #8a0000; }
+        .btn-blue { background: #2196F3; box-shadow: 0 5px 0 #0b7dda, 0 0 20px rgba(255, 255, 255, 0.8); }
+        .btn-blue:active { box-shadow: 0 0 0 #0b7dda; }
+
+        /* HUD */
+        #hud { position: absolute; top: 10px; left: 15px; right: 15px; display: flex; justify-content: space-between; pointer-events: none; z-index: 50; }
+        .stats {
+            background: rgba(0, 0, 0, 0.6); color: white; padding: 8px 15px; border-radius: 15px; font-size: 18px; 
+            border: 2px solid #fff; text-shadow: 1px 1px 0 #000; display: flex; gap: 8px; align-items: center;
+        }
+        .coin-icon { display: inline-block; width: 12px; height: 16px; background: #fbd000; border: 2px solid #fff; border-radius: 50%; position: relative;}
+        .top-buttons { display: flex; gap: 10px; pointer-events: auto; }
+        .hud-btn {
+            background: #fbd000; color: #d13a00; border: 3px solid #fff; padding: 8px 12px; font-size: 16px; 
+            border-radius: 15px; cursor: pointer; box-shadow: 0 4px 0 #c28700; font-family: inherit;
+        }
+        .hud-btn.active-bgm { background: #4caf50; color: white; box-shadow: 0 4px 0 #2e7d32; }
+        .hud-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Touch Controls (No Run Button, Adjusted sizing) */
+        #touch-controls { 
+            position: absolute; bottom: 15px; left: 0; width: 100%; height: 100px; 
+            display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; pointer-events: none; z-index: 50; 
+        }
+        .touch-group { display: flex; gap: 15px; align-items: flex-end; pointer-events: auto; }
+        .t-btn { 
+            width: 70px; height: 70px; background: rgba(255, 255, 255, 0.4); border: 4px solid rgba(255, 255, 255, 0.8); 
+            border-radius: 50%; color: #000; font-size: 14px; font-weight: bold; display: flex; justify-content: center; align-items: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px #fff; user-select: none;
+        }
+        .t-btn:active { background: rgba(255, 255, 255, 0.8); transform: scale(0.95); }
+        .t-btn-jump { width: 85px; height: 85px; background: rgba(229, 37, 33, 0.6); color: white; font-size: 16px; border-color: #ffcccc; text-shadow: 1px 1px 2px #000;}
+        .t-btn-jump:active { background: rgba(229, 37, 33, 1); }
+
+        /* Quiz Box */
+        .quiz-box { max-width: 600px; width: 90%; font-family: sans-serif; pointer-events: auto; max-height: 90vh; overflow-y: auto;}
+        .quiz-box h2 { font-family: 'Fredoka One'; margin-bottom: 5px;}
+        .quiz-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .q-btn { background: #4caf50; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #2e7d32;}
+        .q-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #2e7d32; }
+
+        /* Kuis Susun Kata (Lv 2) & Drag Drop (Lv 3) */
+        .word-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 15px; min-height: 50px; padding: 10px; background: #eee; border-radius: 10px;}
+        .word-chip { background: #2196F3; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 0 #0b7dda;}
+        .word-chip:active { transform: translateY(2px); box-shadow: 0 1px 0 #0b7dda;}
+        .match-container { display: flex; justify-content: space-between; gap: 10px; text-align: left; }
+        .match-col { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .match-item { background: #f9f9f9; border: 2px solid #ccc; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: center; transition: all 0.2s;}
+        .match-item.selected { border-color: #2196F3; background: #e3f2fd; transform: scale(1.05); }
+        .match-item.matched { background: #c8e6c9; border-color: #4caf50; pointer-events: none; color: #2e7d32;}
+
+        /* Materi Modal */
+        #materi-content {
+            background: #fff; border-radius: 15px; padding: 20px; text-align: left; font-family: sans-serif;
+            height: 60vh; overflow-y: auto; border: 3px solid #2196F3; margin-bottom: 15px; font-size: 15px; line-height: 1.6;
+        }
+        #materi-content h3 { color: #e52521; border-bottom: 2px solid #fbd000; padding-bottom: 5px; margin-top: 20px;}
+        #materi-content ul { padding-left: 20px; }
+
+        /* Leaderboard */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 20px 0; height: 120px; font-family: sans-serif;}
+        .podium { width: 30%; text-align: center; border-radius: 10px 10px 0 0; color: white; font-weight: bold; padding-top: 10px; position: relative;}
+        .podium .name { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; position: absolute; top: -20px; left: 0; width: 100%; color:#333;}
+        .p1 { height: 100px; background: #FFD700; }
+        .p2 { height: 75px; background: #C0C0C0; }
+        .p3 { height: 50px; background: #cd7f32; }
+        .lb-list { max-height: 150px; overflow-y: auto; text-align: left; font-family: sans-serif; border: 2px solid #eee; padding: 10px; border-radius: 10px;}
+        .lb-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; font-size: 14px;}
+
+        /* Transition Overlays */
+        #transition-overlay { background: rgba(0,0,0,0.85); flex-direction: column;}
+        #transition-overlay h1 { font-size: 40px; color: #fbd000; text-shadow: 4px 4px 0 #000; margin-bottom: 10px; text-align: center;}
+        #transition-overlay p { color: white; font-family: sans-serif; font-size: 20px; margin-bottom: 30px;}
     </style>
 </head>
-<body class="h-full bg-neutral-900 text-white overflow-auto hide-scrollbar">
+<body>
 
-    <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-neutral-900/95 backdrop-blur-md border-b border-neutral-800/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
-            <div class="flex items-center justify-between">
-                <a href="#" class="text-xl sm:text-2xl font-bold text-white" onclick="navigate('home')">
-                    <span class="text-amber-500">Studio</span>lpg
-                </a>
-                <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
-                    <a href="#" onclick="navigate('home')" class="nav-link text-white/80 hover:text-white text-sm">Beranda</a>
-                    <a href="#about" onclick="navigate('home'); setTimeout(()=>document.getElementById('about').scrollIntoView(), 100);" class="nav-link text-white/80 hover:text-white transition-colors text-sm">Tentang</a>
-					<a href="#" onclick="navigate('home', 'services')" class="nav-link text-white/80 hover:text-white text-sm">Kategori</a>
-                    <a href="#" onclick="navigate('home', 'testimoni')" class="nav-link text-white/80 hover:text-white text-sm">Testimoni</a>
-                    <a href="#" onclick="navigate('kontributor')" class="nav-link text-white/80 hover:text-white text-sm">Kontributor</a>
-                    <a href="#" onclick="openAdminLogin()" class="text-neutral-500 hover:text-amber-500 text-sm transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></a>
-                    <a href="https://s.id/donate-lpg" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-neutral-900 font-semibold px-5 py-2.5 rounded-full text-sm transition-colors">Donate</a>
-                </div>
-                <button class="md:hidden text-white p-2" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
+<div id="portrait-warning">
+    <div class="rotate-icon">📱↻</div>
+    <h1>Putar HP Kamu!</h1>
+    <p>Game ini wajib dimainkan dalam mode mendatar (Landscape) agar seru!</p>
+</div>
+
+<div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Login Menu -->
+    <div id="login-menu" class="overlay">
+        <button id="btn-fs-login" class="hud-btn" style="position:absolute; top:10px; right:10px; background:#333; color:#fff;">⛶ Fullscreen</button>
+        <div class="box-ui">
+            <h2>Masuk Dulu Yuk!</h2>
+            <div class="error-text" id="login-error">Nama dan Sekolah harus diisi!</div>
+            <div class="input-group">
+                <label>Nama Kamu:</label>
+                <input type="text" id="player-name" class="input-field" placeholder="Ketik nama di sini..." autocomplete="off">
             </div>
+            <div class="input-group">
+                <label>Asal Sekolah:</label>
+                <input type="text" id="player-school" class="input-field" placeholder="Ketik nama sekolah..." autocomplete="off">
+            </div>
+            <button class="btn btn-blue" id="login-submit-btn">Mulai Petualangan</button>
+        </div>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="main-menu" class="overlay hidden">
+        <img id="title-img" src="https://i.imgur.com/VmSLsxs.png" alt="Petualangan Fikih">
+        <h1 class="small-title">Halo, <span id="welcome-name">Sobat</span>!</h1>
+        <div style="width: 80%; max-width: 300px;">
+            <button class="btn" id="start-btn">MAIN SEKARANG</button>
+            <button class="btn btn-blue" id="btn-show-lb">PAPAN SKOR</button>
+        </div>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud" class="hidden">
+        <div class="stats">
+            ❤️ <span id="ui-lives">3</span> <span style="color:#aaa; margin: 0 5px;">|</span> 
+            <span class="coin-icon"></span> <span id="ui-score">0</span> <span style="color:#aaa; margin: 0 5px;">|</span> 
+            🚩 Lv <span id="ui-level">1</span>
+        </div>
+        <div class="top-buttons">
+            <button id="bgm-btn" class="hud-btn active-bgm" title="Suara">🎵</button>
+            <button id="fs-btn" class="hud-btn" style="background:#333; color:#fff;" title="Layar Penuh">⛶</button>
+        </div>
+    </div>
+
+    <!-- Touch Controls -->
+    <div id="touch-controls" class="hidden">
+        <div class="touch-group">
+            <div class="t-btn" id="t-left">Kiri</div>
+            <div class="t-btn" id="t-down" style="height: 55px; margin-bottom: 5px;">Nunduk</div> 
+            <div class="t-btn" id="t-right">Kanan</div>
+        </div>
+        <div class="touch-group">
+            <div class="t-btn t-btn-jump" id="t-jump">Lompat</div>
+        </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div id="quiz-modal" class="overlay hidden" style="background: rgba(0,0,0,0.8);">
+        <div class="box-ui quiz-box">
+            <h2 id="qz-title">Kuis (Lv. <span id="qz-lvl-text"></span>)</h2>
+            <p id="quiz-question" style="font-size: 16px; color:#333; margin-bottom: 15px; font-weight: bold;"></p>
             
-            <div id="mobile-menu" class="md:hidden hidden mt-4 pb-4 border-t border-neutral-800 pt-4 flex flex-col space-y-3">
-                <a href="#" onclick="navigate('home');" class="text-white/80 hover:text-white py-2">Beranda</a>
-                <a href="#" onclick="navigate('home', 'services');" class="text-white/80 hover:text-white py-2">Kategori</a>
-                <a href="#" onclick="navigate('kontributor');" class="text-white/80 hover:text-white py-2">Kontributor</a>
-                <a href="#" onclick="openAdminLogin();" class="text-white/80 hover:text-white py-2">Admin Panel</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- MAIN APP CONTAINER -->
-    <main id="app-container" class="pt-16">
-
-        <!-- ==================== HOME PAGE ==================== -->
-        <div id="view-home" class="page-view active">
-            <!-- Hero Section -->
-            <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900">
-                    <div class="absolute inset-0 opacity-30">
-                        <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                            <defs><pattern id="grid" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M 8 0 L 0 0 0 8" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5" /></pattern></defs>
-                            <rect width="100%" height="100%" fill="url(#grid)" />
-                        </svg>
-                    </div>
-                </div>
-                <div class="absolute top-20 right-10 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl animate-float"></div>
-                
-                <div class="relative z-10 max-w-7xl mx-auto px-4 text-center py-12 mt-10">
-                    <div class="animate-fadeIn"><span class="inline-block px-4 py-2 bg-amber-500/20 text-amber-400 rounded-full text-xs font-medium mb-6"> ✨ Studio Media & Bahan Ajar Gratis </span></div>
-                    <h1 class="text-4xl md:text-6xl font-extrabold mb-6 animate-fadeInUp leading-tight">
-                        <span class="text-white">Akses</span> 
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500"> media pembelajaran</span>
-						<span class="text-white">Digitalmu</span><br>
-                        <span style="color: #FFFFFF" class="text-2xl md:text-4xl font-normal mt-4 block">untuk mendukung proses belajar mengajarmu di kelas</span>
-                    </h1>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fadeInUp stagger-3 mt-10">
-                        <button onclick="navigate('home', 'services')" class="bg-amber-500 hover:bg-amber-600 text-neutral-900 font-bold px-8 py-4 rounded-full text-base transition-all">Lihat Layanan</button>
-                        <button onclick="navigate('kontributor')" class="bg-amber-500 hover:bg-amber-600 text-neutral-900 font-bold px-8 py-4 rounded-full text-base transition-all">Leaderboard</button>
-                    </div>
-                    
-                    <!-- Stats -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-20 max-w-4xl mx-auto animate-fadeInUp stagger-3 bg-neutral-800/50 p-6 rounded-3xl border border-neutral-700/50 backdrop-blur-sm">
-                        <div class="text-center">
-                            <div id="stat-total" class="text-3xl font-bold text-amber-400">0</div>
-                            <div class="text-white/60 text-xs mt-1">Total Konten</div>
-                        </div>
-                        <div class="text-center">
-                            <div id="stat-kontributor" class="text-3xl font-bold text-amber-400">0</div>
-                            <div class="text-white/60 text-xs mt-1">Kontributor</div>
-                        </div>
-                        <div class="text-center">
-                            <div id="stat-total-point" class="text-3xl font-bold text-amber-400">0</div>
-                            <div class="text-white/60 text-xs mt-1">Total Poin</div>
-                        </div>
-                        <div class="text-center">
-                            <div id="stat-highest-love" class="text-3xl font-bold text-pink-400">0 ❤️</div>
-                            <div class="text-white/60 text-xs mt-1">Love Tertinggi</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- About Section Shortcut -->
-        <section id="about" class="py-24 bg-neutral-900 border-t border-neutral-800">
-             <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-                 <div>
-                    <span class="text-amber-500 font-bold tracking-wider text-sm uppercase mb-2 block">Tentang Kami</span>
-                    <h2 class="text-4xl md:text-5xl font-bold mb-6">Berkolaborasi Membangun Pendidikan</h2>
-                    <p class="text-white/70 text-lg mb-6 leading-relaxed">Studiolpg mewadahi para pendidik kreatif untuk membagikan karya media dan bahan ajar secara gratis. Setiap kontribusi Anda memberikan poin yang akan menempatkan Anda di Podium Leaderboard kami!</p>
-                    <button onclick="navigate('kontributor')" class="bg-amber-500/10 text-amber-500 border border-amber-500/50 hover:bg-amber-500 hover:text-neutral-900 font-bold px-6 py-3 rounded-xl transition-colors">Lihat  Leaderboard  Kontributor</button>
-                 </div>
-                 <iframe 
-                                            className="w-full h-full absolute top-0 left-0" 
-                                            src="https://www.youtube.com/embed/GCoNenNnOzI?playsinline=1&modestbranding=1&rel=0" 
-                                            title="Video Pembelajaran" 
-                                            frameBorder="0" 
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                            allowFullScreen>
-                                        </iframe>
-             </div>
-        </section>
-		
-		
-		<!-- Kategori / Services Section -->
-            <section id="services" class="py-24 bg-neutral-900 border-t border-neutral-800">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6">
-                    <div class="text-center mb-16">
-                        <span class="inline-block px-4 py-2 bg-amber-500/20 text-amber-400 rounded-full text-sm font-medium mb-4">Layanan Kami</span>
-                        <h2 class="text-4xl font-bold text-white mb-4">Kategori Media & Bahan Ajar</h2>
-                        <p class="text-white/70 max-w-3xl mx-auto">Pilih kategori jenjang pendidikan untuk melihat berbagai Media & Bahan Ajar yang kamu butuhkan</p>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        <!-- Generate Category Cards via JS -->
-                        <div onclick="navigate('kategori', 'PAUD/TK')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-pink-400 to-rose-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-pink-500/50 flex flex-col items-center justify-center">
-    <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-        <span class="text-3xl opacity-70">🎨</span>
-    </div>
-    <h3 class="text-white font-bold text-lg text-center">PAUD/TK</h3>
-</div>
-                        <div onclick="navigate('kategori', 'SD')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-orange-400 to-amber-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-orange-500/50 flex flex-col items-center justify-center">
-    <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-        <span class="text-3xl opacity-70">📚</span>
-    </div>
-    <h3 class="text-white font-bold text-lg text-center">SD</h3>
-</div>
-                        <div onclick="navigate('kategori', 'SMP')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-blue-400 to-indigo-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-blue-500/50 flex flex-col items-center justify-center">
-                            <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm"><span class="text-3xl">🏫</span></div>
-                            <h3 class="text-white font-bold text-lg text-center">SMP</h3>
-                        </div>
-                        <div onclick="navigate('kategori', 'SMA')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-emerald-400 to-teal-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/50 flex flex-col items-center justify-center">
-                            <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm"><span class="text-3xl">🎓</span></div>
-                            <h3 class="text-white font-bold text-lg text-center">SMA</h3>
-                        </div>
-                        <div onclick="navigate('kategori', 'SMK')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-purple-400 to-violet-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-purple-500/50 flex flex-col items-center justify-center">
-                            <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm"><span class="text-3xl">🧪</span></div>
-                            <h3 class="text-white font-bold text-lg text-center">SMK</h3>
-                        </div>
-                        <div onclick="navigate('kategori', 'Game PID')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-red-400 to-pink-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-red-500/50 flex flex-col items-center justify-center">
-                            <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm"><span class="text-3xl">🎮</span></div>
-                            <h3 class="text-white font-bold text-lg text-center">Game PID</h3>
-                        </div>
-						<div onclick="navigate('kategori', 'Lab. Maya')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-yellow-500/50 flex flex-col items-center justify-center">
-    <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-        <span class="text-3xl opacity-70">🔬</span>
-    </div>
-    <h3 class="text-white font-bold text-lg text-center">Lab. Maya</h3>
-</div>
-                        <div onclick="navigate('kategori', 'Lainnya')" class="cursor-pointer group relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-slate-500 to-slate-700 shadow-lg p-6 transition-all duration-300 hover:scale-105 hover:shadow-slate-500/50 flex flex-col items-center justify-center">
-                            <div class="w-16 h-16 mb-3 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm"><span class="text-3xl">📁</span></div>
-                            <h3 class="text-white font-bold text-lg text-center">Lainnya</h3>
-                        </div>
-                    </div>
-                </div>
-            </section>
-	
-		<!-- Testimoni Section -->
-            <section id="testimoni" class="py-24 bg-neutral-800">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6">
-                    <div class="text-center mb-16">
-                        <span class="inline-block px-4 py-2 bg-amber-500/20 text-amber-400 rounded-full text-sm font-medium mb-4">💬 Testimoni</span>
-                        <h2 class="text-4xl font-bold text-white mb-4">Apa Kata Mereka?</h2>
-                    </div>
-                    
-                    <div id="home-testimoni-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-                        <!-- Injected via JS -->
-                    </div>
-
-                    <div class="text-center">
-                        <button onclick="openModal('modal-add-testimoni')" class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 text-neutral-900 font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-amber-500/30">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-           </svg>Tambah Testimoni
-                        </button>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- ==================== KATEGORI DETAILS PAGE ==================== -->
-        <div id="view-kategori" class="page-view py-10 min-h-screen">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6">
-                <!-- Header & Toolbar -->
-                <div class="flex flex-col md:flex-row justify-between items-center bg-neutral-800 p-6 rounded-2xl mb-8 shadow-lg border border-neutral-700">
-                    <div>
-                        <button onclick="navigate('home', 'services')" class="text-amber-500 hover:text-amber-400 text-sm mb-2 flex items-center gap-1">← Kembali</button>
-                        <h2 id="cat-page-title" class="text-3xl font-bold text-white">Kategori: -</h2>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-4 mt-4 md:mt-0">
-                        <div class="flex items-center gap-2 bg-neutral-900 px-3 py-2 rounded-lg border border-neutral-700">
-                            <label class="text-sm text-neutral-400">Tampilkan:</label>
-                            <select id="cat-per-page" onchange="changeCatPageSize()" class="bg-transparent text-white outline-none text-sm">
-                                <option value="6">6</option>
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                        </div>
-                        <button onclick="toggleFullScreen()" class="bg-neutral-700 hover:bg-neutral-600 text-white p-2.5 rounded-lg transition-colors" title="Full Screen">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Grid Konten -->
-                <div id="cat-content-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <!-- Cards injected via JS -->
-                </div>
-
-                <!-- Pagination -->
-                <div class="flex items-center justify-between bg-neutral-800 p-4 rounded-xl border border-neutral-700">
-                    <button id="cat-btn-prev" onclick="changeCatPage(-1)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg disabled:opacity-50 transition-colors">Previous</button>
-                    <div id="cat-page-info" class="text-white text-sm font-medium">Halaman 1 dari 1</div>
-                    <button id="cat-btn-next" onclick="changeCatPage(1)" class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg disabled:opacity-50 transition-colors">Next</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== KONTRIBUTOR PAGE ==================== -->
-        <div id="view-kontributor" class="page-view py-10 min-h-screen">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-white mb-4">Leaderboard Kontributor</h2>
-                    <p class="text-white/70 max-w-3xl mx-auto mb-8 animate-fadeInUp stagger-1">Inilah para kontributor terbaik minggu ini! Peringkat ditentukan dari poin yang dikumpulkan lewat konten keren dan konsistensi. Terus upload dan jadilah kontributor yang berikutnya berada di podium.</p>
-                </div>
-
-                <!-- Podium Top 3 -->
-                <div id="podium-container" class="flex justify-center items-end h-72 gap-2 sm:gap-6 mb-16 mx-auto max-w-3xl">
-                    <!-- Injected via JS -->
-                </div>
-
-                <!-- List Sisa Kontributor -->
-                <div class="bg-neutral-800 rounded-2xl border border-neutral-700 overflow-hidden shadow-xl max-w-4xl mx-auto">
-                    <div class="p-6 border-b border-neutral-700 bg-neutral-800/50">
-                        <h3 class="text-xl font-bold text-white">Peringkat 4+</h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-neutral-300">
-                            <thead class="bg-neutral-900/50 text-xs uppercase text-neutral-400 border-b border-neutral-700">
-                                <tr>
-                                    <th class="px-6 py-4">Rank</th>
-                                    <th class="px-6 py-4">Kontributor</th>
-                                    <th class="px-6 py-4">Instansi</th>
-                                    <th class="px-6 py-4 text-right">Poin</th>
-                                </tr>
-                            </thead>
-                            <tbody id="kontributor-list-table" class="divide-y divide-neutral-700/50">
-                                <!-- Injected via JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== ADMIN PANEL ==================== -->
-        <div id="view-admin" class="page-view py-6 min-h-screen">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6">
-                <div class="flex items-center justify-between mb-8 bg-neutral-800 p-6 rounded-2xl border border-neutral-700">
-                    <h2 class="text-2xl font-bold text-amber-500">🛡️ Admin Panel</h2>
-                    <button onclick="navigate('home')" class="text-white hover:text-amber-400 bg-neutral-700 px-4 py-2 rounded-lg text-sm transition-colors">Keluar Admin</button>
-                </div>
-
-                <!-- Tabs -->
-                <div class="flex flex-wrap gap-2 mb-6 border-b border-neutral-700 pb-4">
-                    <button onclick="switchAdminTab('konten')" id="tab-konten" class="admin-tab bg-amber-500 text-neutral-900 px-4 py-2 rounded-lg font-semibold text-sm transition-colors">Kelola Konten</button>
-                    <button onclick="switchAdminTab('kontributor')" id="tab-kontributor" class="admin-tab bg-neutral-800 hover:bg-neutral-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors">Kelola Kontributor</button>
-                    <button onclick="switchAdminTab('testimoni')" id="tab-testimoni" class="admin-tab bg-neutral-800 hover:bg-neutral-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors">Kelola Testimoni</button>
-                    <button onclick="switchAdminTab('love')" id="tab-love" class="admin-tab bg-neutral-800 hover:bg-neutral-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors">Kelola Love</button>
-                    <button onclick="switchAdminTab('laporan')" id="tab-laporan" class="admin-tab bg-neutral-800 hover:bg-neutral-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors">Kelola Laporan</button>
-                </div>
-
-                <!-- Admin Tab Contents -->
-                <div class="bg-neutral-800 rounded-2xl border border-neutral-700 p-6 shadow-xl">
-                    
-                    <!-- KONTEN -->
-                    <div id="admin-sec-konten" class="admin-section block">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-xl font-bold text-white">Daftar Konten</h3>
-                            <button onclick="openFormModal('modal-form-konten', resetKontenForm)" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold">+ Tambah Konten</button>
-                        </div>
-                        <div class="overflow-x-auto rounded-lg border border-neutral-700">
-                            <table class="w-full text-left text-sm text-neutral-300">
-                                <thead class="bg-neutral-900 text-xs uppercase text-neutral-400">
-                                    <tr>
-                                        <th class="px-4 py-3">Judul</th>
-                                        <th class="px-4 py-3">Kategori</th>
-                                        <th class="px-4 py-3">Kontributor</th>
-                                        <th class="px-4 py-3 text-right">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-konten" class="divide-y divide-neutral-700 bg-neutral-800"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- KONTRIBUTOR -->
-                    <div id="admin-sec-kontributor" class="admin-section hidden">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-xl font-bold text-white">Daftar Kontributor</h3>
-                            <button onclick="openFormModal('modal-form-kontributor', resetKontributorForm)" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold">+ Tambah Kontributor</button>
-                        </div>
-                        <div class="overflow-x-auto rounded-lg border border-neutral-700">
-                            <table class="w-full text-left text-sm text-neutral-300">
-                                <thead class="bg-neutral-900 text-xs uppercase text-neutral-400">
-                                    <tr>
-                                        <th class="px-4 py-3">Nama</th>
-                                        <th class="px-4 py-3">Instansi</th>
-                                        <th class="px-4 py-3">Provinsi</th>
-                                        <th class="px-4 py-3 text-right">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-kontributor" class="divide-y divide-neutral-700 bg-neutral-800"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- TESTIMONI -->
-                    <div id="admin-sec-testimoni" class="admin-section hidden">
-                        <h3 class="text-xl font-bold text-white mb-6">Kelola Testimoni</h3>
-                        <div class="overflow-x-auto rounded-lg border border-neutral-700">
-                            <table class="w-full text-left text-sm text-neutral-300">
-                                <thead class="bg-neutral-900 text-xs uppercase text-neutral-400">
-                                    <tr>
-                                        <th class="px-4 py-3">Nama</th>
-                                        <th class="px-4 py-3">Pesan</th>
-                                        <th class="px-4 py-3 text-right">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-testimoni" class="divide-y divide-neutral-700 bg-neutral-800"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- LOVE -->
-                    <div id="admin-sec-love" class="admin-section hidden">
-                        <h3 class="text-xl font-bold text-white mb-6">Kelola Data Love (Popularitas)</h3>
-                        <div class="overflow-x-auto rounded-lg border border-neutral-700">
-                            <table class="w-full text-left text-sm text-neutral-300">
-                                <thead class="bg-neutral-900 text-xs uppercase text-neutral-400">
-                                    <tr>
-                                        <th class="px-4 py-3">Konten</th>
-                                        <th class="px-4 py-3">Jumlah Love ❤️</th>
-                                        <th class="px-4 py-3 text-right">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-love" class="divide-y divide-neutral-700 bg-neutral-800"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- LAPORAN -->
-                    <div id="admin-sec-laporan" class="admin-section hidden">
-                        <h3 class="text-xl font-bold text-white mb-6">Kelola Laporan User</h3>
-                        <div class="overflow-x-auto rounded-lg border border-neutral-700">
-                            <table class="w-full text-left text-sm text-neutral-300">
-                                <thead class="bg-neutral-900 text-xs uppercase text-neutral-400">
-                                    <tr>
-                                        <th class="px-4 py-3">Tanggal</th>
-                                        <th class="px-4 py-3">Pelapor</th>
-                                        <th class="px-4 py-3">Konten Terkait</th>
-                                        <th class="px-4 py-3">Alasan</th>
-                                        <th class="px-4 py-3 text-right">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-laporan" class="divide-y divide-neutral-700 bg-neutral-800"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-     <footer class="bg-neutral-950 border-t border-neutral-800"><!-- Main Footer -->
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12"><!-- Brand Column -->
-        <div class="lg:col-span-1"><a href="#home" onclick="showPage('home')" class="inline-block text-2xl font-bold text-white mb-4"> <span class="text-amber-500">Studio</span>lpg </a>
-         <p class="text-white/60 text-sm leading-relaxed mb-6">Studiolpg adalah platform media &amp; bahan ajar gratis untuk mendukung pembelajaran yang kreatif dan menyenangkan.</p><!-- Social Media -->
-         <div class="flex items-center gap-3"><a href="https://s.id/youtube-noviyalpg" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-neutral-800 hover:bg-red-600 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300" title="YouTube">
-           <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-           </svg></a> <a href="https://s.id/ig-noviyalpg" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-neutral-800 hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300" title="Instagram">
-           <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-           </svg></a> <a href="https://www.tiktok.com/@noviya.lpg?_t=ZS-8tafgg6Eeyl&amp;_r=1" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-neutral-800 hover:bg-black flex items-center justify-center text-white/60 hover:text-white transition-all duration-300 hover:ring-2 hover:ring-cyan-400" title="TikTok">
-           <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
-           </svg></a> <a href="https://www.facebook.com/noviyalpg/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-neutral-800 hover:bg-blue-600 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300" title="Facebook">
-           <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-           </svg></a>
-         </div>
-    </div><!-- Quick Links -->
-        <div>
-         <h4 class="text-white font-bold text-lg mb-4">Menu Utama</h4>
-         <ul class="space-y-3">
-          <li><a href="#home" onclick="showPage('home')" class="text-white/60 hover:text-amber-400 transition-colors text-sm flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>Beranda</a></li>
-          <li><a href="#services" onclick="scrollToSection('services')" class="text-white/60 hover:text-amber-400 transition-colors text-sm flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>Kategori</a></li>
-          <li><a href="#" onclick="showPage('kontributor'); return false;" class="text-white/60 hover:text-amber-400 transition-colors text-sm flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>Kontributor</a></li>
-         </ul>
-        </div><!-- Contact & CTA -->
-        <div>
-         <h4 class="text-white font-bold text-lg mb-4">Hubungi Kami</h4>
-         <div class="space-y-4">
-          <div class="flex items-start gap-3">
-           <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-           </div>
-           <div>
-            <p class="text-white/40 text-xs mb-1">Email</p><a href="mailto:noviyachannel@gmail.com" class="text-white/80 hover:text-amber-400 text-sm transition-colors">noviyachannel@gmail.com</a>
-           </div>
-          </div>
-          <div class="flex items-start gap-3">
-           <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-           </div>
-           <div>
-            <p class="text-white/40 text-xs mb-1">Lokasi</p>
-            <p class="text-white/80 text-sm">Lampung, Indonesia</p>
-           </div>
-          </div>
-         </div>
-		</div>
-		
-		<!-- CTA Button -->
-                 <div>
-				 <h4 class="text-white font-bold mb-4">Jadilah Kontributor</h4>
-		 <ul class="space-y-4">
-		  <div class="mt-6"><a href="https://datapercobaan.my.canva.site/fitur-ajukan-konten" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-neutral-900 font-bold px-5 py-3 rounded-xl text-sm transition-all shadow-lg shadow-amber-500/20">Pusat Bantuan </a>
-		   
-		 <ul class="space-y-3">
-		  <div class="mt-6"><a href="https://s.id/kontribusi-noviyalpg-studio" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-neutral-900 font-bold px-5 py-3 rounded-xl text-sm transition-all shadow-lg shadow-amber-500/20">Kontribusi Sekarang </a>
-         </div>
-        </div>
-       </div>
-       </div>
-	          </div>
-	   
-	  <!-- Bottom Footer -->
-      <div class="border-t border-neutral-800">
-       <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-         <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-          <p class="text-white/40 text-sm">© 2025 Studiolpg. All rights reserved.</p><span class="hidden sm:inline text-white/20">|</span>
-          <p class="text-white/40 text-xs">Made in Lampung, Indonesia ❤️</p>
-         </div>
-         <div class="flex items-center gap-4"><a href="https://datapercobaan.my.canva.site/kebijakan-privasi-aplikasi-noviyalpg-studio" target="_blank" rel="noopener noreferrer" class="text-white/40 hover:text-white/70 text-xs transition-colors">Kebijakan Privasi</a> <span class="text-white/20">|</span> <a href="https://datapercobaan.my.canva.site/syarat-dan-ketentuan-noviyalpg-studio" target="_blank" rel="noopener noreferrer" class="text-white/40 hover:text-white/70 text-xs transition-colors">Syarat &amp; Ketentuan</a>
-         </div>
-        </div>
-       </div>
-      </div>
-     </footer>
-    </div>
-
-    <!-- ==================== MODALS ==================== -->
-
-    <!-- Admin Login Modal -->
-    <div id="modal-admin-login" class="modal-overlay">
-        <div class="bg-neutral-800 p-8 rounded-2xl w-full max-w-sm border border-neutral-700 shadow-2xl relative">
-            <button onclick="closeModal('modal-admin-login')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
-            <h3 class="text-2xl font-bold text-white mb-6 text-center">Admin Login</h3>
-            <input type="password" id="admin-pwd" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-3 rounded-xl mb-4 focus:outline-none focus:border-amber-500" placeholder="Masukkan Password">
-            <button onclick="checkAdminPassword()" class="w-full bg-amber-500 hover:bg-amber-600 text-neutral-900 font-bold py-3 rounded-xl transition-colors">Masuk</button>
-        </div>
-    </div>
-
-    <!-- Add Report Modal -->
-    <div id="modal-report" class="modal-overlay">
-        <div class="bg-neutral-800 p-8 rounded-2xl w-full max-w-md border border-neutral-700 shadow-2xl relative">
-            <button onclick="closeModal('modal-report')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
-            <h3 class="text-xl font-bold text-white mb-6">Laporkan Konten</h3>
-            <input type="hidden" id="report-content-id">
-            <div class="space-y-4">
-                <input type="text" id="report-name" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-amber-500" placeholder="Nama Anda" required>
-                <input type="text" id="report-origin" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-amber-500" placeholder="Asal/Instansi" required>
-                <textarea id="report-reason" rows="3" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-amber-500" placeholder="Apa yang ingin Anda laporkan?" required></textarea>
-                <button onclick="submitReport()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors">Kirim Laporan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Testimoni Modal (Public) -->
-    <div id="modal-add-testimoni" class="modal-overlay">
-        <div class="bg-neutral-800 p-8 rounded-2xl w-full max-w-md border border-neutral-700 shadow-2xl relative">
-            <button onclick="closeModal('modal-add-testimoni')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
-            <h3 class="text-xl font-bold text-white mb-6">Tambah Testimoni</h3>
-            <div class="space-y-4">
-                <input type="text" id="pub-testi-name" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2.5 rounded-lg" placeholder="Nama Anda" required>
-                <input type="text" id="pub-testi-role" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2.5 rounded-lg" placeholder="Peran (Guru/Siswa/Ortu)" required>
-                <textarea id="pub-testi-msg" rows="3" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2.5 rounded-lg" placeholder="Pesan testimoni" required></textarea>
-                <button onclick="submitPublicTestimoni()" class="w-full bg-amber-500 hover:bg-amber-600 text-neutral-900 font-bold py-3 rounded-xl transition-colors">Kirim</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Form Modal: Kontributor -->
-    <div id="modal-form-kontributor" class="modal-overlay">
-        <div class="bg-neutral-800 p-8 rounded-2xl w-full max-w-lg border border-neutral-700 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
-            <button onclick="closeModal('modal-form-kontributor')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
-            <h3 id="form-title-kontributor" class="text-xl font-bold text-white mb-6">Tambah Kontributor</h3>
-            <input type="hidden" id="form-kontrib-id">
-            <div class="space-y-4 text-sm">
-                <div><label class="block text-neutral-400 mb-1">Nama Lengkap</label><input type="text" id="form-kontrib-name" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
-                <div><label class="block text-neutral-400 mb-1">Asal Instansi</label><input type="text" id="form-kontrib-instansi" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
-                <div><label class="block text-neutral-400 mb-1">Provinsi</label><input type="text" id="form-kontrib-provinsi" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
-                <div><label class="block text-neutral-400 mb-1">Jabatan</label><input type="text" id="form-kontrib-jabatan" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
-                <div><label class="block text-neutral-400 mb-1">Link Profil Imgur (Opsional)</label><input type="url" id="form-kontrib-img" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
-                <button onclick="saveKontributor()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl mt-4">Simpan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Form Modal: Konten -->
-    <div id="modal-form-konten" class="modal-overlay">
-        <div class="bg-neutral-800 p-8 rounded-2xl w-full max-w-2xl border border-neutral-700 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scrollbar">
-            <button onclick="closeModal('modal-form-konten')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
-            <h3 id="form-title-konten" class="text-xl font-bold text-white mb-6">Tambah Konten Baru</h3>
-            <input type="hidden" id="form-konten-id">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div class="md:col-span-2"><label class="block text-neutral-400 mb-1">Judul Konten</label><input type="text" id="form-konten-title" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
-                
-                <div>
-                    <label class="block text-neutral-400 mb-1">Kontributor</label>
-                    <select id="form-konten-kontributor" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></select>
-                </div>
-                <div>
-                    <label class="block text-neutral-400 mb-1">Jenjang</label>
-                    <select id="form-konten-level" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg">
-                        <option value="PAUD/TK">PAUD/TK</option><option value="SD">SD</option><option value="SMP">SMP</option>
-                        <option value="SMA">SMA</option><option value="SMK">SMK</option><option value="Game PID">Game PID</option><option value="Lab. Maya">Lab. Maya</option><option value="Lainnya">Lainnya</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-neutral-400 mb-1">Jenis Konten</label>
-                    <select id="form-konten-type" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg">
-                        <option value="Media Ajar">Media Ajar</option><option value="Video Pembelajaran">Video Pembelajaran</option>
-                        <option value="Bahan Ajar">Bahan Ajar</option><option value="Infografis">Infografis</option>
-                        <option value="Augmented Reality">Augmented Reality</option><option value="Game/Permainan">Game/Permainan</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-neutral-400 mb-1">Fase</label>
-                    <select id="form-konten-phase" onchange="updateMataPelajaran()" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg">
-                        <option value="Fondasi">Fondasi</option><option value="A">A</option><option value="B">B</option>
-                        <option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
-                    </select>
-                </div>
-                
-                <div><label class="block text-neutral-400 mb-1">Mata Pelajaran</label><select id="form-konten-subject" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></select></div>
-                <div><label class="block text-neutral-400 mb-1">Kelas</label><select id="form-konten-class" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></select></div>
-                
-                <div><label class="block text-neutral-400 mb-1">Rating Bintang (1-5)</label><input type="number" min="1" max="5" id="form-konten-rating" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg" value="5"></div>
-                <div><label class="block text-neutral-400 mb-1">Link Thumbnail (Imgur - Opsional)</label><input type="url" id="form-konten-thumb" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
-                
-                <div class="md:col-span-2"><label class="block text-neutral-400 mb-1">Link Akses Konten</label><input type="url" id="form-konten-link" class="w-full bg-neutral-900 border border-neutral-700 text-white px-4 py-2 rounded-lg"></div>
-                
-                <div class="md:col-span-2"><button onclick="saveKonten()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl mt-4">Simpan</button></div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ==================== LOGIC & DATA ==================== -->
-    <script>
-        // CONFIG
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbyaZhRMHiy52m9ADp78JuXD6-xb6w_QKCQJyhM8A-g1wfCCoi67P0NFuR7M0KYRs7XoIg/exec";
-        const ADMIN_PWD = "iatah";
-
-        // MOCK DATA (Initial State while loading from backend, or fallback)
-        let state = {
-            contributors: [
-                { id: "c1", name: "Budi Santoso", instansi: "SDN 1 Lampung", provinsi: "Lampung", jabatan: "Guru", profileLink: "" },
-                { id: "c2", name: "Ani Yudhoyono", instansi: "SMP 2 Jakarta", provinsi: "DKI Jakarta", jabatan: "Guru Penggerak", profileLink: "" },
-                { id: "c3", name: "Siti Aminah", instansi: "SMA 1 Bandung", provinsi: "Jawa Barat", jabatan: "Kepala Sekolah", profileLink: "" },
-                { id: "c4", name: "Joko Widodo", instansi: "SMK Bisa", provinsi: "Jawa Tengah", jabatan: "Guru Produktif", profileLink: "" }
-            ],
-            contents: [
-                { id: "k1", title: "Media Interaktif IPA Kelas 4", contributorId: "c1", level: "SD", type: "Media Ajar", phase: "B", subject: "Ilmu Pengetahuan Alam", class: "4", link: "#", thumbnail: "", rating: 5, loves: 120 },
-                { id: "k2", title: "Video Sejarah Kemerdekaan", contributorId: "c2", level: "SMP", type: "Video Pembelajaran", phase: "D", subject: "IPS", class: "8", link: "#", thumbnail: "", rating: 4, loves: 45 },
-                { id: "k3", title: "AR Anatomi Tubuh Manusia", contributorId: "c3", level: "SMA", type: "Augmented Reality", phase: "F", subject: "Biologi", class: "11", link: "#", thumbnail: "", rating: 5, loves: 200 },
-                { id: "k4", title: "Game Edukasi Mengurutkan Angka", contributorId: "c1", level: "PAUD/TK", type: "Game/Permainan", phase: "Fondasi", subject: "Tematik", class: "TK B", link: "#", thumbnail: "", rating: 5, loves: 88 }
-            ],
-            testimonials: [
-                { id: "t1", name: "Rina", role: "Guru SD", message: "Studiolpg sangat membantu saya mendapatkan inspirasi mengajar!" },
-                { id: "t2", name: "Doni", role: "Siswa SMA", message: "Gamenya seru banget buat belajar biologi." }
-            ],
-            reports: [],
+            <!-- Area dinamis kuis -->
+            <div id="quiz-dynamic-area"></div>
             
-            // Pagination state
-            catCurrentPage: 1,
-            catItemsPerPage: 6,
-            catCurrentLevel: "SD"
-        };
+            <p id="quiz-feedback" style="margin-top: 15px; font-weight: bold; display: none;"></p>
+        </div>
+    </div>
 
-        // PHASE MAPPING DYNAMICS
-        const phaseMap = {
-            "Fondasi": { subjects: ["Literasi Dasar", "Numerasi Dasar", "Nilai Agama & Budi Pekerti", "Jati Diri", "Dasar-dasar Sains, Teknologi, Rekayasa, & Seni", "Lainnya" ], classes: ["PAUD", "TK A", "TK B"] },
-            "A": { subjects: ["Pendidikan Agama & Budi Pekerti", "Pendidikan Pancasila", "Matematika", "B. Indonesia", "Seni & Budaya", "IPAS", "PJOK", "B. Inggris", "B. Lampung", "Lainnya"], classes: ["1", "2"] },
-            "B": { subjects: ["Pendidikan Agama & Budi Pekerti", "Pendidikan Pancasila", "Matematika", "B. Indonesia", "Seni & Budaya", "IPAS", "PJOK", "B. Inggris", "B. Lampung", "Lainnya"], classes: ["3", "4"] },
-            "C": { subjects: ["Pendidikan Agama & Budi Pekerti", "Pendidikan Pancasila", "Matematika", "B. Indonesia", "Seni & Budaya", "IPAS", "PJOK", "B. Inggris", "B. Lampung", "Lainnya"], classes: ["5", "6"] },
-            "D": { subjects: ["Pendidikan Agama & Budi Pekerti", "Pendidikan Pancasila", "Matematika", "B. Indonesia", "Seni & Budaya", "IPAS", "PJOK", "B. Inggris", "B. Lampung", "Informatika", "PAK", "Lainnya"], classes: ["7", "8", "9"] },
-            "E": { subjects: ["Pendidikan Agama & Budi Pekerti", "Pendidikan Pancasila", "Matematika", "B. Indonesia", "Seni & Budaya", "IPAS", "PJOK", "B. Inggris", "B. Lampung","Biologi", "Fisika", "Kimia", "Sejarah", "Sosiologi", "Ekonomi", "Geografi", "Projek Kreatif dan Kewirausahaan", "Informatika", "PAK", "Dasar-dasar Keahlian", "Lainnya"], classes: ["10"] },
-            "F": { subjects: ["Pendidikan Agama & Budi Pekerti", "Pendidikan Pancasila", "Matematika", "B. Indonesia", "Seni & Budaya", "IPAS", "PJOK", "B. Inggris", "B. Lampung","Biologi", "Fisika", "Kimia", "Sejarah", "Sosiologi", "Antropologi", "Ekonomi", "Geografi", "Projek Kreatif dan Kewirausahaan", "Informatika", "PAK", "Dasar-dasar Keahlian", "Konsentrasi Keahlian", "Lainnya"], classes: ["11", "12"] }
-        };
+    <!-- Materi Modal (Level 1 Pipe) -->
+    <div id="materi-modal" class="overlay hidden" style="background: rgba(0,0,0,0.9);">
+        <div class="box-ui" style="max-width: 800px; width: 95%;">
+            <h2>📚 Materi Puasa</h2>
+            <div id="materi-content">
+                <h3>1. Pengertian Puasa</h3>
+                <p>Secara bahasa (etimologi), puasa (Ash-Shiyam) berarti "menahan". Secara istilah (terminologi), puasa adalah menahan diri dari makan, minum, dan segala hal yang membatalkannya mulai dari terbit fajar (waktu subuh) hingga terbenam matahari (waktu magrib) disertai dengan niat karena Allah SWT.</p>
+                
+                <h3>2. Dasar Hukum</h3>
+                <p>Kewajiban puasa Ramadan terdapat dalam Al-Qur'an Surah Al-Baqarah ayat 183: "Hai orang-orang yang beriman, diwajibkan atas kamu berpuasa sebagaimana diwajibkan atas orang-orang sebelum kamu agar kamu bertakwa."</p>
 
-        // ================= UTILS & INIT =================
+                <h3>3. Syarat Wajib & Syarat Sah</h3>
+                <ul>
+                    <li><b>Syarat Wajib:</b> Islam, Baligh (dewasa), Berakal sehat, Mampu berpuasa, Suci dari haid dan nifas (bagi wanita), Mukim (tidak sedang bepergian jauh).</li>
+                    <li><b>Syarat Sah:</b> Islam, Tamyiz (bisa membedakan baik dan buruk), Suci dari haid/nifas, Pada waktu yang diperbolehkan puasa.</li>
+                </ul>
+
+                <h3>4. Rukun Puasa</h3>
+                <ul>
+                    <li><b>Niat:</b> Disengaja dalam hati sebelum fajar untuk puasa wajib.</li>
+                    <li><b>Menahan Diri:</b> Dari segala yang membatalkan dari terbit fajar hingga terbenam matahari.</li>
+                </ul>
+
+                <h3>5. Hal yang Membatalkan & Makruh</h3>
+                <ul>
+                    <li><b>Membatalkan:</b> Makan/minum dengan sengaja, muntah disengaja, haid/nifas, murtad.</li>
+                    <li><b>Makruh (Mengurangi Pahala):</b> Berkata dusta, marah berlebihan, gosip, tidur sepanjang hari, berkumur berlebihan saat wudu.</li>
+                </ul>
+
+                <h3>6. Jenis Puasa</h3>
+                <ul>
+                    <li><b>Wajib:</b> Puasa Ramadan, Puasa Nazar, Puasa Kafarat/Denda.</li>
+                    <li><b>Sunnah:</b> Puasa Senin-Kamis, Puasa Arafah, Puasa Asyura, Puasa Syawal.</li>
+                </ul>
+
+                <h3>7. Hikmah Puasa</h3>
+                <p>Meningkatkan ketakwaan, melatih kesabaran dan pengendalian diri, menumbuhkan rasa empati kepada fakir miskin, dan menjaga kesehatan tubuh.</p>
+            </div>
+            <button class="btn btn-blue" id="btn-close-materi">Selesai Membaca & Kembali</button>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboard-modal" class="overlay hidden">
+        <div class="box-ui">
+            <h2>🏆 Papan Skor</h2>
+            <div id="lb-loading" style="font-family: sans-serif;">Memuat data dari server...</div>
+            <div class="podium-container hidden" id="podium-container">
+                <div class="podium p2"><div class="name" id="pod-2-name">-</div><div id="pod-2-score">-</div></div>
+                <div class="podium p1"><div class="name" id="pod-1-name">-</div><div id="pod-1-score">-</div></div>
+                <div class="podium p3"><div class="name" id="pod-3-name">-</div><div id="pod-3-score">-</div></div>
+            </div>
+            <div class="lb-list hidden" id="lb-list"></div>
+            <button class="btn" id="btn-close-lb" style="margin-top: 15px;">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Transition Overlay -->
+    <div id="transition-overlay" class="overlay hidden">
+        <h1 id="trans-title">Selamat!</h1>
+        <p id="trans-desc">Kamu berhasil menyelesaikan Level 1</p>
+        <button class="btn" id="trans-btn" style="max-width:300px;">Lanjut Level 2</button>
+    </div>
+</div>
+
+<script>
+/** ==============================
+ * KONFIGURASI DAN VARIABEL GLOBAL
+ * ============================== */
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const GAS_URL = "https://script.google.com/macros/s/AKfycbweBUj24ZH6syZAf83BoKrzHMQ6-jUFrIVuzxs23mgx4rn3VOoRUzYvwe8MHcKBoNhF/exec";
+
+let gameState = 'login'; 
+let requestID;
+let currentPlayer = { name: '', school: '' };
+
+const TILE_SIZE = 40;
+const GRAVITY = 0.5; 
+const FRICTION = 0.85; 
+let camera = { x: 0, y: 0 };
+// Hapus control lari, lari bergantung pada momentum
+const keys = { right: false, left: false, jump: false, down: false }; 
+
+let score = 0;
+let lives = 3;
+let currentLevel = 1;
+let groundOffset = 0; // Untuk menurunkan map mendekati kontrol
+
+let mapTiles = []; let mapWidth = 0; let mapHeight = 0;
+let blocks = []; let items = []; let enemies = []; let particles = []; let floatingTexts = [];
+let scenery = []; let pipes = []; let flags = [];
+
+let inSecretArea = false;
+let returnPosX = 0;
+let returnPosY = 0;
+let frameCount = 0;
+let currentQuizIndex = 0;
+
+// Assets
+const assets = { 
+    player: new Image(), flag: new Image(), enemy: new Image(),
+    mushGrow: new Image(), mushLife: new Image(), star: new Image()
+};
+assets.player.crossOrigin = "Anonymous"; assets.player.src = "https://i.imgur.com/z6sD9iS.png";
+assets.flag.crossOrigin = "Anonymous"; assets.flag.src = "https://i.imgur.com/nlCH2HZ.png";
+assets.enemy.crossOrigin = "Anonymous"; assets.enemy.src = "https://i.imgur.com/sjcux6J.png";
+
+// Dummy images for items since not provided
+function createColorSquare(color) {
+    const c = document.createElement('canvas'); c.width=30; c.height=30;
+    const cx = c.getContext('2d'); cx.fillStyle=color; cx.fillRect(0,0,30,30); return c;
+}
+assets.mushGrow = createColorSquare('#ff0000'); // Merah
+assets.mushLife = createColorSquare('#00ff00'); // Hijau
+assets.star = createColorSquare('#ffff00'); // Kuning
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    groundOffset = canvas.height - (14 * TILE_SIZE) - 100; // Layar map selalu di bawah
+    if(groundOffset < 0) groundOffset = 0;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas(); 
+
+// Fullscreen Logic
+function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.log(`Error attempting to enable fullscreen: ${err.message} (${err.name})`);
+        });
+    } else {
+        if (document.exitFullscreen) { document.exitFullscreen(); }
+    }
+}
+document.getElementById('fs-btn').addEventListener('click', toggleFullScreen);
+document.getElementById('btn-fs-login').addEventListener('click', toggleFullScreen);
+
+/** ==============================
+ * PROCEDURAL AUDIO SYNTHESIZER
+ * ============================== */
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx; let isBgmPlaying = false; let bgmEnabled = true; let bgmInterval;
+
+function initAudio() {
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playSound(type) {
+    if (!audioCtx || !bgmEnabled) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    const now = audioCtx.currentTime;
+    
+    if (type === 'jump') {
+        osc.type = 'square'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.2);
+        gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.2); 
+        osc.start(now); osc.stop(now + 0.2);
+    } else if (type === 'coin') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(987.77, now); osc.frequency.setValueAtTime(1318.51, now + 0.08);
+        gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3); 
+        osc.start(now); osc.stop(now + 0.3);
+    } else if (type === 'bump') {
+        osc.type = 'square'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+        gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 0.1); 
+        osc.start(now); osc.stop(now + 0.1);
+    } else if (type === 'powerup') {
+        osc.type = 'square'; osc.frequency.setValueAtTime(300, now); osc.frequency.linearRampToValueAtTime(800, now + 0.1);
+        osc.frequency.linearRampToValueAtTime(500, now + 0.2); osc.frequency.linearRampToValueAtTime(1000, now + 0.3);
+        gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0, now + 0.5); 
+        osc.start(now); osc.stop(now + 0.5);
+    } else if (type === 'stomp' || type === 'break') {
+        osc.type = 'triangle'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+        gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 0.15); 
+        osc.start(now); osc.stop(now + 0.15);
+    } else if (type === 'pipe') {
+        osc.type = 'square'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(50, now + 0.6);
+        gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 0.6); 
+        osc.start(now); osc.stop(now + 0.6);
+    } else if (type === 'win') {
+        osc.type = 'square';
+        [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => { osc.frequency.setValueAtTime(f, now + i*0.1); });
+        gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.6);
+        osc.start(now); osc.stop(now + 0.6);
+    } else if (type === 'dead') {
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(400, now); osc.frequency.linearRampToValueAtTime(100, now + 0.8);
+        gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 1.0); 
+        osc.start(now); osc.stop(now + 1.0);
+    }
+}
+
+// BGM (Super Mario Bros Overworld simplified)
+const bgmNotes = [
+    {f:659.25, d:0.15}, {f:0, d:0.05}, {f:659.25, d:0.15}, {f:0, d:0.15}, {f:659.25, d:0.15}, {f:0, d:0.15}, {f:523.25, d:0.15}, {f:659.25, d:0.15}, {f:0, d:0.15}, {f:783.99, d:0.2}, {f:0, d:0.3}, {f:392.00, d:0.2}, {f:0, d:0.3}
+];
+let bgmStep = 0;
+function playBGM() {
+    if (!bgmEnabled || gameState !== 'playing' || !audioCtx) return;
+    let note = bgmNotes[bgmStep];
+    if (note.f > 0 && player.powerUpTimer <= 0) { // Star BGM overrides
+        let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+        osc.type = 'square'; osc.frequency.value = note.f; gain.gain.value = 0.03;
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + note.d);
+    } else if (player.powerUpTimer > 0) {
+        // Star music fast
+        let f = (frameCount % 10 < 5) ? 800 : 1000;
+        let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+        osc.type = 'square'; osc.frequency.value = f; gain.gain.value = 0.05;
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+    }
+    bgmStep = (bgmStep + 1) % bgmNotes.length;
+    bgmInterval = setTimeout(playBGM, (note.d * 1000) + 20);
+}
+function stopBGM() { clearTimeout(bgmInterval); }
+
+document.getElementById('bgm-btn').addEventListener('click', function() {
+    bgmEnabled = !bgmEnabled; this.classList.toggle('active-bgm', bgmEnabled);
+    if(bgmEnabled) playBGM(); else stopBGM();
+});
+
+/** ==============================
+ * DATA KUIS HOTS TENTANG PUASA
+ * ============================== */
+const puasaQuizzes = {
+    1: [ // Level 1: Pilihan Ganda (Sederhana)
+        { q: "Saat berpuasa, Ali tidak makan dan minum sampai berbuka. Ini menunjukkan puasa berarti …", opts: ["Menghindari kegiatan", "Menahan diri dari yang membatalkan", "Tidak boleh bicara", "Hanya menahan lapar"], ans: 1 },
+        { q: "Waktu puasa yang benar dimulai dari …", opts: ["Tengah malam sampai siang", "Subuh sampai Magrib", "Pagi sampai malam", "Sahur sampai Isya"], ans: 1 }
+    ],
+    2: [ // Level 2: Susun Kata
+        { q: "Susun kata menjadi syarat sah puasa:", words: ["Suci", "dari", "haid", "dan", "nifas"], ans: "Suci dari haid dan nifas" },
+        { q: "Susun kata menjadi rukun puasa:", words: ["Niat", "di", "malam", "hari"], ans: "Niat di malam hari" }
+    ],
+    3: [ // Level 3: Drag Drop (Diadaptasi jadi Match Pairs untuk sentuhan)
+        { q: "Cocokkan konsep puasa berikut:", 
+          pairs: [ {l:"Menahan lapar", r:"Pengertian Puasa"}, {l:"Islam, Baligh", r:"Syarat Wajib"}, {l:"Muntah sengaja", r:"Batal Puasa"} ] 
+        }
+    ]
+};
+
+/** ==============================
+ * GAME CLASSES
+ * ============================== */
+class Player {
+    constructor(x, y) {
+        this.x = x; this.y = y; this.width = 30; this.height = 30;
+        this.vx = 0; this.vy = 0; this.speed = 4;
+        this.grounded = false; this.isBig = false; this.isCrouching = false;
+        this.powerUpTimer = 0; this.invincibleTimer = 0;
+        this.dir = 1; // 1 kanan, -1 kiri
+        this.dead = false;
+    }
+
+    update() {
+        if (this.dead) {
+            this.vy += GRAVITY; this.y += this.vy; return;
+        }
+
+        // Timer
+        if(this.powerUpTimer > 0) this.powerUpTimer--;
+        if(this.invincibleTimer > 0) this.invincibleTimer--;
+
+        // Horizontal Movement & Momentum (Lari)
+        this.isCrouching = keys.down && this.grounded;
         
-        async function init() {
-            try {
-                console.log("Sedang menarik data dari backend GAS...");
-                
-                // Memanggil URL GAS dengan metode GET. 
-                // Kita tambahkan parameter ?action=getData agar backend tahu ini permintaan penarikan data
-                const response = await fetch(GAS_URL + "?action=getData");
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    // Timpa state lokal dengan data dari backend jika data tersedia
-                    if (data.contents) state.contents = data.contents;
-                    if (data.contributors) state.contributors = data.contributors;
-                    if (data.testimonials) state.testimonials = data.testimonials;
-                    if (data.reports) state.reports = data.reports;
-                    
-                    console.log("Berhasil memuat data dari backend!", data);
-                } else {
-                    console.warn("Backend merespon namun tidak OK. Tetap menggunakan data sementara.");
-                }
-            } catch (error) {
-                console.error("Gagal terhubung ke GAS (mungkin CORS atau backend belum siap). Tetap menggunakan data sementara.", error);
-            }
+        let maxSpeed = 4;
+        let accel = 0.5;
 
-            // Setelah data siap (baik dari backend maupun data sementara), perbarui tampilan
-            calculatePoints();
-            updateStats();
-            renderHomeTestimoni();
+        if (!this.isCrouching) {
+            if (keys.right) { this.vx += accel; this.dir = 1; }
+            if (keys.left) { this.vx -= accel; this.dir = -1; }
         }
 
-        function navigate(pageId, subParam = null) {
-            document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
-            document.getElementById(`view-${pageId}`).classList.add('active');
-            window.scrollTo(0,0);
+        // Friction & Cap
+        this.vx *= FRICTION;
+        
+        // Cek jika bergerak terus, speed naik (mekanik lari tanpa tombol)
+        if (Math.abs(this.vx) > 0.5 && (keys.left || keys.right)) {
+             maxSpeed = 7; // Top speed saat lari
+        }
+        
+        if (this.vx > maxSpeed) this.vx = maxSpeed;
+        if (this.vx < -maxSpeed) this.vx = -maxSpeed;
 
-            if(pageId === 'home' && subParam) {
-                setTimeout(() => document.getElementById(subParam).scrollIntoView(), 100);
-            }
-            if(pageId === 'kategori') {
-                state.catCurrentLevel = subParam;
-                state.catCurrentPage = 1;
-                document.getElementById('cat-page-title').innerText = `Kategori: ${subParam}`;
-                renderKategori();
-            }
-            if(pageId === 'kontributor') {
-                renderLeaderboard();
-            }
-            if(pageId === 'admin') {
-                updateAdminDropdowns();
-                switchAdminTab('konten'); // Default tab
-            }
+        if (Math.abs(this.vx) < 0.1) this.vx = 0;
+
+        this.x += this.vx;
+        this.checkCollisions('x');
+
+        // Vertical Movement (Gravity & Jump)
+        this.vy += GRAVITY;
+        
+        // Lompatan tinggi jika sedang lari kencang
+        if (keys.jump && this.grounded && !this.isCrouching) {
+            let jumpStrength = -10;
+            if (Math.abs(this.vx) > 4) jumpStrength = -13; // Super jump!
+            this.vy = jumpStrength; 
+            this.grounded = false;
+            playSound('jump');
         }
 
-        function calculatePoints() {
-            state.contributors.forEach(c => {
-                let pts = 0;
-                state.contents.forEach(k => {
-                    if(k.contributorId === c.id) {
-                        pts += (k.rating * 2); // 5 stars = 10 pts, 4 stars = 8 pts
+        // Terbang jika punya powerup bintang
+        if(keys.jump && this.powerUpTimer > 0) {
+            this.vy = -6; 
+        }
+
+        this.y += this.vy;
+        this.grounded = false;
+        this.checkCollisions('y');
+
+        // Dimensi saat membesar
+        this.height = (this.isBig && !this.isCrouching) ? 60 : 30;
+        
+        // Batas bawah jurang
+        if (this.y > (mapHeight * TILE_SIZE) + 100) this.die();
+        // Batas kiri map
+        if (this.x < 0) this.x = 0;
+    }
+
+    checkCollisions(axis) {
+        let hbx = this.x + 2; let hbw = this.width - 4; // Hitbox slightly smaller
+        
+        for (let b of blocks) {
+            if (hbx < b.x + b.width && hbx + hbw > b.x && this.y < b.y + b.height && this.y + this.height > b.y) {
+                if (axis === 'x') {
+                    if (this.vx > 0) this.x = b.x - this.width;
+                    else if (this.vx < 0) this.x = b.x + b.width;
+                    this.vx = 0;
+                } else if (axis === 'y') {
+                    if (this.vy > 0) { // Jatuh ke atas blok
+                        this.y = b.y - this.height; this.grounded = true; this.vy = 0;
+                    } else if (this.vy < 0) { // Menyundul blok
+                        this.y = b.y + b.height; this.vy = 0;
+                        b.hit(this.isBig);
                     }
-                });
-                c.points = pts;
-            });
-        }
-
-        function updateStats() {
-            document.getElementById('stat-total').innerText = state.contents.length;
-            document.getElementById('stat-kontributor').innerText = state.contributors.length;
-            const totalPoints = state.contributors.reduce((acc, curr) => acc + (curr.points || 0), 0);
-            document.getElementById('stat-total-point').innerText = totalPoints;
-            const highestLove = state.contents.reduce((max, curr) => curr.loves > max ? curr.loves : max, 0);
-            document.getElementById('stat-highest-love').innerText = `${highestLove} ❤️`;
-        }
-
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    alert(`Error: ${err.message}`);
-                });
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
                 }
             }
         }
 
-        // ================= MODALS =================
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-        // ================= KATEGORI PAGE =================
-        function renderKategori() {
-            const grid = document.getElementById('cat-content-grid');
-            
-            // Filter by level, sort by Loves (Popular first)
-            let filtered = state.contents.filter(c => c.level === state.catCurrentLevel);
-            filtered.sort((a, b) => b.loves - a.loves);
-
-            // Pagination logic
-            const totalItems = filtered.length;
-            const totalPages = Math.ceil(totalItems / state.catItemsPerPage) || 1;
-            
-            if(state.catCurrentPage > totalPages) state.catCurrentPage = totalPages;
-            
-            const startIdx = (state.catCurrentPage - 1) * state.catItemsPerPage;
-            const paginated = filtered.slice(startIdx, startIdx + state.catItemsPerPage);
-
-            grid.innerHTML = '';
-            if(paginated.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center text-white/50 py-10">Belum ada konten di kategori ini.</div>`;
-            }
-
-            paginated.forEach(c => {
-                const author = state.contributors.find(k => k.id === c.contributorId);
-                const authorName = author ? author.name : 'Unknown';
-                const thumb = c.thumbnail ? c.thumbnail : `https://placehold.co/600x400/3b3b3b/ffffff?text=${encodeURIComponent(c.title)}`;
-                
-                grid.innerHTML += `
-                    <div class="bg-neutral-800 rounded-2xl overflow-hidden border border-neutral-700 hover:border-amber-500/50 transition-all group flex flex-col">
-                        <div class="h-48 overflow-hidden relative">
-                            <img src="${thumb}" alt="${c.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                            <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-xs text-white border border-white/10">${c.type}</div>
-                        </div>
-                        <div class="p-5 flex-1 flex flex-col">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-lg font-bold text-white line-clamp-2">${c.title}</h3>
-                            </div>
-                            <div class="text-sm text-neutral-400 mb-4 flex items-center gap-2">
-                                <span class="w-6 h-6 bg-neutral-700 rounded-full flex items-center justify-center text-xs">👤</span>
-                                ${authorName}
-                            </div>
-                            <div class="mt-auto flex justify-between items-center pt-4 border-t border-neutral-700/50">
-                                <div class="flex gap-2">
-                                    <button onclick="addLove('${c.id}')" class="text-sm px-3 py-1.5 bg-neutral-700 hover:bg-pink-500/20 hover:text-pink-400 rounded-lg transition-colors flex items-center gap-1">
-                                        ❤️ ${c.loves}
-                                    </button>
-                                    <button onclick="openReportModal('${c.id}')" class="text-sm px-3 py-1.5 bg-neutral-700 hover:bg-red-500/20 hover:text-red-400 rounded-lg transition-colors">
-                                        ⚠️ Lapor
-                                    </button>
-                                </div>
-                                <a href="${c.link}" target="_blank" class="bg-amber-500 text-neutral-900 px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-amber-600 transition-colors">Akses</a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // Update Pagination UI
-            document.getElementById('cat-page-info').innerText = `Halaman ${state.catCurrentPage} dari ${totalPages}`;
-            document.getElementById('cat-btn-prev').disabled = state.catCurrentPage === 1;
-            document.getElementById('cat-btn-next').disabled = state.catCurrentPage === totalPages;
+        // Pipa
+        for(let p of pipes) {
+             if (hbx < p.x + p.width && hbx + hbw > p.x && this.y < p.y + p.height && this.y + this.height > p.y) {
+                 if (axis === 'x') {
+                     if (this.vx > 0) this.x = p.x - this.width;
+                     else if (this.vx < 0) this.x = p.x + p.width;
+                     this.vx = 0;
+                 } else if (axis === 'y') {
+                     if (this.vy > 0) { this.y = p.y - this.height; this.grounded = true; this.vy = 0; 
+                        // Masuk Pipa jika nunduk
+                        if(this.isCrouching && p.isEntrance) enterPipe();
+                     }
+                     else if (this.vy < 0) { this.y = p.y + p.height; this.vy = 0; }
+                 }
+             }
         }
+    }
 
-        function changeCatPageSize() {
-            state.catItemsPerPage = parseInt(document.getElementById('cat-per-page').value);
-            state.catCurrentPage = 1;
-            renderKategori();
+    die() {
+        if(this.powerUpTimer > 0) return; // Kebal
+        if(this.isBig) {
+            playSound('pipe'); this.isBig = false; this.invincibleTimer = 60; return;
         }
-
-        function changeCatPage(dir) {
-            state.catCurrentPage += dir;
-            renderKategori();
-        }
-
-        function addLove(contentId) {
-            const content = state.contents.find(c => c.id === contentId);
-            if(content) {
-                content.loves += 1;
-                // Simulasikan panggil backend
-                syncDataToGAS('addLove', { contentId: contentId });
-                renderKategori();
-            }
-        }
-
-        function openReportModal(contentId) {
-            document.getElementById('report-content-id').value = contentId;
-            document.getElementById('report-name').value = '';
-            document.getElementById('report-origin').value = '';
-            document.getElementById('report-reason').value = '';
-            openModal('modal-report');
-        }
-
-        function submitReport() {
-            const rId = 'r' + Date.now();
-            const r = {
-                id: rId,
-                contentId: document.getElementById('report-content-id').value,
-                reporterName: document.getElementById('report-name').value,
-                reporterOrigin: document.getElementById('report-origin').value,
-                reason: document.getElementById('report-reason').value,
-                date: new Date().toLocaleDateString('id-ID')
-            };
-            if(!r.reporterName || !r.reporterOrigin || !r.reason) return alert("Lengkapi semua form lapor!");
-            
-            state.reports.push(r);
-            syncDataToGAS('addReport', r);
-            closeModal('modal-report');
-            alert("Laporan berhasil dikirim!");
-        }
-
-        // ================= KONTRIBUTOR LEADERBOARD =================
-        function renderLeaderboard() {
-            calculatePoints();
-            let sorted = [...state.contributors].sort((a,b) => b.points - a.points);
-            
-            const podium = document.getElementById('podium-container');
-            const list = document.getElementById('kontributor-list-table');
-            
-            podium.innerHTML = '';
-            list.innerHTML = '';
-
-            // Render Podium (Top 3)
-            const top3 = sorted.slice(0, 3);
-            
-            // Urutan podium visual: 2, 1, 3
-            if(top3[1]) podium.innerHTML += createPodiumCard(top3[1], 2, 'podium-2', 'silver-gradient', 'scale-90');
-            if(top3[0]) podium.innerHTML += createPodiumCard(top3[0], 1, 'podium-1', 'gold-gradient', 'scale-110 z-10 shadow-2xl animate-glow');
-            if(top3[2]) podium.innerHTML += createPodiumCard(top3[2], 3, 'podium-3', 'bronze-gradient', 'scale-90');
-
-            // Render Sisa
-            const rest = sorted.slice(3);
-            rest.forEach((c, idx) => {
-                list.innerHTML += `
-                    <tr class="hover:bg-neutral-700/30 transition-colors">
-                        <td class="px-6 py-4 font-bold text-neutral-500">#${idx + 4}</td>
-                        <td class="px-6 py-4">
-                            <div class="font-semibold text-white">${c.name}</div>
-                            <div class="text-xs text-neutral-400">${c.jabatan}</div>
-                        </td>
-                        <td class="px-6 py-4 text-neutral-400">${c.instansi}, ${c.provinsi}</td>
-                        <td class="px-6 py-4 text-right font-bold text-amber-500">${c.points} Poin</td>
-                    </tr>
-                `;
-            });
-        }
-
-        function createPodiumCard(c, rank, hClass, gradClass, extraClass) {
-            const img = c.profileLink || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=random`;
-            return `
-                <div class="podium-step w-1/3 max-w-[140px] text-center ${extraClass} transition-transform hover:scale-105">
-                    <img src="${img}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-neutral-800 object-cover mb-[-20px] z-10 shadow-lg mx-auto bg-neutral-700">
-                    <div class="w-full ${hClass} ${gradClass} rounded-t-2xl flex flex-col justify-end pb-4 px-2 text-neutral-900 shadow-inner">
-                        <div class="text-3xl font-black mb-1 opacity-80">${rank}</div>
-                        <div class="text-xs font-bold leading-tight line-clamp-1">${c.name}</div>
-                        <div class="text-[10px] font-semibold opacity-80 mt-1">${c.points} Pts</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ================= TESTIMONI =================
-        function renderHomeTestimoni() {
-            const grid = document.getElementById('home-testimoni-grid');
-            grid.innerHTML = '';
-            state.testimonials.forEach(t => {
-                grid.innerHTML += `
-                    <div class="bg-neutral-900/50 border border-neutral-700 p-6 rounded-2xl">
-                        <p class="text-white/80 italic mb-4">"${t.message}"</p>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center text-amber-500 font-bold">${t.name.charAt(0)}</div>
-                            <div>
-                                <h4 class="text-white font-bold text-sm">${t.name}</h4>
-                                <p class="text-white/50 text-xs">${t.role}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function submitPublicTestimoni() {
-            const t = {
-                id: 't' + Date.now(),
-                name: document.getElementById('pub-testi-name').value,
-                role: document.getElementById('pub-testi-role').value,
-                message: document.getElementById('pub-testi-msg').value
-            };
-            if(!t.name || !t.role || !t.message) return alert("Lengkapi form!");
-            state.testimonials.push(t);
-            syncDataToGAS('addTestimoni', t);
-            closeModal('modal-add-testimoni');
-            renderHomeTestimoni();
-            alert("Testimoni dikirim! Terima kasih.");
-        }
-
-
-        // ================= ADMIN PANEL LOGIC =================
-        function openAdminLogin() {
-            document.getElementById('admin-pwd').value = '';
-            openModal('modal-admin-login');
-        }
-
-        function checkAdminPassword() {
-            const pwd = document.getElementById('admin-pwd').value;
-            if(pwd === ADMIN_PWD) {
-                closeModal('modal-admin-login');
-                navigate('admin');
-            } else {
-                alert("Password Salah!");
-            }
-        }
-
-        function switchAdminTab(tabId) {
-            document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
-            document.querySelectorAll('.admin-tab').forEach(t => { t.classList.remove('bg-amber-500', 'text-neutral-900'); t.classList.add('bg-neutral-800', 'text-white'); });
-            
-            document.getElementById(`admin-sec-${tabId}`).classList.remove('hidden');
-            const activeTab = document.getElementById(`tab-${tabId}`);
-            activeTab.classList.remove('bg-neutral-800', 'text-white');
-            activeTab.classList.add('bg-amber-500', 'text-neutral-900');
-
-            if(tabId === 'konten') renderAdminKonten();
-            if(tabId === 'kontributor') renderAdminKontributor();
-            if(tabId === 'testimoni') renderAdminTestimoni();
-            if(tabId === 'love') renderAdminLove();
-            if(tabId === 'laporan') renderAdminLaporan();
-        }
-
-        function updateAdminDropdowns() {
-            // Update Select Kontributor di Form Konten
-            const sel = document.getElementById('form-konten-kontributor');
-            sel.innerHTML = state.contributors.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-            updateMataPelajaran();
-        }
-
-        function updateMataPelajaran() {
-            const phase = document.getElementById('form-konten-phase').value;
-            const subSel = document.getElementById('form-konten-subject');
-            const clsSel = document.getElementById('form-konten-class');
-            
-            if(phaseMap[phase]) {
-                subSel.innerHTML = phaseMap[phase].subjects.map(s => `<option value="${s}">${s}</option>`).join('');
-                clsSel.innerHTML = phaseMap[phase].classes.map(c => `<option value="${c}">${c}</option>`).join('');
-            }
-        }
-
-        function openFormModal(modalId, resetFn) {
-            resetFn();
-            openModal(modalId);
-        }
-
-        // --- ADMIN: KONTEN ---
-        function renderAdminKonten() {
-            const tbody = document.getElementById('table-konten');
-            tbody.innerHTML = '';
-            state.contents.forEach(c => {
-                const author = state.contributors.find(k => k.id === c.contributorId)?.name || 'Unknown';
-                tbody.innerHTML += `
-                    <tr class="hover:bg-neutral-700/50">
-                        <td class="px-4 py-3 font-semibold">${c.title}</td>
-                        <td class="px-4 py-3">${c.level} <br><span class="text-xs text-neutral-500">${c.type}</span></td>
-                        <td class="px-4 py-3">${author}</td>
-                        <td class="px-4 py-3 text-right">
-                            <button onclick="editKonten('${c.id}')" class="text-blue-400 hover:text-blue-300 mr-2 text-sm">Edit</button>
-                            <button onclick="deleteItem('contents', '${c.id}')" class="text-red-400 hover:text-red-300 text-sm">Hapus</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function resetKontenForm() {
-            document.getElementById('form-title-konten').innerText = "Tambah Konten Baru";
-            document.getElementById('form-konten-id').value = '';
-            document.getElementById('form-konten-title').value = '';
-            document.getElementById('form-konten-link').value = '';
-            document.getElementById('form-konten-thumb').value = '';
-        }
-
-        function editKonten(id) {
-            const c = state.contents.find(x => x.id === id);
-            if(!c) return;
-            document.getElementById('form-title-konten').innerText = "Edit Konten";
-            document.getElementById('form-konten-id').value = c.id;
-            document.getElementById('form-konten-title').value = c.title;
-            document.getElementById('form-konten-kontributor').value = c.contributorId;
-            document.getElementById('form-konten-level').value = c.level;
-            document.getElementById('form-konten-type').value = c.type;
-            document.getElementById('form-konten-phase').value = c.phase;
-            updateMataPelajaran(); // trigger re-render dropdown mapel & kelas
+        if(!this.dead) {
+            this.dead = true; this.vy = -10; playSound('dead'); lives--;
+            updateHUD();
             setTimeout(() => {
-                document.getElementById('form-konten-subject').value = c.subject;
-                document.getElementById('form-konten-class').value = c.class;
-            }, 50);
-            document.getElementById('form-konten-rating').value = c.rating;
-            document.getElementById('form-konten-thumb').value = c.thumbnail || '';
-            document.getElementById('form-konten-link').value = c.link || '';
-            openModal('modal-form-konten');
+                if(lives <= 0) gameOver();
+                else resetLevel();
+            }, 2000);
         }
+    }
 
-        function saveKonten() {
-            const id = document.getElementById('form-konten-id').value || 'k' + Date.now();
-            const payload = {
-                id: id,
-                title: document.getElementById('form-konten-title').value,
-                contributorId: document.getElementById('form-konten-kontributor').value,
-                level: document.getElementById('form-konten-level').value,
-                type: document.getElementById('form-konten-type').value,
-                phase: document.getElementById('form-konten-phase').value,
-                subject: document.getElementById('form-konten-subject').value,
-                class: document.getElementById('form-konten-class').value,
-                rating: parseInt(document.getElementById('form-konten-rating').value),
-                thumbnail: document.getElementById('form-konten-thumb').value,
-                link: document.getElementById('form-konten-link').value,
-                loves: 0 // default for new
-            };
+    draw() {
+        if (this.invincibleTimer > 0 && frameCount % 10 < 5) return; // Blink
+        
+        ctx.save();
+        ctx.translate(this.x + this.width/2 - camera.x, this.y + this.height/2 - camera.y + groundOffset);
+        if (this.dir === -1) ctx.scale(-1, 1);
+        
+        let drawW = 35; let drawH = this.isBig ? 65 : 35;
+        if(this.isCrouching) drawH = 35;
+        
+        // Efek warna jika terbang/star
+        if(this.powerUpTimer > 0) ctx.filter = `hue-rotate(${frameCount*20}deg)`;
 
-            const idx = state.contents.findIndex(x => x.id === id);
-            if(idx >= 0) {
-                payload.loves = state.contents[idx].loves; // preserve loves
-                state.contents[idx] = payload;
+        if (assets.player.complete && assets.player.naturalWidth > 0) {
+            ctx.drawImage(assets.player, -drawW/2, -drawH/2, drawW, drawH);
+        } else {
+            ctx.fillStyle = this.isBig ? 'red' : 'blue';
+            ctx.fillRect(-drawW/2, -drawH/2, drawW, drawH);
+        }
+        ctx.restore();
+    }
+}
+
+class Block {
+    constructor(x, y, type) {
+        this.x = x; this.y = y; this.width = TILE_SIZE; this.height = TILE_SIZE;
+        this.type = type; // G(Ground), B(Brick), ?(Question), Q(Quiz), M(Hidden)
+        this.active = (type !== 'G'); 
+        this.hidden = (type === 'M');
+        this.hitY = 0;
+        
+        // Tentukan isi blok ?
+        this.content = 'coin';
+        if(type === '?' || type === 'M') {
+            let r = Math.random();
+            if(r < 0.2) this.content = 'mushGrow';
+            else if(r < 0.3) this.content = 'mushLife';
+            else if(r < 0.4) this.content = 'star';
+        }
+    }
+    update() { if(this.hitY < 0) this.hitY += 1; }
+    draw() {
+        if(this.hidden && this.active) return; // Tak terlihat sebelum disundul
+        
+        ctx.save();
+        ctx.translate(this.x - camera.x, this.y + this.hitY - camera.y + groundOffset);
+        
+        if (this.type === 'G') {
+            ctx.fillStyle = '#8B4513'; ctx.fillRect(0,0,this.width,this.height);
+            ctx.fillStyle = '#228B22'; ctx.fillRect(0,0,this.width,5);
+        } else if (!this.active && this.type !== 'B') { // Kosong
+            ctx.fillStyle = '#B8860B'; ctx.fillRect(0,0,this.width,this.height);
+            ctx.strokeStyle = '#000'; ctx.strokeRect(0,0,this.width,this.height);
+        } else if (this.type === 'B') { // Bata
+            ctx.fillStyle = '#CD853F'; ctx.fillRect(0,0,this.width,this.height);
+            ctx.strokeStyle = '#8B4513'; ctx.beginPath(); ctx.moveTo(0,10); ctx.lineTo(40,10); ctx.moveTo(0,30); ctx.lineTo(40,30);
+            ctx.moveTo(20,10); ctx.lineTo(20,30); ctx.stroke();
+        } else if (this.type === '?' || this.type === 'M') {
+            ctx.fillStyle = '#FFD700'; ctx.fillRect(0,0,this.width,this.height);
+            ctx.fillStyle = '#000'; ctx.font = '24px Arial'; ctx.fillText('?', 13, 28);
+        } else if (this.type === 'Q') {
+            ctx.fillStyle = '#FF4500'; ctx.fillRect(0,0,this.width,this.height);
+            ctx.fillStyle = '#FFF'; ctx.font = '24px Arial'; ctx.fillText('Q', 10, 28);
+        }
+        ctx.restore();
+    }
+    hit(isBig) {
+        if (!this.active && this.type !== 'B') return;
+        this.hidden = false;
+        if (this.type === 'B') {
+            if (isBig) {
+                playSound('break'); this.active = false;
+                for(let i=0; i<4; i++) particles.push(new Particle(this.x+20, this.y+20, '#CD853F'));
+                this.y = -1000; // Hilangkan
+            } else { playSound('bump'); this.hitY = -10; }
+        } else {
+            playSound('powerup'); this.hitY = -10; this.active = false;
+            if(this.type === '?') {
+                if(this.content === 'coin') { addScore(100); coins.push(new Particle(this.x+15, this.y-20, '#FFD700', true)); playSound('coin');}
+                else spawnItem(this.x, this.y - TILE_SIZE, this.content);
+            } else if (this.type === 'M') {
+                spawnItem(this.x, this.y - TILE_SIZE, 'mushGrow');
+            } else if (this.type === 'Q') {
+                showQuiz();
+            }
+        }
+    }
+}
+
+class Item {
+    constructor(x, y, type) {
+        this.x = x; this.y = y; this.width = 30; this.height = 30;
+        this.type = type; // mushGrow, mushLife, star
+        this.vx = (Math.random() > 0.5 ? 1 : -1) * 2;
+        this.vy = -3;
+        this.active = true;
+    }
+    update() {
+        if(!this.active) return;
+        this.vy += GRAVITY;
+        this.x += this.vx;
+        
+        // Tabrakan Blok
+        for(let b of blocks) {
+            if(this.x < b.x+b.width && this.x+this.width > b.x && this.y < b.y+b.height && this.y+this.height > b.y) {
+                if(this.y + this.height - this.vy <= b.y) { this.y = b.y - this.height; this.vy = 0; } // Atas
+                else { this.vx *= -1; this.x += this.vx; } // Samping
+            }
+        }
+        this.y += this.vy;
+
+        // Player ambil
+        if(player.x < this.x+this.width && player.x+player.width > this.x && player.y < this.y+this.height && player.y+player.height > this.y) {
+            playSound('coin'); this.active = false; addScore(500);
+            if(this.type === 'mushGrow') { player.isBig = true; floatingTexts.push(new FloatingText(this.x, this.y, "Membesar!"));}
+            if(this.type === 'mushLife') { lives++; updateHUD(); floatingTexts.push(new FloatingText(this.x, this.y, "1-UP!"));}
+            if(this.type === 'star') { player.powerUpTimer = 900; floatingTexts.push(new FloatingText(this.x, this.y, "Terbang!"));} // 15 detik (60fps * 15)
+        }
+    }
+    draw() {
+        if(!this.active) return;
+        let img = assets[this.type];
+        if(img) {
+            if (img instanceof HTMLImageElement && (!img.complete || img.naturalWidth === 0)) {
+                ctx.fillStyle = this.type === 'mushGrow' ? 'red' : (this.type === 'mushLife' ? 'green' : 'yellow');
+                ctx.fillRect(this.x - camera.x, this.y - camera.y + groundOffset, this.width, this.height);
             } else {
-                state.contents.push(payload);
+                ctx.drawImage(img, this.x - camera.x, this.y - camera.y + groundOffset, this.width, this.height);
             }
+        }
+    }
+}
+
+class Enemy {
+    constructor(x, y) {
+        this.x = x; this.y = y; this.width = 35; this.height = 25;
+        this.vx = -1.5; this.vy = 0; this.dead = false; this.deadTimer = 0;
+    }
+    update() {
+        if(this.dead) { this.deadTimer++; return; }
+        this.vy += GRAVITY;
+        this.x += this.vx;
+        
+        let onGround = false;
+        for(let b of blocks) {
+            if(this.x < b.x+b.width && this.x+this.width > b.x && this.y < b.y+b.height && this.y+this.height > b.y) {
+                if(this.y + this.height - this.vy <= b.y) { this.y = b.y - this.height; this.vy = 0; onGround = true; } // Di atas tanah
+                else { this.vx *= -1; this.x += this.vx; } // Nabrak tembok
+            }
+        }
+        for(let p of pipes) { // Nabrak pipa putar balik
+            if(this.x < p.x+p.width && this.x+this.width > p.x && this.y < p.y+p.height && this.y+this.height > p.y) {
+                this.vx *= -1; this.x += this.vx*2;
+            }
+        }
+        this.y += this.vy;
+
+        // Jatuh dari ujung blok
+        if(!onGround && this.vy === GRAVITY) { this.vx *= -1; this.x += this.vx*5;}
+
+        // Collision dgn Player
+        if(player.x < this.x+this.width && player.x+player.width > this.x && player.y < this.y+this.height && player.y+player.height > this.y) {
+            if(!player.dead && player.invincibleTimer <= 0) {
+                if(player.powerUpTimer > 0) { // Jika sedang terbang/star, musuh mati ditabrak
+                     this.dead = true; playSound('stomp'); addScore(200);
+                } else if(player.vy > 0 && player.y + player.height - player.vy < this.y + 10) { // Injak
+                    this.dead = true; player.vy = -8; playSound('stomp'); addScore(200);
+                } else {
+                    player.die();
+                }
+            }
+        }
+    }
+    draw() {
+        if(this.deadTimer > 30) return;
+        ctx.save();
+        ctx.translate(this.x + this.width/2 - camera.x, this.y + this.height/2 - camera.y + groundOffset + (this.dead?10:0));
+        if(this.vx > 0) ctx.scale(-1, 1);
+        if(this.dead) ctx.scale(1, -0.5); // Gepeng
+        if (assets.enemy.complete && assets.enemy.naturalWidth > 0) {
+            ctx.drawImage(assets.enemy, -20, -15, 40, 30);
+        } else {
+            ctx.fillStyle = 'purple';
+            ctx.fillRect(-15, -15, 30, 30);
+        }
+        ctx.restore();
+    }
+}
+
+class Particle {
+    constructor(x, y, color, isCoin=false) {
+        this.x = x; this.y = y; this.color = color; this.isCoin = isCoin;
+        this.vx = (Math.random() - 0.5) * 6; this.vy = (Math.random() - 1) * 8;
+        this.life = 30;
+    }
+    update() { this.x += this.vx; this.vy += GRAVITY; this.y += this.vy; this.life--; }
+    draw() {
+        if(this.life <= 0) return;
+        ctx.fillStyle = this.color;
+        if(this.isCoin) { ctx.beginPath(); ctx.arc(this.x-camera.x, this.y-camera.y+groundOffset, 8, 0, Math.PI*2); ctx.fill();}
+        else ctx.fillRect(this.x-camera.x, this.y-camera.y+groundOffset, 8, 8);
+    }
+}
+class FloatingText {
+    constructor(x, y, text) { this.x=x; this.y=y; this.text=text; this.life=40; }
+    update() { this.y -= 1; this.life--; }
+    draw() {
+        if(this.life <= 0) return;
+        ctx.fillStyle = 'white'; ctx.font='16px Fredoka One'; ctx.strokeStyle='black'; ctx.lineWidth=3;
+        ctx.strokeText(this.text, this.x-camera.x, this.y-camera.y+groundOffset);
+        ctx.fillText(this.text, this.x-camera.x, this.y-camera.y+groundOffset);
+    }
+}
+
+class Scenery {
+    constructor(x, y, type) { this.x=x; this.y=y; this.type=type; }
+    draw() {
+        let scX = this.x - camera.x * (this.type==='cloud'?0.2 : 0.6); // Parallax
+        let scY = this.y - camera.y + groundOffset;
+        ctx.fillStyle = this.type==='cloud'?'#fff':(this.type==='bush'?'#2e7d32':'#795548');
+        
+        if(this.type === 'cloud') {
+            ctx.beginPath(); ctx.arc(scX, scY, 20, 0, Math.PI*2); ctx.arc(scX+20, scY-10, 25, 0, Math.PI*2); ctx.arc(scX+40, scY, 20, 0, Math.PI*2); ctx.fill();
+        } else if(this.type === 'bush') {
+            ctx.beginPath(); ctx.arc(scX, scY, 15, 0, Math.PI*2); ctx.arc(scX+15, scY-10, 20, 0, Math.PI*2); ctx.arc(scX+30, scY, 15, 0, Math.PI*2); ctx.fill();
+        } else if(this.type === 'tree') {
+            ctx.fillRect(scX, scY, 15, 40); ctx.fillStyle='#4caf50';
+            ctx.beginPath(); ctx.arc(scX+7, scY-10, 30, 0, Math.PI*2); ctx.fill();
+        } else if(this.type === 'bird') {
+            ctx.fillStyle='#000'; ctx.font='20px sans-serif'; ctx.fillText('v v', scX + Math.sin(frameCount/20)*10, scY);
+        }
+    }
+}
+
+/** ==============================
+ * MAP PARSER
+ * ============================== */
+const maps = {
+    1: [ // Level 1 (Easy) - Pipa ke materi
+        "                                                                     ",
+        "                                                                     ",
+        "                                                                     ",
+        "                                                                     ",
+        "                                                                     ",
+        "                                       Q         ?                   ",
+        "                                                                     ",
+        "         ?                                                           ",
+        "                    B?Q                      M         B?B       |   ",
+        "     S       C                                                  |   ",
+        "             C          P                            E          |   ",
+        "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+        "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
+    ],
+    secret: [ // Materi Room
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "                                ",
+        "           P                    ",
+        "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
+    ],
+    2: [ // Level 2 (Sempit, crouch)
+        "                                                                              ",
+        "                                                                              ",
+        "                                                                              ",
+        "                                                                              ",
+        "                                                                              ",
+        "                                  BBBBB                                       ",
+        "                                 B     B           E          M               ",
+        "                                B       B         B?B         B           |   ",
+        "            BBBBBBBB            B   C   B                                 |   ",
+        "      S                  E      B       B   Q              BBBB           |   ",
+        "                            E   B       B                                 |   ",
+        "GGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGG",
+        "GGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGG"
+    ],
+    3: [ // Level 3 (Hard, start small)
+        "                                                                                        ",
+        "                                                                                        ",
+        "                                                                                        ",
+        "                                                                                        ",
+        "                                        ?B?                                             ",
+        "                                                                             BMB        ",
+        "           B?B                       BBBBBBB               E                            ",
+        "      S               BB                                 BBBBB                     |    ",
+        "                             E                                                     |    ",
+        "                            BB                                        Q            |    ",
+        "                          BBBB                  E                   BBBB           |    ",
+        "GGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+        "GGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
+    ]
+};
+
+let player;
+
+function loadMap(mapLevel, isSecret = false) {
+    let mapData = isSecret ? maps.secret : maps[mapLevel];
+    if(!mapData) { finishGame(); return; } // Tamat
+    
+    mapHeight = mapData.length; mapWidth = mapData[0].length;
+    blocks = []; items = []; enemies = []; particles = []; floatingTexts = []; coins = []; scenery = []; pipes = []; flags = [];
+    
+    // Add Scenery
+    for(let i=0; i<mapWidth; i+=10) {
+        if(Math.random()>0.5) scenery.push(new Scenery(i*TILE_SIZE, 3*TILE_SIZE, 'cloud'));
+        if(Math.random()>0.7) scenery.push(new Scenery((i+2)*TILE_SIZE, (mapHeight-3)*TILE_SIZE, 'bush'));
+        if(Math.random()>0.8) scenery.push(new Scenery((i+5)*TILE_SIZE, (mapHeight-4)*TILE_SIZE, 'tree'));
+        if(Math.random()>0.5) scenery.push(new Scenery(i*TILE_SIZE, 2*TILE_SIZE, 'bird'));
+    }
+
+    for (let r = 0; r < mapHeight; r++) {
+        for (let c = 0; c < mapWidth; c++) {
+            let char = mapData[r][c];
+            let x = c * TILE_SIZE; let y = r * TILE_SIZE;
+            if (char === 'G' || char === 'B' || char === '?' || char === 'Q' || char === 'M') blocks.push(new Block(x, y, char));
+            else if (char === 'E') enemies.push(new Enemy(x, y));
+            else if (char === 'C') coins.push({x:x+10, y:y+10, collected:false});
+            else if (char === 'P') pipes.push({x:x, y:y-TILE_SIZE, width:TILE_SIZE*2, height:TILE_SIZE*2, isEntrance:true});
+            else if (char === '|') flags.push({x:x, y:y, width:10, height:TILE_SIZE});
+            else if (char === 'S' && !isSecret && (!inSecretArea)) { 
+                player = new Player(x, y); 
+                if(mapLevel === 3) player.isBig = false; // Lv 3 kecil dulu
+            }
+        }
+    }
+    camera.x = 0;
+}
+
+function enterPipe() {
+    playSound('pipe');
+    if(!inSecretArea && currentLevel === 1) { // Masuk ke area materi
+        returnPosX = player.x; returnPosY = player.y;
+        inSecretArea = true; loadMap(1, true);
+        player.x = 2 * TILE_SIZE; player.y = 2 * TILE_SIZE;
+        // Tampilkan Modal Materi
+        setTimeout(() => { document.getElementById('materi-modal').classList.remove('hidden'); }, 500);
+    } else if (inSecretArea) { // Kembali dari materi
+        inSecretArea = false; loadMap(currentLevel);
+        player.x = returnPosX + TILE_SIZE*2; player.y = returnPosY - TILE_SIZE; // Geser dikit biar gak masuk lagi
+    }
+}
+
+document.getElementById('btn-close-materi').addEventListener('click', () => {
+    document.getElementById('materi-modal').classList.add('hidden');
+    // Keluar lewat pipa otomatis
+    for(let p of pipes) { if(p.isEntrance) enterPipe(); break; }
+});
+
+function spawnItem(x, y, type) { items.push(new Item(x, y, type)); }
+function addScore(pts) { score += pts; updateHUD(); }
+function updateHUD() {
+    document.getElementById('ui-score').innerText = score;
+    document.getElementById('ui-lives').innerText = lives;
+    document.getElementById('ui-level').innerText = currentLevel;
+}
+
+/** ==============================
+ * QUIZ SYSTEM
+ * ============================== */
+let currentQuizData = null;
+
+function showQuiz() {
+    gameState = 'quiz';
+    let qList = puasaQuizzes[currentLevel] || puasaQuizzes[1];
+    currentQuizData = qList[currentQuizIndex % qList.length];
+    currentQuizIndex++;
+    
+    document.getElementById('qz-lvl-text').innerText = currentLevel;
+    document.getElementById('quiz-question').innerText = currentQuizData.q;
+    
+    let area = document.getElementById('quiz-dynamic-area');
+    area.innerHTML = ''; document.getElementById('quiz-feedback').style.display='none';
+    
+    if (currentLevel === 1) { // Pilihan Ganda
+        area.className = 'quiz-options';
+        currentQuizData.opts.forEach((opt, idx) => {
+            let btn = document.createElement('button'); btn.className = 'q-btn'; btn.innerText = opt;
+            btn.onclick = () => handleQuizAnswer(idx === currentQuizData.ans);
+            area.appendChild(btn);
+        });
+    } 
+    else if (currentLevel === 2) { // Susun Kata
+        area.className = '';
+        let pool = document.createElement('div'); pool.className = 'word-pool';
+        let answerBox = document.createElement('div'); answerBox.className = 'word-pool'; answerBox.style.background = '#e8f5e9'; answerBox.style.minHeight='60px';
+        
+        let shuffled = [...currentQuizData.words].sort(() => Math.random() - 0.5);
+        let selectedWords = [];
+        
+        function renderWords() {
+            pool.innerHTML=''; answerBox.innerHTML='';
+            shuffled.forEach(w => {
+                let c = document.createElement('span'); c.className='word-chip'; c.innerText=w;
+                c.onclick = () => { selectedWords.push(w); shuffled = shuffled.filter(x=>x!==w); renderWords(); }
+                pool.appendChild(c);
+            });
+            selectedWords.forEach(w => {
+                let c = document.createElement('span'); c.className='word-chip'; c.innerText=w; c.style.background='#4caf50';
+                c.onclick = () => { shuffled.push(w); selectedWords = selectedWords.filter(x=>x!==w); renderWords(); }
+                answerBox.appendChild(c);
+            });
             
-            syncDataToGAS('saveKonten', payload);
-            closeModal('modal-form-konten');
-            renderAdminKonten();
-            updateStats();
-        }
-
-        // --- ADMIN: KONTRIBUTOR ---
-        function renderAdminKontributor() {
-            const tbody = document.getElementById('table-kontributor');
-            tbody.innerHTML = '';
-            state.contributors.forEach(c => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-neutral-700/50">
-                        <td class="px-4 py-3 font-semibold">${c.name}</td>
-                        <td class="px-4 py-3">${c.instansi}</td>
-                        <td class="px-4 py-3">${c.provinsi}</td>
-                        <td class="px-4 py-3 text-right">
-                            <button onclick="editKontributor('${c.id}')" class="text-blue-400 hover:text-blue-300 mr-2 text-sm">Edit</button>
-                            <button onclick="deleteItem('contributors', '${c.id}')" class="text-red-400 hover:text-red-300 text-sm">Hapus</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function resetKontributorForm() {
-            document.getElementById('form-title-kontributor').innerText = "Tambah Kontributor";
-            document.getElementById('form-kontrib-id').value = '';
-            ['name', 'instansi', 'provinsi', 'jabatan', 'img'].forEach(id => document.getElementById(`form-kontrib-${id}`).value = '');
-        }
-
-        function editKontributor(id) {
-            const c = state.contributors.find(x => x.id === id);
-            if(!c) return;
-            document.getElementById('form-title-kontributor').innerText = "Edit Kontributor";
-            document.getElementById('form-kontrib-id').value = c.id;
-            document.getElementById('form-kontrib-name').value = c.name;
-            document.getElementById('form-kontrib-instansi').value = c.instansi;
-            document.getElementById('form-kontrib-provinsi').value = c.provinsi;
-            document.getElementById('form-kontrib-jabatan').value = c.jabatan;
-            document.getElementById('form-kontrib-img').value = c.profileLink || '';
-            openModal('modal-form-kontributor');
-        }
-
-        function saveKontributor() {
-            const id = document.getElementById('form-kontrib-id').value || 'c' + Date.now();
-            const payload = {
-                id: id,
-                name: document.getElementById('form-kontrib-name').value,
-                instansi: document.getElementById('form-kontrib-instansi').value,
-                provinsi: document.getElementById('form-kontrib-provinsi').value,
-                jabatan: document.getElementById('form-kontrib-jabatan').value,
-                profileLink: document.getElementById('form-kontrib-img').value,
-                points: 0
-            };
-
-            const idx = state.contributors.findIndex(x => x.id === id);
-            if(idx >= 0) {
-                payload.points = state.contributors[idx].points;
-                state.contributors[idx] = payload;
-            } else {
-                state.contributors.push(payload);
+            // Cek Jawaban
+            if(shuffled.length === 0) {
+                let guess = selectedWords.join(" ");
+                let submitBtn = document.createElement('button'); submitBtn.className='q-btn'; submitBtn.innerText="Cek Jawaban"; submitBtn.style.width="100%"; submitBtn.style.marginTop="10px";
+                submitBtn.onclick = () => handleQuizAnswer(guess === currentQuizData.ans);
+                answerBox.appendChild(submitBtn);
             }
-
-            syncDataToGAS('saveKontributor', payload);
-            closeModal('modal-form-kontributor');
-            renderAdminKontributor();
-            updateAdminDropdowns();
-            updateStats();
         }
-
-        // --- ADMIN: TESTIMONI ---
-        function renderAdminTestimoni() {
-            const tbody = document.getElementById('table-testimoni');
-            tbody.innerHTML = '';
-            state.testimonials.forEach(t => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-neutral-700/50">
-                        <td class="px-4 py-3 font-semibold">${t.name} <br><span class="text-xs text-neutral-500">${t.role}</span></td>
-                        <td class="px-4 py-3 text-sm max-w-xs truncate">${t.message}</td>
-                        <td class="px-4 py-3 text-right">
-                            <button onclick="deleteItem('testimonials', '${t.id}')" class="text-red-400 hover:text-red-300 text-sm">Hapus</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        // --- ADMIN: LOVE ---
-        function renderAdminLove() {
-            const tbody = document.getElementById('table-love');
-            tbody.innerHTML = '';
-            // Sort by highest love for admin view
-            [...state.contents].sort((a,b) => b.loves - a.loves).forEach(c => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-neutral-700/50">
-                        <td class="px-4 py-3 font-semibold">${c.title}</td>
-                        <td class="px-4 py-3 text-pink-400 font-bold">${c.loves} ❤️</td>
-                        <td class="px-4 py-3 text-right">
-                            <button onclick="resetLove('${c.id}')" class="text-amber-400 hover:text-amber-300 text-sm">Reset 0</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function resetLove(id) {
-            if(confirm("Yakin mereset Love konten ini ke 0?")) {
-                const c = state.contents.find(x => x.id === id);
-                if(c) c.loves = 0;
-                renderAdminLove();
+        renderWords();
+        area.appendChild(document.createElement('p')).innerText="Ketuk kata untuk menyusun kalimat:";
+        area.appendChild(answerBox); area.appendChild(pool);
+    }
+    else if (currentLevel === 3) { // Drag & Drop (Match Pairs for mobile)
+        area.className = 'match-container';
+        let colLeft = document.createElement('div'); colLeft.className = 'match-col';
+        let colRight = document.createElement('div'); colRight.className = 'match-col';
+        
+        let leftItems = currentQuizData.pairs.map(p=>p.l).sort(()=>Math.random()-0.5);
+        let rightItems = currentQuizData.pairs.map(p=>p.r).sort(()=>Math.random()-0.5);
+        
+        let selLeft = null, selRight = null; let matchedCount = 0;
+        
+        function checkMatch() {
+            if(selLeft && selRight) {
+                let isMatch = currentQuizData.pairs.some(p => p.l === selLeft.innerText && p.r === selRight.innerText);
+                if(isMatch) {
+                    selLeft.classList.add('matched'); selRight.classList.add('matched');
+                    selLeft.classList.remove('selected'); selRight.classList.remove('selected');
+                    matchedCount++;
+                    if(matchedCount === currentQuizData.pairs.length) handleQuizAnswer(true);
+                } else {
+                    selLeft.classList.remove('selected'); selRight.classList.remove('selected');
+                    // Shake effect or sound (skip for brevity, just reset)
+                }
+                selLeft = null; selRight = null;
             }
         }
 
-        // --- ADMIN: LAPORAN ---
-        function renderAdminLaporan() {
-            const tbody = document.getElementById('table-laporan');
-            tbody.innerHTML = '';
-            state.reports.forEach(r => {
-                const c = state.contents.find(x => x.id === r.contentId);
-                const cTitle = c ? c.title : 'Konten terhapus';
-                tbody.innerHTML += `
-                    <tr class="hover:bg-neutral-700/50">
-                        <td class="px-4 py-3 text-xs whitespace-nowrap">${r.date}</td>
-                        <td class="px-4 py-3 font-semibold">${r.reporterName} <br><span class="text-xs text-neutral-500">${r.reporterOrigin}</span></td>
-                        <td class="px-4 py-3 text-amber-400 text-sm">${cTitle}</td>
-                        <td class="px-4 py-3 text-sm text-white/80">${r.reason}</td>
-                        <td class="px-4 py-3 text-right">
-                            <button onclick="deleteItem('reports', '${r.id}')" class="text-red-400 hover:text-red-300 text-sm">Hapus</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            if(state.reports.length === 0) tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-neutral-500">Belum ada laporan.</td></tr>`;
-        }
+        leftItems.forEach(txt => {
+            let div = document.createElement('div'); div.className='match-item'; div.innerText=txt;
+            div.onclick = () => { if(div.classList.contains('matched')) return;
+                Array.from(colLeft.children).forEach(c=>c.classList.remove('selected'));
+                div.classList.add('selected'); selLeft = div; checkMatch();
+            }; colLeft.appendChild(div);
+        });
+        rightItems.forEach(txt => {
+            let div = document.createElement('div'); div.className='match-item'; div.innerText=txt;
+            div.onclick = () => { if(div.classList.contains('matched')) return;
+                Array.from(colRight.children).forEach(c=>c.classList.remove('selected'));
+                div.classList.add('selected'); selRight = div; checkMatch();
+            }; colRight.appendChild(div);
+        });
+        
+        area.appendChild(colLeft); area.appendChild(colRight);
+        let inst = document.createElement('p'); inst.innerText="Pilih pasangan yang tepat!"; inst.style.gridColumn="1/-1"; inst.style.textAlign="center";
+        area.insertBefore(inst, colLeft);
+    }
+    
+    document.getElementById('quiz-modal').classList.remove('hidden');
+}
 
-        // --- GLOBAL DELETE ACTION ---
-        function deleteItem(collection, id) {
-            if(confirm('Yakin ingin menghapus data ini?')) {
-                state[collection] = state[collection].filter(x => x.id !== id);
-                
-                // Re-render appropriate view
-                if(collection === 'contents') renderAdminKonten();
-                if(collection === 'contributors') renderAdminKontributor();
-                if(collection === 'testimonials') renderAdminTestimoni();
-                if(collection === 'reports') renderAdminLaporan();
-                
-                updateStats();
-                syncDataToGAS('delete', { collection, id });
-            }
-        }
+function handleQuizAnswer(isCorrect) {
+    let fb = document.getElementById('quiz-feedback');
+    fb.style.display = 'block';
+    if(isCorrect) {
+        fb.style.color = '#4caf50'; fb.innerText = 'Jawaban Benar! +300 Poin'; playSound('jump'); addScore(300);
+        setTimeout(() => {
+            document.getElementById('quiz-modal').classList.add('hidden');
+            gameState = 'playing';
+        }, 1000);
+    } else {
+        fb.style.color = '#e52521'; fb.innerText = 'Jawaban Salah! Coba pikirkan lagi.'; playSound('bump');
+        // Beri pinalti skor? Biarkan saja untuk game edukasi agar tidak frustrasi
+    }
+}
 
-        // ================= GOOGLE APPS SCRIPT SYNC (Dummy/Wrapper) =================
-        function syncDataToGAS(action, payload) {
-            console.log(`📡 Sinkronisasi ke GAS [${action}]:`, payload);
+
+/** ==============================
+ * GAME LOOP & RENDERING
+ * ============================== */
+function update() {
+    if (gameState !== 'playing') return;
+
+    player.update();
+    
+    // Camera follow player (center)
+    let targetCamX = player.x - canvas.width / 2 + player.width / 2;
+    if(targetCamX < 0) targetCamX = 0;
+    if(targetCamX > (mapWidth * TILE_SIZE) - canvas.width) targetCamX = (mapWidth * TILE_SIZE) - canvas.width;
+    camera.x += (targetCamX - camera.x) * 0.1;
+
+    blocks.forEach(b => b.update());
+    items.forEach(i => i.update());
+    items = items.filter(i => i.active);
+    enemies.forEach(e => e.update());
+    particles.forEach(p => p.update());
+    particles = particles.filter(p => p.life > 0);
+    floatingTexts.forEach(t => t.update());
+    floatingTexts = floatingTexts.filter(t => t.life > 0);
+
+    // Coins
+    coins.forEach(c => {
+        if(!c.collected && player.x < c.x+10 && player.x+player.width > c.x-10 && player.y < c.y+10 && player.y+player.height > c.y-10) {
+            c.collected = true; addScore(10); playSound('coin');
+            particles.push(new Particle(c.x, c.y, '#FFD700', true));
+        }
+    });
+
+    // Cek Flag (Finish Level)
+    flags.forEach(f => {
+        if(player.x < f.x+f.width && player.x+player.width > f.x && player.y < f.y+f.height && player.y+player.height > f.y) {
+            if(!player.dead) levelComplete();
+        }
+    });
+
+    frameCount++;
+}
+
+function draw() {
+    // Sky gradient
+    let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    grad.addColorStop(0, '#5c94fc'); grad.addColorStop(1, '#a0c4ff');
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (gameState === 'login' || gameState === 'menu') return;
+
+    scenery.forEach(s => s.draw());
+    pipes.forEach(p => {
+        ctx.fillStyle = '#00dd00'; ctx.fillRect(p.x - camera.x, p.y - camera.y + groundOffset, p.width, p.height);
+        ctx.strokeStyle = '#000'; ctx.lineWidth=2; ctx.strokeRect(p.x - camera.x, p.y - camera.y + groundOffset, p.width, p.height);
+        ctx.fillRect(p.x - camera.x - 5, p.y - camera.y + groundOffset, p.width+10, 20); ctx.strokeRect(p.x - camera.x - 5, p.y - camera.y + groundOffset, p.width+10, 20);
+    });
+    
+    flags.forEach(f => {
+        ctx.fillStyle = '#fff'; ctx.fillRect(f.x - camera.x, f.y - camera.y + groundOffset, 4, f.height); // Tiang
+        if (assets.flag.complete && assets.flag.naturalWidth > 0) {
+            ctx.drawImage(assets.flag, f.x - camera.x, f.y - camera.y + groundOffset, 40, 40); // Bendera
+        } else {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(f.x - camera.x, f.y - camera.y + groundOffset, 30, 20);
+        }
+    });
+
+    coins.forEach(c => {
+        if(!c.collected) {
+            ctx.fillStyle='#FFD700'; ctx.beginPath(); ctx.arc(c.x-camera.x, c.y-camera.y+groundOffset, 8, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle='#B8860B'; ctx.lineWidth=2; ctx.stroke();
+        }
+    });
+
+    blocks.forEach(b => b.draw());
+    items.forEach(i => i.draw());
+    enemies.forEach(e => e.draw());
+    player.draw();
+    particles.forEach(p => p.draw());
+    floatingTexts.forEach(t => t.draw());
+    
+    // Debug hitbox
+    // ctx.strokeStyle='red'; ctx.strokeRect(player.x-camera.x, player.y-camera.y+groundOffset, player.width, player.height);
+}
+
+function gameLoop() {
+    update(); draw(); requestID = requestAnimationFrame(gameLoop);
+}
+
+/** ==============================
+ * FLOW CONTROL
+ * ============================== */
+document.getElementById('login-submit-btn').addEventListener('click', () => {
+    let n = document.getElementById('player-name').value.trim();
+    let s = document.getElementById('player-school').value.trim();
+    if(n==='' || s==='') { document.getElementById('login-error').style.display='block'; return; }
+    
+    currentPlayer.name = n; currentPlayer.school = s;
+    document.getElementById('welcome-name').innerText = n;
+    document.getElementById('login-menu').classList.add('hidden');
+    document.getElementById('main-menu').classList.remove('hidden');
+    initAudio(); // Initialize audio context on first interaction
+});
+
+document.getElementById('start-btn').addEventListener('click', () => {
+    document.getElementById('main-menu').classList.add('hidden');
+    document.getElementById('hud').classList.remove('hidden');
+    document.getElementById('touch-controls').classList.remove('hidden');
+    startGame();
+});
+
+function startGame() {
+    score = 0; lives = 3; currentLevel = 1; currentQuizIndex = 0;
+    updateHUD(); loadMap(currentLevel); gameState = 'playing'; playBGM();
+    if(!requestID) gameLoop();
+}
+
+function resetLevel() {
+    loadMap(currentLevel); player.dead = false; gameState = 'playing'; playBGM();
+}
+
+function levelComplete() {
+    gameState = 'transition'; stopBGM(); playSound('win');
+    score += (lives * 500); // Bonus nyawa
+    updateHUD();
+    
+    let tOverlay = document.getElementById('transition-overlay');
+    document.getElementById('trans-title').innerText = "Hebat!";
+    document.getElementById('trans-desc').innerText = `Kamu berhasil menyelesaikan Level ${currentLevel}\nSkor: ${score}`;
+    let btn = document.getElementById('trans-btn');
+    
+    tOverlay.classList.remove('hidden');
+    
+    btn.onclick = () => {
+        tOverlay.classList.add('hidden');
+        currentLevel++;
+        if(currentLevel > Object.keys(puasaQuizzes).length) {
+            finishGame();
+        } else {
+            updateHUD(); loadMap(currentLevel); gameState = 'playing'; playBGM();
+        }
+    };
+}
+
+function gameOver() {
+    gameState = 'dead'; stopBGM();
+    let tOverlay = document.getElementById('transition-overlay');
+    document.getElementById('trans-title').innerText = "Game Over!";
+    document.getElementById('trans-title').style.color = "#e52521";
+    document.getElementById('trans-desc').innerText = "Jangan menyerah, coba lagi!";
+    let btn = document.getElementById('trans-btn');
+    btn.innerText = "Kirim Skor & Kembali";
+    tOverlay.classList.remove('hidden');
+    
+    btn.onclick = () => { tOverlay.classList.add('hidden'); submitScore(); };
+}
+
+function finishGame() {
+    gameState = 'dead'; stopBGM();
+    let tOverlay = document.getElementById('transition-overlay');
+    document.getElementById('trans-title').innerText = "TAMAT!";
+    document.getElementById('trans-title').style.color = "#4caf50";
+    document.getElementById('trans-desc').innerText = `Luar Biasa!\nSkor Akhir: ${score}`;
+    let btn = document.getElementById('trans-btn');
+    btn.innerText = "Kirim Skor ke Leaderboard";
+    tOverlay.classList.remove('hidden');
+    
+    btn.onclick = () => { tOverlay.classList.add('hidden'); submitScore(); };
+}
+
+/** ==============================
+ * INPUT HANDLING
+ * ============================== */
+window.addEventListener('keydown', e => {
+    if(e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+    if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+    if(e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') keys.jump = true;
+    if(e.key === 'ArrowDown' || e.key === 's') keys.down = true;
+});
+window.addEventListener('keyup', e => {
+    if(e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+    if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+    if(e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') keys.jump = false;
+    if(e.key === 'ArrowDown' || e.key === 's') keys.down = false;
+});
+
+function setupTouch(id, keyStr) {
+    let el = document.getElementById(id);
+    el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyStr] = true; });
+    el.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyStr] = false; });
+}
+setupTouch('t-left', 'left');
+setupTouch('t-right', 'right');
+setupTouch('t-jump', 'jump');
+setupTouch('t-down', 'down');
+
+// Cegah double tap zoom di mobile
+document.addEventListener('dblclick', function(event) { event.preventDefault(); }, { passive: false });
+
+/** ==============================
+ * LEADERBOARD (Google Apps Script)
+ * ============================== */
+function submitScore() {
+    document.getElementById('hud').classList.add('hidden');
+    document.getElementById('touch-controls').classList.add('hidden');
+    document.getElementById('main-menu').classList.remove('hidden');
+    
+    if(score === 0) return; // Jgn kirim kalo 0
+    let url = `${GAS_URL}?action=insert&nama=${encodeURIComponent(currentPlayer.name)}&sekolah=${encodeURIComponent(currentPlayer.school)}&skor=${score}`;
+    
+    // Silently send
+    fetch(url).catch(e=>console.log("GAS Post Error", e));
+}
+
+document.getElementById('btn-show-lb').addEventListener('click', loadLeaderboard);
+document.getElementById('btn-close-lb').addEventListener('click', () => { document.getElementById('leaderboard-modal').classList.add('hidden'); });
+
+function loadLeaderboard() {
+    document.getElementById('leaderboard-modal').classList.remove('hidden');
+    let loading = document.getElementById('lb-loading');
+    let podium = document.getElementById('podium-container');
+    let list = document.getElementById('lb-list');
+    
+    loading.style.display = 'block'; podium.classList.add('hidden'); list.classList.add('hidden'); list.innerHTML='';
+    
+    fetch(`${GAS_URL}?action=read`)
+        .then(res => res.json())
+        .then(data => {
+            loading.style.display = 'none';
+            if(!data || data.length === 0) { loading.style.display='block'; loading.innerText="Belum ada data."; return; }
             
-            // Menggunakan mode no-cors jika GAS belum dikonfigurasi CORS (preflight handling)
-            // Catatan: response akan opaque jika no-cors, jadi kita tidak bisa baca body response
-            // Tapi data akan terkirim. Local state tetap terupdate sehingga UI tidak freeze.
-            fetch(GAS_URL, {
-                method: 'POST',
-                mode: 'no-cors', 
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: action, data: payload })
-            }).catch(e => {
-                console.error("Gagal sinkronisasi dengan GAS (Normal jika mode dev lokal/CORS strict):", e);
-            });
-        }
+            // Sort Descending
+            data.sort((a,b) => parseInt(b.skor) - parseInt(a.skor));
+            
+            // Podium
+            if(data[0]) { document.getElementById('pod-1-name').innerText = data[0].nama; document.getElementById('pod-1-score').innerText = data[0].skor; }
+            if(data[1]) { document.getElementById('pod-2-name').innerText = data[1].nama; document.getElementById('pod-2-score').innerText = data[1].skor; }
+            if(data[2]) { document.getElementById('pod-3-name').innerText = data[2].nama; document.getElementById('pod-3-score').innerText = data[2].skor; }
+            podium.classList.remove('hidden');
+            
+            // List sisa
+            if(data.length > 3) {
+                list.classList.remove('hidden');
+                for(let i=3; i<Math.min(13, data.length); i++) {
+                    let r = document.createElement('div'); r.className='lb-row';
+                    r.innerHTML = `<span>${i+1}. ${data[i].nama} (${data[i].sekolah})</span> <span>${data[i].skor}</span>`;
+                    list.appendChild(r);
+                }
+            }
+        })
+        .catch(e => {
+            loading.innerText = "Gagal memuat papan skor.";
+        });
+}
 
-        // Start Application
-        init();
+// Initial draw start
+draw();
 
-    </script>
+</script>
 </body>
 </html>
