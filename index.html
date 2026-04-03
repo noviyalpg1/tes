@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Petualangan Fikih</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
@@ -11,15 +11,41 @@
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: #000; overflow: hidden;
             font-family: 'Fredoka One', cursive, sans-serif;
-            touch-action: none; user-select: none; -webkit-user-select: none;
         }
 
-        #game-container {
-            position: relative; width: 100vw; height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-            background-color: #5c94fc; overflow: hidden;
+        /* --- FORCED LANDSCAPE WARNING --- */
+        #portrait-warning {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #e52521; color: white; z-index: 999999;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 20px; box-sizing: border-box;
         }
-        canvas { display: block; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+        #portrait-warning h1 { font-size: 30px; margin-bottom: 10px; text-shadow: 2px 2px 0px #000; }
+        #portrait-warning p { font-family: sans-serif; font-size: 18px; line-height: 1.5; font-weight: bold;}
+        .rotate-icon { font-size: 60px; animation: spin 2s infinite ease-in-out; margin-bottom: 20px;}
+        
+        @media screen and (orientation: portrait) { 
+            #portrait-warning { display: flex !important; } 
+            #game-container { display: none !important; }
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } 100% { transform: rotate(0deg); } }
+
+        /* --- GAME CONTAINER & SCALABLE WRAPPER --- */
+        #game-container {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background-color: #000; overflow: auto;
+        }
+        
+        #game-wrapper {
+            position: relative; 
+            width: 1280px; height: 720px; 
+            background-color: #5c94fc; 
+            transform-origin: center center;
+            overflow: hidden;
+        }
+
+        canvas { display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
 
         /* --- UI OVERLAYS --- */
         .overlay {
@@ -35,20 +61,25 @@
             background-size: cover; background-color: #5c94fc; 
         }
 
-        /* Login & Boxes */
-        .box-ui {
-            background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 20px; text-align: center;
-            width: 80%; max-width: 400px; border: 5px solid #fbd000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        /* Prevent touch action only on interactive UI elements to allow native zooming elsewhere */
+        #touch-controls, #hud, .box-ui {
+            touch-action: none; user-select: none; -webkit-user-select: none;
         }
-        .box-ui h2 { color: #e52521; margin-top: 0; font-size: 28px; }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; font-size: 14px; color: #333; margin-bottom: 5px; font-family: sans-serif; font-weight: bold;}
+
+        /* Login & Boxes (Upscaled for 720p Canvas) */
+        .box-ui {
+            background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px; text-align: center;
+            width: 80%; max-width: 600px; border: 6px solid #fbd000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .box-ui h2 { color: #e52521; margin-top: 0; font-size: 38px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; font-size: 20px; color: #333; margin-bottom: 8px; font-family: sans-serif; font-weight: bold;}
         .input-field {
-            width: 100%; padding: 12px; border: 3px solid #ccc; border-radius: 10px;
-            font-size: 16px; font-family: sans-serif; box-sizing: border-box; outline: none;
+            width: 100%; padding: 15px; border: 4px solid #ccc; border-radius: 12px;
+            font-size: 22px; font-family: sans-serif; box-sizing: border-box; outline: none;
         }
         .input-field:focus { border-color: #4caf50; }
-        .error-text { color: #e52521; font-family: sans-serif; font-size: 14px; margin-bottom: 15px; display: none; font-weight: bold;}
+        .error-text { color: #e52521; font-family: sans-serif; font-size: 18px; margin-bottom: 15px; display: none; font-weight: bold;}
 
         /* Main Menu */
         #title-img {
@@ -57,261 +88,235 @@
         }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
         .small-title {
-            font-size: 28px; color: #FFFF00; margin-top: -10px; margin-bottom: 20px; letter-spacing: 2px; text-align: center;
-            text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 0 15px rgba(255, 255, 255, 1); 
+            font-size: 40px; color: #FFFF00; margin-top: -10px; margin-bottom: 30px; letter-spacing: 2px; text-align: center;
+            text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 0 20px rgba(255, 255, 255, 1); 
             position: relative; z-index: 2;
         }
         
         .btn {
-            background: #e52521; color: white; border: 4px solid #fff; padding: 12px 30px; font-size: 20px; font-family: inherit;
-            border-radius: 30px; cursor: pointer; transition: transform 0.1s; width: 100%; box-sizing: border-box; text-align: center;
-            box-shadow: 0 5px 0 #8a0000, 0 0 20px rgba(255, 255, 255, 0.8); margin-bottom: 10px;
+            background: #e52521; color: white; border: 5px solid #fff; padding: 18px 40px; font-size: 28px; font-family: inherit;
+            border-radius: 40px; cursor: pointer; transition: transform 0.1s; width: 100%; box-sizing: border-box; text-align: center;
+            box-shadow: 0 6px 0 #8a0000, 0 0 20px rgba(255, 255, 255, 0.8); margin-bottom: 15px;
         }
-        .btn:active { transform: translateY(5px); box-shadow: 0 0 0 #8a0000; }
-        .btn-blue { background: #2196F3; box-shadow: 0 5px 0 #0b7dda, 0 0 20px rgba(255, 255, 255, 0.8); }
+        .btn:active { transform: translateY(6px); box-shadow: 0 0 0 #8a0000; }
+        .btn-blue { background: #2196F3; box-shadow: 0 6px 0 #0b7dda, 0 0 20px rgba(255, 255, 255, 0.8); }
         .btn-blue:active { box-shadow: 0 0 0 #0b7dda; }
 
         /* HUD */
-        #hud { position: absolute; top: 10px; left: 15px; right: 15px; display: flex; justify-content: space-between; pointer-events: none; z-index: 50; }
+        #hud { position: absolute; top: 20px; left: 25px; right: 25px; display: flex; justify-content: space-between; pointer-events: none; z-index: 50; }
         .stats {
-            background: rgba(0, 0, 0, 0.6); color: white; padding: 8px 15px; border-radius: 15px; font-size: 16px; 
-            border: 2px solid #fff; text-shadow: 1px 1px 0 #000; display: flex; gap: 8px; align-items: center;
+            background: rgba(0, 0, 0, 0.6); color: white; padding: 10px 25px; border-radius: 20px; font-size: 24px; 
+            border: 3px solid #fff; text-shadow: 2px 2px 0 #000; display: flex; gap: 12px; align-items: center;
         }
-        .coin-icon { display: inline-block; width: 12px; height: 16px; background: #fbd000; border: 2px solid #fff; border-radius: 50%; position: relative;}
-        .top-buttons { display: flex; gap: 10px; pointer-events: auto; }
+        .coin-icon { display: inline-block; width: 18px; height: 24px; background: #fbd000; border: 3px solid #fff; border-radius: 50%; position: relative;}
+        .top-buttons { display: flex; gap: 15px; pointer-events: auto; }
         .hud-btn {
-            background: #fbd000; color: #d13a00; border: 3px solid #fff; padding: 8px 12px; font-size: 16px; 
-            border-radius: 15px; cursor: pointer; box-shadow: 0 4px 0 #c28700; font-family: inherit;
+            background: #fbd000; color: #d13a00; border: 4px solid #fff; padding: 12px 20px; font-size: 24px; 
+            border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 #c28700; font-family: inherit;
         }
-        .hud-btn.active-bgm { background: #4caf50; color: white; box-shadow: 0 4px 0 #2e7d32; }
-        .hud-btn:active { transform: translateY(4px); box-shadow: none; }
+        .hud-btn.active-bgm { background: #4caf50; color: white; box-shadow: 0 5px 0 #2e7d32; }
+        .hud-btn:active { transform: translateY(5px); box-shadow: none; }
 
-        /* Touch Controls (Default/Landscape) */
+        /* Touch Controls (Upscaled for wrapper) */
         #touch-controls { 
-            position: absolute; bottom: 15px; left: 0; width: 100%; height: 100px; 
-            display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; pointer-events: none; z-index: 50; 
+            position: absolute; bottom: 25px; left: 0; width: 100%; height: 130px; 
+            display: flex; justify-content: space-between; padding: 0 40px; box-sizing: border-box; pointer-events: none; z-index: 50; 
         }
-        .touch-group { display: flex; gap: 15px; align-items: flex-end; pointer-events: auto; }
+        .touch-group { display: flex; gap: 20px; align-items: flex-end; pointer-events: auto; }
         .t-btn { 
-            width: 70px; height: 70px; background: rgba(255, 255, 255, 0.4); border: 4px solid rgba(255, 255, 255, 0.8); 
-            border-radius: 50%; color: #000; font-size: 14px; font-weight: bold; display: flex; justify-content: center; align-items: center; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px #fff; user-select: none; cursor: pointer;
+            width: 100px; height: 100px; background: rgba(255, 255, 255, 0.4); border: 5px solid rgba(255, 255, 255, 0.8); 
+            border-radius: 50%; color: #000; font-size: 20px; font-weight: bold; display: flex; justify-content: center; align-items: center; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px #fff; user-select: none; cursor: pointer;
         }
         .t-btn:active { background: rgba(255, 255, 255, 0.8); transform: scale(0.95); }
-        .t-btn-jump { width: 85px; height: 85px; background: rgba(229, 37, 33, 0.6); color: white; font-size: 16px; border-color: #ffcccc; text-shadow: 1px 1px 2px #000;}
+        .t-btn-jump { width: 120px; height: 120px; background: rgba(229, 37, 33, 0.6); color: white; font-size: 24px; border-color: #ffcccc; text-shadow: 1px 1px 2px #000;}
         .t-btn-jump:active { background: rgba(229, 37, 33, 1); }
         
-        #t-down { height: 55px; margin-bottom: 5px; }
-
-        /* Teks Tombol Pendek & Panjang */
-        .short { display: none; }
-        .long { display: block; }
-
-        /* --- RESPONSIVITAS HP POTRET --- */
-        @media screen and (orientation: portrait) {
-            #game-container { flex-direction: column; justify-content: flex-start; }
-            canvas { flex: 1; height: auto !important; } 
-            
-            #touch-controls { 
-                position: relative !important; bottom: auto !important; left: auto !important; 
-                width: 100% !important; height: 30vh !important; flex: 0 0 30vh !important;
-                background: #111; padding: 0 20px !important; 
-                align-items: center !important; pointer-events: auto !important;
-            }
-            .touch-group { gap: 15px !important; align-items: center !important; margin-bottom: 0 !important; }
-            .t-btn { width: 65px !important; height: 65px !important; border-width: 3px !important; margin: 0 !important; }
-            .t-btn-jump { width: 85px !important; height: 85px !important; }
-            #t-down { height: 65px !important; margin-bottom: 0 !important; }
-            
-            .long { display: none !important; }
-            .short { display: block !important; font-size: 30px; font-weight: normal; }
-
-            .box-ui { padding: 20px; width: 90%; max-height: 85vh; overflow-y: auto; }
-            #title-img { max-width: 90%; margin-top: 5vh; }
-            
-            #hud { top: 5px; left: 5px; right: 5px; }
-            .stats { font-size: 12px; padding: 5px 10px; gap: 5px;}
-            .top-buttons { gap: 5px; }
-            .hud-btn { padding: 5px 8px; font-size: 14px; }
-        }
+        #t-down { height: 80px; margin-bottom: 5px; }
 
         /* Quiz Box */
-        .quiz-box { max-width: 600px; width: 90%; font-family: sans-serif; pointer-events: auto; max-height: 90vh; overflow-y: auto;}
-        .quiz-box h2 { font-family: 'Fredoka One'; margin-bottom: 5px;}
-        .quiz-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
-        .q-btn { background: #4caf50; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #2e7d32;}
-        .q-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #2e7d32; }
+        .quiz-box { max-width: 800px; width: 90%; font-family: sans-serif; pointer-events: auto; max-height: 90vh; overflow-y: auto;}
+        .quiz-box h2 { font-family: 'Fredoka One'; margin-bottom: 10px; font-size: 32px;}
+        .quiz-options { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        .q-btn { background: #4caf50; color: white; border: none; padding: 15px; font-size: 20px; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #2e7d32;}
+        .q-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #2e7d32; }
 
-        /* Kuis Susun Kata (Lv 2) & Drag Drop (Lv 3) */
-        .word-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 15px; min-height: 50px; padding: 10px; background: #eee; border-radius: 10px;}
-        .word-chip { background: #2196F3; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 0 #0b7dda;}
-        .word-chip:active { transform: translateY(2px); box-shadow: 0 1px 0 #0b7dda;}
-        .match-container { display: flex; justify-content: space-between; gap: 10px; text-align: left; }
-        .match-col { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        .match-item { background: #f9f9f9; border: 2px solid #ccc; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: center; transition: all 0.2s;}
+        /* Kuis Susun Kata & Drag Drop */
+        .word-pool { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 20px; min-height: 60px; padding: 15px; background: #eee; border-radius: 12px;}
+        .word-chip { background: #2196F3; color: white; padding: 12px 20px; border-radius: 25px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #0b7dda;}
+        .word-chip:active { transform: translateY(4px); box-shadow: 0 0 0 #0b7dda;}
+        .match-container { display: flex; justify-content: space-between; gap: 15px; text-align: left; }
+        .match-col { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .match-item { background: #f9f9f9; border: 3px solid #ccc; padding: 15px; border-radius: 10px; cursor: pointer; font-size: 18px; text-align: center; transition: all 0.2s;}
         .match-item.selected { border-color: #2196F3; background: #e3f2fd; transform: scale(1.05); }
         .match-item.matched { background: #c8e6c9; border-color: #4caf50; pointer-events: none; color: #2e7d32;}
 
         /* Materi Modal */
         #materi-content {
-            background: #fff; border-radius: 15px; padding: 20px; text-align: left; font-family: sans-serif;
-            height: 60vh; overflow-y: auto; border: 3px solid #2196F3; margin-bottom: 15px; font-size: 15px; line-height: 1.6;
+            background: #fff; border-radius: 15px; padding: 25px; text-align: left; font-family: sans-serif;
+            height: 50vh; overflow-y: auto; border: 4px solid #2196F3; margin-bottom: 20px; font-size: 20px; line-height: 1.6;
         }
-        #materi-content h3 { color: #e52521; border-bottom: 2px solid #fbd000; padding-bottom: 5px; margin-top: 20px;}
-        #materi-content ul { padding-left: 20px; }
+        #materi-content h3 { color: #e52521; border-bottom: 3px solid #fbd000; padding-bottom: 8px; margin-top: 25px;}
+        #materi-content ul { padding-left: 25px; }
 
         /* Leaderboard */
-        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 20px 0; height: 120px; font-family: sans-serif;}
-        .podium { width: 30%; text-align: center; border-radius: 10px 10px 0 0; color: white; font-weight: bold; padding-top: 10px; position: relative;}
-        .podium .name { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; position: absolute; top: -20px; left: 0; width: 100%; color:#333;}
-        .p1 { height: 100px; background: #FFD700; }
-        .p2 { height: 75px; background: #C0C0C0; }
-        .p3 { height: 50px; background: #cd7f32; }
-        .lb-list { max-height: 150px; overflow-y: auto; text-align: left; font-family: sans-serif; border: 2px solid #eee; padding: 10px; border-radius: 10px;}
-        .lb-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; font-size: 14px;}
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 30px 0; height: 160px; font-family: sans-serif;}
+        .podium { width: 30%; text-align: center; border-radius: 15px 15px 0 0; color: white; font-weight: bold; padding-top: 15px; position: relative; font-size: 20px;}
+        .podium .name { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; position: absolute; top: -30px; left: 0; width: 100%; color:#333;}
+        .p1 { height: 140px; background: #FFD700; }
+        .p2 { height: 105px; background: #C0C0C0; }
+        .p3 { height: 70px; background: #cd7f32; }
+        .lb-list { max-height: 200px; overflow-y: auto; text-align: left; font-family: sans-serif; border: 3px solid #eee; padding: 15px; border-radius: 15px;}
+        .lb-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 2px solid #eee; font-size: 18px;}
 
         /* Transition Overlays */
         #transition-overlay { background: rgba(0,0,0,0.85); flex-direction: column;}
-        #transition-overlay h1 { font-size: 40px; color: #fbd000; text-shadow: 4px 4px 0 #000; margin-bottom: 10px; text-align: center;}
-        #transition-overlay p { color: white; font-family: sans-serif; font-size: 20px; margin-bottom: 30px;}
+        #transition-overlay h1 { font-size: 60px; color: #fbd000; text-shadow: 4px 4px 0 #000; margin-bottom: 15px; text-align: center;}
+        #transition-overlay p { color: white; font-family: sans-serif; font-size: 28px; margin-bottom: 40px;}
     </style>
 </head>
 <body>
 
+<div id="portrait-warning">
+    <div class="rotate-icon">📱↻</div>
+    <h1>Putar HP Kamu!</h1>
+    <p>Game ini wajib dimainkan dalam mode mendatar (Landscape) agar seru!</p>
+</div>
+
 <div id="game-container">
-    <canvas id="gameCanvas"></canvas>
+    <div id="game-wrapper">
+        <canvas id="gameCanvas" width="1280" height="720"></canvas>
 
-    <!-- Login Menu -->
-    <div id="login-menu" class="overlay">
-        <!-- Fitur Full Screen di Login -->
-        <button id="btn-fs-login" class="hud-btn" style="position:absolute; top:15px; right:15px; background:#333; color:#fff; border-color:#fff;">⛶ Fullscreen</button>
-        
-        <div class="box-ui">
-            <h2>Masuk Dulu Yuk!</h2>
-            <div class="error-text" id="login-error">Nama dan Sekolah harus diisi!</div>
-            <div class="input-group">
-                <label>Nama Kamu:</label>
-                <input type="text" id="player-name" class="input-field" placeholder="Ketik nama di sini..." autocomplete="off">
+        <!-- Login Menu -->
+        <div id="login-menu" class="overlay">
+            <button id="btn-fs-login" class="hud-btn" style="position:absolute; top:25px; right:25px; background:#333; color:#fff; border-color:#fff;">⛶ Fullscreen</button>
+            <div class="box-ui">
+                <h2>Masuk Dulu Yuk!</h2>
+                <div class="error-text" id="login-error">Nama dan Sekolah harus diisi!</div>
+                <div class="input-group">
+                    <label>Nama Kamu:</label>
+                    <input type="text" id="player-name" class="input-field" placeholder="Ketik nama di sini..." autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label>Asal Sekolah:</label>
+                    <input type="text" id="player-school" class="input-field" placeholder="Ketik nama sekolah..." autocomplete="off">
+                </div>
+                <button class="btn btn-blue" id="login-submit-btn">Mulai Petualangan</button>
             </div>
-            <div class="input-group">
-                <label>Asal Sekolah:</label>
-                <input type="text" id="player-school" class="input-field" placeholder="Ketik nama sekolah..." autocomplete="off">
+        </div>
+
+        <!-- Main Menu -->
+        <div id="main-menu" class="overlay hidden">
+            <img id="title-img" src="https://i.imgur.com/VmSLsxs.png" alt="Petualangan Fikih">
+            <h1 class="small-title">Halo, <span id="welcome-name">Sobat</span>!</h1>
+            <div style="width: 80%; max-width: 400px;">
+                <button class="btn" id="start-btn">MAIN SEKARANG</button>
+                <button class="btn btn-blue" id="btn-show-lb">PAPAN SKOR</button>
             </div>
-            <button class="btn btn-blue" id="login-submit-btn">Mulai Petualangan</button>
         </div>
-    </div>
 
-    <!-- Main Menu -->
-    <div id="main-menu" class="overlay hidden">
-        <img id="title-img" src="https://i.imgur.com/VmSLsxs.png" alt="Petualangan Fikih">
-        <h1 class="small-title">Halo, <span id="welcome-name">Sobat</span>!</h1>
-        <div style="width: 80%; max-width: 300px;">
-            <button class="btn" id="start-btn">MAIN SEKARANG</button>
-            <button class="btn btn-blue" id="btn-show-lb">PAPAN SKOR</button>
+        <!-- HUD -->
+        <div id="hud" class="hidden">
+            <div class="stats">
+                ❤️ <span id="ui-lives">3</span> <span style="color:#aaa; margin: 0 8px;">|</span> 
+                <span class="coin-icon"></span> <span id="ui-score">0</span> <span style="color:#aaa; margin: 0 8px;">|</span> 
+                🚩 Lv <span id="ui-level">1</span> <span style="color:#aaa; margin: 0 8px;">|</span>
+                📝 Kuis: <span id="ui-quizzes">0/0</span>
+            </div>
+            <div class="top-buttons">
+                <button id="bgm-btn" class="hud-btn active-bgm" title="Suara">🎵</button>
+                <button id="fs-btn" class="hud-btn" style="background:#333; color:#fff;" title="Layar Penuh">⛶</button>
+            </div>
         </div>
-    </div>
 
-    <!-- HUD -->
-    <div id="hud" class="hidden">
-        <div class="stats">
-            ❤️ <span id="ui-lives">3</span> <span style="color:#aaa; margin: 0 5px;">|</span> 
-            <span class="coin-icon"></span> <span id="ui-score">0</span> <span style="color:#aaa; margin: 0 5px;">|</span> 
-            🚩 Lv <span id="ui-level">1</span> <span style="color:#aaa; margin: 0 5px;">|</span>
-            📝 Kuis: <span id="ui-quizzes">0/0</span>
+        <!-- Touch Controls -->
+        <div id="touch-controls" class="hidden">
+            <div class="touch-group">
+                <div class="t-btn" id="t-left">Kiri</div>
+                <div class="t-btn" id="t-down">Nunduk</div> 
+                <div class="t-btn" id="t-right">Kanan</div>
+            </div>
+            <div class="touch-group">
+                <div class="t-btn t-btn-jump" id="t-jump">Lompat</div>
+            </div>
         </div>
-        <div class="top-buttons">
-            <button id="bgm-btn" class="hud-btn active-bgm" title="Suara">🎵</button>
-            <button id="fs-btn" class="hud-btn" style="background:#333; color:#fff;" title="Layar Penuh">⛶</button>
-        </div>
-    </div>
 
-    <!-- Touch Controls -->
-    <div id="touch-controls" class="hidden">
-        <div class="touch-group">
-            <div class="t-btn" id="t-left"><span class="long">Kiri</span><span class="short">◀</span></div>
-            <div class="t-btn" id="t-down"><span class="long">Nunduk</span><span class="short">▼</span></div> 
-            <div class="t-btn" id="t-right"><span class="long">Kanan</span><span class="short">▶</span></div>
-        </div>
-        <div class="touch-group">
-            <div class="t-btn t-btn-jump" id="t-jump"><span class="long">Lompat</span><span class="short">▲</span></div>
-        </div>
-    </div>
-
-    <!-- Quiz Modal -->
-    <div id="quiz-modal" class="overlay hidden" style="background: rgba(0,0,0,0.8);">
-        <div class="box-ui quiz-box">
-            <h2 id="qz-title">Kuis (Lv. <span id="qz-lvl-text"></span>)</h2>
-            <p id="quiz-question" style="font-size: 16px; color:#333; margin-bottom: 15px; font-weight: bold;"></p>
-            
-            <!-- Area dinamis kuis -->
-            <div id="quiz-dynamic-area"></div>
-            
-            <p id="quiz-feedback" style="margin-top: 15px; font-weight: bold; display: none;"></p>
-        </div>
-    </div>
-
-    <!-- Materi Modal (Level 1 Pipe) -->
-    <div id="materi-modal" class="overlay hidden" style="background: rgba(0,0,0,0.9);">
-        <div class="box-ui" style="max-width: 800px; width: 95%;">
-            <h2>📚 Materi Puasa</h2>
-            <div id="materi-content">
-                <h3>1. Pengertian Puasa</h3>
-                <p>Secara bahasa (etimologi), puasa (Ash-Shiyam) berarti "menahan". Secara istilah (terminologi), puasa adalah menahan diri dari makan, minum, dan segala hal yang membatalkannya mulai dari terbit fajar (waktu subuh) hingga terbenam matahari (waktu magrib) disertai dengan niat karena Allah SWT.</p>
+        <!-- Quiz Modal -->
+        <div id="quiz-modal" class="overlay hidden" style="background: rgba(0,0,0,0.8);">
+            <div class="box-ui quiz-box">
+                <h2 id="qz-title">Kuis (Lv. <span id="qz-lvl-text"></span>)</h2>
+                <p id="quiz-question" style="font-size: 22px; color:#333; margin-bottom: 20px; font-weight: bold;"></p>
                 
-                <h3>2. Dasar Hukum</h3>
-                <p>Kewajiban puasa Ramadan terdapat dalam Al-Qur'an Surah Al-Baqarah ayat 183: "Hai orang-orang yang beriman, diwajibkan atas kamu berpuasa sebagaimana diwajibkan atas orang-orang sebelum kamu agar kamu bertakwa."</p>
-
-                <h3>3. Syarat Wajib & Syarat Sah</h3>
-                <ul>
-                    <li><b>Syarat Wajib:</b> Islam, Baligh (dewasa), Berakal sehat, Mampu berpuasa, Suci dari haid dan nifas (bagi wanita), Mukim (tidak sedang bepergian jauh).</li>
-                    <li><b>Syarat Sah:</b> Islam, Tamyiz (bisa membedakan baik dan buruk), Suci dari haid/nifas, Pada waktu yang diperbolehkan puasa.</li>
-                </ul>
-
-                <h3>4. Rukun Puasa</h3>
-                <ul>
-                    <li><b>Niat:</b> Disengaja dalam hati sebelum fajar untuk puasa wajib.</li>
-                    <li><b>Menahan Diri:</b> Dari segala yang membatalkan dari terbit fajar hingga terbenam matahari.</li>
-                </ul>
-
-                <h3>5. Hal yang Membatalkan & Makruh</h3>
-                <ul>
-                    <li><b>Membatalkan:</b> Makan/minum dengan sengaja, muntah disengaja, haid/nifas, murtad.</li>
-                    <li><b>Makruh (Mengurangi Pahala):</b> Berkata dusta, marah berlebihan, gosip, tidur sepanjang hari, berkumur berlebihan saat wudu.</li>
-                </ul>
-
-                <h3>6. Jenis Puasa</h3>
-                <ul>
-                    <li><b>Wajib:</b> Puasa Ramadan, Puasa Nazar, Puasa Kafarat/Denda.</li>
-                    <li><b>Sunnah:</b> Puasa Senin-Kamis, Puasa Arafah, Puasa Asyura, Puasa Syawal.</li>
-                </ul>
-
-                <h3>7. Hikmah Puasa</h3>
-                <p>Meningkatkan ketakwaan, melatih kesabaran dan pengendalian diri, menumbuhkan rasa empati kepada fakir miskin, dan menjaga kesehatan tubuh.</p>
+                <!-- Area dinamis kuis -->
+                <div id="quiz-dynamic-area"></div>
+                
+                <p id="quiz-feedback" style="margin-top: 20px; font-size:20px; font-weight: bold; display: none;"></p>
             </div>
-            <button class="btn btn-blue" id="btn-close-materi">Selesai Membaca & Kembali</button>
         </div>
-    </div>
 
-    <!-- Leaderboard Modal -->
-    <div id="leaderboard-modal" class="overlay hidden">
-        <div class="box-ui">
-            <h2>🏆 Papan Skor Peringkat</h2>
-            <div id="lb-loading">Memuat data dari server...</div>
-            <div class="podium-container hidden" id="podium-container">
-                <div class="podium p2"><div class="name" id="pod-2-name">-</div><div id="pod-2-score">-</div></div>
-                <div class="podium p1"><div class="name" id="pod-1-name">-</div><div id="pod-1-score">-</div></div>
-                <div class="podium p3"><div class="name" id="pod-3-name">-</div><div id="pod-3-score">-</div></div>
+        <!-- Materi Modal (Level 1 Pipe) -->
+        <div id="materi-modal" class="overlay hidden" style="background: rgba(0,0,0,0.9);">
+            <div class="box-ui" style="max-width: 1000px; width: 95%;">
+                <h2 style="font-size: 45px;">📚 Materi Puasa</h2>
+                <div id="materi-content">
+                    <h3>1. Pengertian Puasa</h3>
+                    <p>Secara bahasa (etimologi), puasa (Ash-Shiyam) berarti "menahan". Secara istilah (terminologi), puasa adalah menahan diri dari makan, minum, dan segala hal yang membatalkannya mulai dari terbit fajar (waktu subuh) hingga terbenam matahari (waktu magrib) disertai dengan niat karena Allah SWT.</p>
+                    
+                    <h3>2. Dasar Hukum</h3>
+                    <p>Kewajiban puasa Ramadan terdapat dalam Al-Qur'an Surah Al-Baqarah ayat 183: "Hai orang-orang yang beriman, diwajibkan atas kamu berpuasa sebagaimana diwajibkan atas orang-orang sebelum kamu agar kamu bertakwa."</p>
+
+                    <h3>3. Syarat Wajib & Syarat Sah</h3>
+                    <ul>
+                        <li><b>Syarat Wajib:</b> Islam, Baligh (dewasa), Berakal sehat, Mampu berpuasa, Suci dari haid dan nifas (bagi wanita), Mukim (tidak sedang bepergian jauh).</li>
+                        <li><b>Syarat Sah:</b> Islam, Tamyiz (bisa membedakan baik dan buruk), Suci dari haid/nifas, Pada waktu yang diperbolehkan puasa.</li>
+                    </ul>
+
+                    <h3>4. Rukun Puasa</h3>
+                    <ul>
+                        <li><b>Niat:</b> Disengaja dalam hati sebelum fajar untuk puasa wajib.</li>
+                        <li><b>Menahan Diri:</b> Dari segala yang membatalkan dari terbit fajar hingga terbenam matahari.</li>
+                    </ul>
+
+                    <h3>5. Hal yang Membatalkan & Makruh</h3>
+                    <ul>
+                        <li><b>Membatalkan:</b> Makan/minum dengan sengaja, muntah disengaja, haid/nifas, murtad.</li>
+                        <li><b>Makruh (Mengurangi Pahala):</b> Berkata dusta, marah berlebihan, gosip, tidur sepanjang hari, berkumur berlebihan saat wudu.</li>
+                    </ul>
+
+                    <h3>6. Jenis Puasa</h3>
+                    <ul>
+                        <li><b>Wajib:</b> Puasa Ramadan, Puasa Nazar, Puasa Kafarat/Denda.</li>
+                        <li><b>Sunnah:</b> Puasa Senin-Kamis, Puasa Arafah, Puasa Asyura, Puasa Syawal.</li>
+                    </ul>
+
+                    <h3>7. Hikmah Puasa</h3>
+                    <p>Meningkatkan ketakwaan, melatih kesabaran dan pengendalian diri, menumbuhkan rasa empati kepada fakir miskin, dan menjaga kesehatan tubuh.</p>
+                </div>
+                <button class="btn btn-blue" id="btn-close-materi" style="margin-top:15px;">Selesai Membaca & Kembali</button>
             </div>
-            <div class="lb-list hidden" id="lb-list"></div>
-            <button class="btn" id="btn-close-lb" style="margin-top: 15px;">Tutup</button>
         </div>
-    </div>
 
-    <!-- Transition Overlay -->
-    <div id="transition-overlay" class="overlay hidden">
-        <h1 id="trans-title">Selamat!</h1>
-        <p id="trans-desc">Kamu berhasil menyelesaikan Level 1</p>
-        <button class="btn" id="trans-btn" style="max-width:300px;">Lanjut Level 2</button>
+        <!-- Leaderboard Modal -->
+        <div id="leaderboard-modal" class="overlay hidden">
+            <div class="box-ui">
+                <h2>🏆 Papan Skor Peringkat</h2>
+                <div id="lb-loading" style="font-size:18px;">Memuat data dari server...</div>
+                <div class="podium-container hidden" id="podium-container">
+                    <div class="podium p2"><div class="name" id="pod-2-name">-</div><div id="pod-2-score">-</div></div>
+                    <div class="podium p1"><div class="name" id="pod-1-name">-</div><div id="pod-1-score">-</div></div>
+                    <div class="podium p3"><div class="name" id="pod-3-name">-</div><div id="pod-3-score">-</div></div>
+                </div>
+                <div class="lb-list hidden" id="lb-list"></div>
+                <button class="btn" id="btn-close-lb" style="margin-top: 20px;">Tutup</button>
+            </div>
+        </div>
+
+        <!-- Transition Overlay -->
+        <div id="transition-overlay" class="overlay hidden">
+            <h1 id="trans-title">Selamat!</h1>
+            <p id="trans-desc">Kamu berhasil menyelesaikan Level 1</p>
+            <button class="btn" id="trans-btn" style="max-width:400px;">Lanjut Level 2</button>
+        </div>
     </div>
 </div>
 
@@ -323,7 +328,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const GAS_URL = "https://script.google.com/macros/s/AKfycbweBUj24ZH6syZAf83BoKrzHMQ6-jUFrIVuzxs23mgx4rn3VOoRUzYvwe8MHcKBoNhF/exec";
 
-let gameState = 'login'; // login, menu, playing, transition, quiz, materi, dead
+let gameState = 'login'; 
 let requestID;
 let currentPlayer = { name: '', school: '' };
 
@@ -343,7 +348,7 @@ let blocks = []; let items = []; let enemies = []; let particles = []; let float
 let coins = []; let scenery = []; let pipes = []; let flags = [];
 
 let inSecretArea = false;
-let savedMapState = null; // Menyimpan memori saat masuk pipa
+let savedMapState = null; 
 let returnPosX = 0;
 let returnPosY = 0;
 
@@ -360,19 +365,13 @@ assets.player.crossOrigin = "Anonymous"; assets.player.src = "https://i.imgur.co
 assets.flag.crossOrigin = "Anonymous"; assets.flag.src = "https://i.imgur.com/nlCH2HZ.png";
 assets.enemy.crossOrigin = "Anonymous"; assets.enemy.src = "https://i.imgur.com/sjcux6J.png";
 
+// Responsive Scaling (Membungkus 1280x720 menjadi Auto Scale di Layar manapun)
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    let controls = document.getElementById('touch-controls');
-    let controlsVisible = controls && !controls.classList.contains('hidden');
-    
-    if (window.innerHeight > window.innerWidth && controlsVisible) {
-        canvas.height = window.innerHeight * 0.7;
-    } else {
-        canvas.height = window.innerHeight;
-    }
-    
-    groundOffset = canvas.height - (14 * TILE_SIZE) - 100;
-    if(groundOffset < 0) groundOffset = 0;
+    let wrapper = document.getElementById('game-wrapper');
+    let scaleX = window.innerWidth / 1280;
+    let scaleY = window.innerHeight / 720;
+    let scale = Math.min(scaleX, scaleY);
+    wrapper.style.transform = `scale(${scale})`;
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas(); 
@@ -898,7 +897,7 @@ class FloatingText {
     update() { this.y -= 1; this.life--; }
     draw() {
         if(this.life <= 0) return;
-        ctx.fillStyle = 'white'; ctx.font='16px Fredoka One'; ctx.strokeStyle='black'; ctx.lineWidth=3;
+        ctx.fillStyle = 'white'; ctx.font='20px Fredoka One'; ctx.strokeStyle='black'; ctx.lineWidth=4;
         ctx.strokeText(this.text, this.x-camera.x, this.y-camera.y+groundOffset);
         ctx.fillText(this.text, this.x-camera.x, this.y-camera.y+groundOffset);
     }
@@ -937,7 +936,7 @@ class Scenery {
             ctx.fillStyle = '#795548'; ctx.fillRect(scX, scY, 15, 40); 
             ctx.fillStyle = '#4caf50'; ctx.beginPath(); ctx.arc(scX+7, scY-10, 30, 0, Math.PI*2); ctx.fill();
         } else if(this.type === 'bird') {
-            ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
+            ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
             ctx.beginPath();
             let wingY = Math.sin(frameCount / 8) * 10;
             ctx.moveTo(scX, scY);
@@ -1044,6 +1043,11 @@ function loadMap(mapLevel, isSecret = false) {
     }
     
     mapHeight = mapData.length; mapWidth = mapData[0].length;
+    
+    // Fit to bottom perfectly based on map height
+    groundOffset = 720 - (mapHeight * TILE_SIZE) - 60;
+    if(groundOffset < 0) groundOffset = 0;
+
     blocks = []; items = []; enemies = []; particles = []; floatingTexts = []; coins = []; scenery = []; pipes = []; flags = [];
     
     // Generate Scenery
@@ -1071,7 +1075,7 @@ function loadMap(mapLevel, isSecret = false) {
             else if (char === 'P') {
                 // Buat corong lebih ramping (width 60, di-center)
                 pipes.push({x:x+10, y:y-TILE_SIZE, width:TILE_SIZE*1.5, height:TILE_SIZE*2, isEntrance:true});
-                if(isSecret) floatingTexts.push(new FloatingText(x, y-50, "Nunduk untuk Keluar!"));
+                if(isSecret) floatingTexts.push(new FloatingText(x, y-50, "Nunduk Keluar!"));
             }
             else if (char === '|') flags.push({x:x, y:y, width:10, height:TILE_SIZE});
             else if (char === '@' && !isSecret && (!inSecretArea)) { 
@@ -1088,11 +1092,12 @@ function enterPipe() {
     if(!inSecretArea) { 
         returnPosX = player.x; returnPosY = player.y;
         
-        // Simpan Dunia Utama (Menjaga agar Quiz yang dijawab & block yg pecah tidak hilang)
+        // Simpan Dunia Utama beserta dimensi (Fixed Error Out-of-bounds)
         savedMapState = {
             blocks: blocks, items: items, enemies: enemies, coins: coins, 
             flags: flags, scenery: scenery, pipes: pipes,
-            qTot: quizzesTotal, qAns: quizzesAnswered
+            qTot: quizzesTotal, qAns: quizzesAnswered,
+            mWidth: mapWidth, mHeight: mapHeight
         };
         
         inSecretArea = true; 
@@ -1112,6 +1117,11 @@ function enterPipe() {
         flags = savedMapState.flags; scenery = savedMapState.scenery; 
         pipes = savedMapState.pipes;
         quizzesTotal = savedMapState.qTot; quizzesAnswered = savedMapState.qAns;
+        mapWidth = savedMapState.mWidth; mapHeight = savedMapState.mHeight;
+
+        // Auto center map vertically 
+        groundOffset = 720 - (mapHeight * TILE_SIZE) - 60;
+        if(groundOffset < 0) groundOffset = 0;
 
         player.x = returnPosX + TILE_SIZE*2; player.y = returnPosY - TILE_SIZE; 
     }
@@ -1473,7 +1483,7 @@ setupTouch('t-right', 'right');
 setupTouch('t-jump', 'jump');
 setupTouch('t-down', 'down');
 
-// Cegah double tap zoom di mobile
+// Cegah double tap zoom di mobile untuk tombol-tombol
 document.addEventListener('dblclick', function(event) { event.preventDefault(); }, { passive: false });
 
 /** ==============================
