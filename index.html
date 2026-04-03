@@ -35,20 +35,6 @@
             background-size: cover; background-color: #5c94fc; 
         }
 
-        /* Portrait Warning */
-        #portrait-warning {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #e52521; color: white; z-index: 9999;
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; padding: 20px; box-sizing: border-box;
-        }
-        #portrait-warning h1 { font-size: 30px; margin-bottom: 10px; text-shadow: 2px 2px 0px #000; }
-        #portrait-warning p { font-family: sans-serif; font-size: 18px; line-height: 1.5; font-weight: bold;}
-        .rotate-icon { font-size: 60px; animation: spin 2s infinite ease-in-out; margin-bottom: 20px;}
-        
-        @media screen and (orientation: portrait) { #portrait-warning { display: flex; } }
-        @keyframes spin { 0% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } 100% { transform: rotate(0deg); } }
-
         /* Login & Boxes */
         .box-ui {
             background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 20px; text-align: center;
@@ -100,7 +86,7 @@
         .hud-btn.active-bgm { background: #4caf50; color: white; box-shadow: 0 4px 0 #2e7d32; }
         .hud-btn:active { transform: translateY(4px); box-shadow: none; }
 
-        /* Touch Controls (No Run Button, Adjusted sizing) */
+        /* Touch Controls (Default/Landscape) */
         #touch-controls { 
             position: absolute; bottom: 15px; left: 0; width: 100%; height: 100px; 
             display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; pointer-events: none; z-index: 50; 
@@ -109,11 +95,48 @@
         .t-btn { 
             width: 70px; height: 70px; background: rgba(255, 255, 255, 0.4); border: 4px solid rgba(255, 255, 255, 0.8); 
             border-radius: 50%; color: #000; font-size: 14px; font-weight: bold; display: flex; justify-content: center; align-items: center; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px #fff; user-select: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px #fff; user-select: none; cursor: pointer;
         }
         .t-btn:active { background: rgba(255, 255, 255, 0.8); transform: scale(0.95); }
         .t-btn-jump { width: 85px; height: 85px; background: rgba(229, 37, 33, 0.6); color: white; font-size: 16px; border-color: #ffcccc; text-shadow: 1px 1px 2px #000;}
         .t-btn-jump:active { background: rgba(229, 37, 33, 1); }
+        
+        #t-down { height: 55px; margin-bottom: 5px; }
+
+        /* Teks Tombol Pendek & Panjang */
+        .short { display: none; }
+        .long { display: block; }
+
+        /* --- RESPONSIVITAS HP POTRET --- */
+        @media screen and (orientation: portrait) {
+            #game-container { flex-direction: column; justify-content: flex-start; }
+            canvas { flex: 1; height: auto !important; } /* Canvas menyesuaikan sisa ruang */
+            
+            #touch-controls { 
+                position: relative !important; bottom: auto !important; left: auto !important; 
+                width: 100% !important; height: 30vh !important; flex: 0 0 30vh !important;
+                background: #111; padding: 0 20px !important; 
+                align-items: center !important; pointer-events: auto !important;
+            }
+            .touch-group { gap: 15px !important; align-items: center !important; margin-bottom: 0 !important; }
+            .t-btn { width: 65px !important; height: 65px !important; border-width: 3px !important; margin: 0 !important; }
+            .t-btn-jump { width: 85px !important; height: 85px !important; }
+            #t-down { height: 65px !important; margin-bottom: 0 !important; }
+            
+            /* Ubah teks tombol jadi pendek (ikon) saat layar sempit */
+            .long { display: none !important; }
+            .short { display: block !important; font-size: 30px; font-weight: normal; }
+
+            /* Sesuaikan proporsi elemen menu di portrait */
+            .box-ui { padding: 20px; width: 90%; max-height: 85vh; overflow-y: auto; }
+            #title-img { max-width: 90%; margin-top: 5vh; }
+            
+            /* Perkecil HUD di potret */
+            #hud { top: 5px; left: 5px; right: 5px; }
+            .stats { font-size: 14px; padding: 5px 10px; }
+            .top-buttons { gap: 5px; }
+            .hud-btn { padding: 5px 8px; font-size: 14px; }
+        }
 
         /* Quiz Box */
         .quiz-box { max-width: 600px; width: 90%; font-family: sans-serif; pointer-events: auto; max-height: 90vh; overflow-y: auto;}
@@ -158,18 +181,14 @@
 </head>
 <body>
 
-<div id="portrait-warning">
-    <div class="rotate-icon">📱↻</div>
-    <h1>Putar HP Kamu!</h1>
-    <p>Game ini wajib dimainkan dalam mode mendatar (Landscape) agar seru!</p>
-</div>
-
 <div id="game-container">
     <canvas id="gameCanvas"></canvas>
 
     <!-- Login Menu -->
     <div id="login-menu" class="overlay">
-        <button id="btn-fs-login" class="hud-btn" style="position:absolute; top:10px; right:10px; background:#333; color:#fff;">⛶ Fullscreen</button>
+        <!-- Fitur Full Screen di Login -->
+        <button id="btn-fs-login" class="hud-btn" style="position:absolute; top:15px; right:15px; background:#333; color:#fff; border-color:#fff;">⛶ Fullscreen</button>
+        
         <div class="box-ui">
             <h2>Masuk Dulu Yuk!</h2>
             <div class="error-text" id="login-error">Nama dan Sekolah harus diisi!</div>
@@ -211,12 +230,12 @@
     <!-- Touch Controls -->
     <div id="touch-controls" class="hidden">
         <div class="touch-group">
-            <div class="t-btn" id="t-left">Kiri</div>
-            <div class="t-btn" id="t-down" style="height: 55px; margin-bottom: 5px;">Nunduk</div> 
-            <div class="t-btn" id="t-right">Kanan</div>
+            <div class="t-btn" id="t-left"><span class="long">Kiri</span><span class="short">◀</span></div>
+            <div class="t-btn" id="t-down"><span class="long">Nunduk</span><span class="short">▼</span></div> 
+            <div class="t-btn" id="t-right"><span class="long">Kanan</span><span class="short">▶</span></div>
         </div>
         <div class="touch-group">
-            <div class="t-btn t-btn-jump" id="t-jump">Lompat</div>
+            <div class="t-btn t-btn-jump" id="t-jump"><span class="long">Lompat</span><span class="short">▲</span></div>
         </div>
     </div>
 
@@ -352,7 +371,17 @@ assets.star = createColorSquare('#ffff00'); // Kuning
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    
+    let controls = document.getElementById('touch-controls');
+    let controlsVisible = controls && !controls.classList.contains('hidden');
+    
+    // Sesuaikan resolusi canvas berdasarkan layout potret/lanskap
+    if (window.innerHeight > window.innerWidth && controlsVisible) {
+        canvas.height = window.innerHeight * 0.7;
+    } else {
+        canvas.height = window.innerHeight;
+    }
+    
     groundOffset = canvas.height - (14 * TILE_SIZE) - 100; // Layar map selalu di bawah
     if(groundOffset < 0) groundOffset = 0;
 }
@@ -1197,6 +1226,8 @@ document.getElementById('start-btn').addEventListener('click', () => {
     document.getElementById('main-menu').classList.add('hidden');
     document.getElementById('hud').classList.remove('hidden');
     document.getElementById('touch-controls').classList.remove('hidden');
+    
+    resizeCanvas(); // Pastikan resolusi cocok saat mulai
     startGame();
 });
 
