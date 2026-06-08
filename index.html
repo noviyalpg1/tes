@@ -8,557 +8,212 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
 <style>
-  :root {
-    --navy: #0f2a4a;
-    --blue: #1a5cb4;
-    --blue-mid: #2672d4;
-    --blue-light: #4a9af5;
-    --sky: #e8f2ff;
-    --sky-deep: #d0e5ff;
-    --gold: #e8a020;
-    --gold-light: #fef3dc;
-    --white: #ffffff;
-    --gray-50: #f8fafc;
-    --gray-100: #f0f4f8;
-    --gray-200: #dde4ed;
-    --gray-400: #8fa3bb;
-    --gray-600: #4a647c;
-    --gray-800: #1e3349;
-    --success: #16a34a;
-    --success-bg: #dcfce7;
-    --radius: 14px;
-    --radius-sm: 8px;
-    --shadow: 0 4px 24px rgba(15,42,74,0.10);
-    --shadow-lg: 0 8px 40px rgba(15,42,74,0.15);
-    --transition: all 0.22s cubic-bezier(.4,0,.2,1);
-  }
+:root {
+  --navy: #0f2a4a;
+  --blue: #1a5cb4;
+  --blue-mid: #2672d4;
+  --blue-light: #4a9af5;
+  --sky: #eaf3ff;
+  --sky-deep: #cce0ff;
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f0f4f8;
+  --gray-200: #dde4ed;
+  --gray-400: #8fa3bb;
+  --gray-600: #4a647c;
+  --gray-800: #1e3349;
+  --success: #16a34a;
+  --success-bg: #dcfce7;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 24px rgba(15,42,74,0.10);
+  --shadow-lg: 0 8px 40px rgba(15,42,74,0.16);
+  --transition: all 0.22s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:linear-gradient(135deg,#eaf3ff 0%,#f8fafc 50%,#f0f7ff 100%);min-height:100vh;color:var(--gray-800);font-size:15px;}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* HEADER */
+header{background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);color:white;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(15,42,74,.3);}
+.header-inner{max-width:1440px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.header-icon{width:42px;height:42px;background:rgba(255,255,255,.18);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.header-text h1{font-size:1.08rem;font-weight:700;letter-spacing:-.3px;}
+.header-text p{font-size:.76rem;opacity:.72;margin-top:2px;}
+.header-badge{margin-left:auto;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:5px 13px;border-radius:50px;font-size:.7rem;font-weight:700;letter-spacing:.5px;flex-shrink:0;}
 
-  body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background: linear-gradient(135deg, #e8f2ff 0%, #f8fafc 40%, #fff9f0 100%);
-    min-height: 100vh;
-    color: var(--gray-800);
-    font-size: 15px;
-  }
+/* LAYOUT */
+.container{max-width:1440px;margin:0 auto;padding:26px 20px 60px;display:grid;grid-template-columns:390px 1fr;gap:22px;align-items:start;}
 
-  /* ── HEADER ── */
-  header {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
-    color: white;
-    padding: 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 20px rgba(15,42,74,0.30);
-  }
-  .header-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 16px 28px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .header-icon {
-    width: 46px; height: 46px;
-    background: rgba(255,255,255,0.18);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    flex-shrink: 0;
-  }
-  .header-text h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.3px; }
-  .header-text p { font-size: 0.78rem; opacity: 0.75; margin-top: 2px; }
-  .header-badge {
-    margin-left: auto;
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.25);
-    padding: 5px 12px;
-    border-radius: 50px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
+/* CARD */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--gray-200);}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:10px;}
+.card-header-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--sky);flex-shrink:0;}
+.card-header h2{font-size:.9rem;font-weight:700;color:var(--navy);}
+.card-body{padding:18px 20px;}
 
-  /* ── MAIN LAYOUT ── */
-  .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 28px 20px 60px;
-    display: grid;
-    grid-template-columns: 400px 1fr;
-    gap: 24px;
-    align-items: start;
-  }
+/* FORM */
+.form-group{margin-bottom:13px;}
+.form-group label{display:block;font-size:.73rem;font-weight:700;color:var(--gray-600);margin-bottom:5px;letter-spacing:.3px;text-transform:uppercase;}
+.form-group label span{color:#e53e3e;}
+.form-control{width:100%;padding:9px 13px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:inherit;font-size:.86rem;color:var(--gray-800);background:var(--gray-50);transition:var(--transition);outline:none;}
+.form-control:focus{border-color:var(--blue-mid);background:white;box-shadow:0 0 0 3px rgba(38,114,212,.1);}
+.form-control::placeholder{color:var(--gray-400);}
+textarea.form-control{resize:vertical;min-height:108px;line-height:1.55;}
+select.form-control{cursor:pointer;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.tp-options{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.tp-opt{position:relative;}
+.tp-opt input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
+.tp-opt label{display:flex;align-items:center;justify-content:center;padding:9px 5px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);cursor:pointer;transition:var(--transition);font-size:.8rem;font-weight:600;color:var(--gray-600);background:var(--gray-50);text-transform:none;letter-spacing:0;}
+.tp-opt input:checked+label{border-color:var(--blue-mid);background:var(--sky);color:var(--blue);}
 
-  /* ── CARDS ── */
-  .card {
-    background: var(--white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    border: 1px solid var(--gray-200);
-  }
-  .card-header {
-    padding: 18px 22px 16px;
-    border-bottom: 1px solid var(--gray-100);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .card-header-icon {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px;
-    background: var(--sky);
-    flex-shrink: 0;
-  }
-  .card-header h2 {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: var(--navy);
-    letter-spacing: -0.2px;
-  }
-  .card-body { padding: 20px 22px; }
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:var(--radius-sm);font-family:inherit;font-size:.84rem;font-weight:600;cursor:pointer;border:none;transition:var(--transition);text-decoration:none;white-space:nowrap;}
+.btn-primary{background:linear-gradient(135deg,var(--blue) 0%,var(--blue-mid) 100%);color:white;box-shadow:0 4px 14px rgba(26,92,180,.32);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,92,180,.42);}
+.btn-outline{background:white;color:var(--blue);border:1.5px solid var(--blue-light);}
+.btn-outline:hover{background:var(--sky);}
+.btn-ghost{background:var(--gray-100);color:var(--gray-600);}
+.btn-ghost:hover{background:var(--gray-200);}
+.btn-word{background:linear-gradient(135deg,#1a56a0 0%,#1e6fcf 100%);color:white;box-shadow:0 4px 14px rgba(26,86,160,.32);}
+.btn-word:hover{transform:translateY(-1px);}
+.btn-pdf{background:linear-gradient(135deg,#b91c1c 0%,#dc2626 100%);color:white;box-shadow:0 4px 14px rgba(185,28,28,.28);}
+.btn-pdf:hover{transform:translateY(-1px);}
+.btn-success{background:var(--success-bg);color:var(--success);}
+.btn-success:hover{background:#bbf7d0;}
+.btn-lg{padding:13px 22px;font-size:.92rem;border-radius:10px;}
+.btn-full{width:100%;}
+.action-buttons{display:flex;flex-direction:column;gap:9px;margin-top:18px;}
+.action-row{display:flex;gap:8px;}
+.section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray-400);margin-bottom:8px;margin-top:16px;}
+.section-label:first-child{margin-top:0;}
+.form-control.error{border-color:#dc2626;background:#fff5f5;}
+.error-msg{color:#dc2626;font-size:.73rem;margin-top:3px;display:none;}
+.error-msg.visible{display:block;}
 
-  /* ── FORM ── */
-  .form-group { margin-bottom: 14px; }
-  .form-group label {
-    display: block;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--gray-600);
-    margin-bottom: 5px;
-    letter-spacing: 0.2px;
-    text-transform: uppercase;
-  }
-  .form-group label span { color: #e53e3e; }
-  .form-control {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1.5px solid var(--gray-200);
-    border-radius: var(--radius-sm);
-    font-family: inherit;
-    font-size: 0.88rem;
-    color: var(--gray-800);
-    background: var(--gray-50);
-    transition: var(--transition);
-    outline: none;
-  }
-  .form-control:focus {
-    border-color: var(--blue-mid);
-    background: white;
-    box-shadow: 0 0 0 3px rgba(38,114,212,0.12);
-  }
-  .form-control::placeholder { color: var(--gray-400); }
-  textarea.form-control {
-    resize: vertical;
-    min-height: 110px;
-    line-height: 1.55;
-  }
-  select.form-control { cursor: pointer; }
+/* ═══ RESULT PANEL ═══ */
+.result-doc{background:white;}
 
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+/* Document Header */
+.doc-header{background:linear-gradient(135deg,var(--navy) 0%,#1e4d9a 100%);color:white;padding:22px 28px;text-align:center;}
+.doc-header-title{font-family:'Lora',serif;font-size:1.05rem;font-weight:600;letter-spacing:.4px;line-height:1.4;}
+.doc-header-sub{font-size:.74rem;opacity:.72;margin-top:5px;}
 
-  .tp-options {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-  }
-  .tp-opt {
-    position: relative;
-  }
-  .tp-opt input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0; height: 0;
-  }
-  .tp-opt label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 6px;
-    border: 1.5px solid var(--gray-200);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: var(--transition);
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--gray-600);
-    background: var(--gray-50);
-    text-transform: none;
-    letter-spacing: 0;
-  }
-  .tp-opt input:checked + label {
-    border-color: var(--blue-mid);
-    background: var(--sky);
-    color: var(--blue);
-  }
+/* Identity Table */
+.identity-section{padding:20px 28px 0;}
+.identity-section-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.identity-section-title::after{content:'';flex:1;height:1px;background:var(--sky-deep);}
+.identity-table{width:100%;border-collapse:collapse;font-size:.84rem;}
+.identity-table tr{border-bottom:1px solid var(--gray-100);}
+.identity-table tr:last-child{border-bottom:none;}
+.identity-table td{padding:7px 10px;vertical-align:top;}
+.identity-table .id-label{font-weight:600;color:var(--gray-600);width:140px;white-space:nowrap;}
+.identity-table .id-colon{color:var(--gray-400);width:14px;text-align:center;}
+.identity-table .id-value{font-weight:600;color:var(--navy);}
 
-  /* ── BUTTONS ── */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    padding: 11px 18px;
-    border-radius: var(--radius-sm);
-    font-family: inherit;
-    font-size: 0.86rem;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    transition: var(--transition);
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-mid) 100%);
-    color: white;
-    box-shadow: 0 4px 14px rgba(26,92,180,0.35);
-  }
-  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,92,180,0.45); }
-  .btn-primary:active { transform: translateY(0); }
-  .btn-outline {
-    background: white;
-    color: var(--blue);
-    border: 1.5px solid var(--blue-light);
-  }
-  .btn-outline:hover { background: var(--sky); }
-  .btn-ghost {
-    background: var(--gray-100);
-    color: var(--gray-600);
-  }
-  .btn-ghost:hover { background: var(--gray-200); }
-  .btn-danger {
-    background: #fee2e2;
-    color: #dc2626;
-  }
-  .btn-danger:hover { background: #fecaca; }
-  .btn-success {
-    background: var(--success-bg);
-    color: var(--success);
-  }
-  .btn-gold {
-    background: linear-gradient(135deg, #d97706 0%, var(--gold) 100%);
-    color: white;
-    box-shadow: 0 4px 14px rgba(232,160,32,0.35);
-  }
-  .btn-gold:hover { transform: translateY(-1px); }
-  .btn-lg { padding: 14px 24px; font-size: 0.94rem; border-radius: 10px; }
-  .btn-full { width: 100%; }
+/* Analysis Table - Clean & Professional */
+.analysis-section{padding:18px 28px 0;}
+.analysis-section-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.analysis-section-title::after{content:'';flex:1;height:1px;background:var(--sky-deep);}
+.table-scroll{overflow-x:auto;border:1.5px solid #c8d8ee;border-radius:10px;box-shadow:0 2px 12px rgba(15,42,74,.07);}
+.analysis-table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:780px;}
+/* Header row */
+.analysis-table thead tr{background:var(--navy);}
+.analysis-table thead th{padding:11px 13px;text-align:left;font-size:.75rem;font-weight:700;color:white;letter-spacing:.3px;border-right:1px solid rgba(255,255,255,.12);}
+.analysis-table thead th:last-child{border-right:none;}
+/* Col widths */
+.col-elemen{width:10%;}
+.col-cp{width:22%;}
+.col-komp{width:16%;}
+.col-konten{width:14%;}
+.col-tp{width:28%;}
+.col-kode{width:10%;}
+/* Body */
+.analysis-table tbody tr{border-bottom:1px solid var(--gray-100);}
+.analysis-table tbody tr:last-child{border-bottom:none;}
+.analysis-table tbody td{padding:12px 13px;vertical-align:top;border-right:1px solid var(--gray-100);line-height:1.55;color:var(--gray-800);}
+.analysis-table tbody td:last-child{border-right:none;}
+/* Cell styles */
+.cell-elemen{font-weight:700;color:var(--blue);}
+.cell-cp{color:var(--gray-800);font-style:italic;font-size:.8rem;}
+/* List items */
+.item-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px;}
+.item-list li{display:flex;align-items:flex-start;gap:6px;font-size:.81rem;}
+.item-dot{color:var(--blue-light);flex-shrink:0;font-size:.9rem;line-height:1.5;}
+/* TP list */
+.tp-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:7px;}
+.tp-list li{display:flex;align-items:flex-start;gap:7px;padding-bottom:7px;border-bottom:1px dashed var(--gray-200);font-size:.81rem;line-height:1.55;}
+.tp-list li:last-child{border-bottom:none;padding-bottom:0;}
+.tp-num{background:var(--navy);color:white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;margin-top:1px;}
+/* Kode badges */
+.kode-list{display:flex;flex-direction:column;gap:4px;}
+.kode-badge{display:inline-block;background:var(--sky);color:var(--blue);border:1px solid var(--sky-deep);padding:3px 9px;border-radius:50px;font-size:.71rem;font-weight:700;white-space:nowrap;}
 
-  .action-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-  .action-row { display: flex; gap: 8px; }
+/* ATP */
+.atp-section{padding:18px 28px 24px;}
+.atp-section-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.atp-section-title::after{content:'';flex:1;height:1px;background:var(--sky-deep);}
+.atp-box{background:var(--sky);border:1.5px solid var(--sky-deep);border-radius:10px;padding:16px 20px;}
+.atp-flow-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px;}
+.atp-node{background:white;border:1.5px solid var(--blue-light);color:var(--blue);padding:6px 14px;border-radius:50px;font-size:.78rem;font-weight:700;box-shadow:0 2px 6px rgba(26,92,180,.1);}
+.atp-arrow{color:var(--blue-light);font-size:1rem;}
+.atp-desc-list{background:white;border-radius:8px;overflow:hidden;border:1px solid var(--sky-deep);}
+.atp-desc-row{display:flex;gap:0;border-bottom:1px solid var(--gray-100);}
+.atp-desc-row:last-child{border-bottom:none;}
+.atp-desc-kode{background:var(--sky);padding:9px 12px;font-size:.75rem;font-weight:700;color:var(--blue);min-width:85px;display:flex;align-items:center;border-right:1px solid var(--sky-deep);}
+.atp-desc-text{padding:9px 14px;font-size:.8rem;color:var(--gray-800);line-height:1.5;}
 
-  /* ── RESULT PANEL ── */
-  #resultPanel { display: none; }
-  #resultPanel.visible { display: block; }
+/* Export bar */
+.export-bar{display:flex;gap:9px;flex-wrap:wrap;padding:14px 20px;background:var(--gray-50);border-top:1px solid var(--gray-100);}
 
-  .result-header {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
-    color: white;
-    padding: 24px 28px;
-    text-align: center;
-  }
-  .result-header .doc-title {
-    font-family: 'Lora', serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
-  }
-  .result-header .doc-subtitle {
-    font-size: 0.78rem;
-    opacity: 0.75;
-  }
+/* Empty state */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:70px 20px;color:var(--gray-400);text-align:center;}
+.empty-icon{font-size:2.8rem;margin-bottom:12px;}
+.empty-title{font-size:.95rem;font-weight:600;color:var(--gray-600);margin-bottom:6px;}
+.empty-desc{font-size:.82rem;line-height:1.65;}
 
-  /* ── IDENTITY TABLE ── */
-  .identity-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    margin-bottom: 20px;
-  }
-  .identity-item {
-    padding: 9px 14px;
-    border-bottom: 1px solid var(--gray-100);
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-  }
-  .identity-item:nth-child(even) { border-left: 1px solid var(--gray-100); }
-  .identity-label {
-    font-size: 0.76rem;
-    color: var(--gray-600);
-    font-weight: 600;
-    min-width: 100px;
-    flex-shrink: 0;
-  }
-  .identity-value {
-    font-size: 0.86rem;
-    color: var(--navy);
-    font-weight: 600;
-  }
-  .identity-colon { color: var(--gray-400); }
+/* Loading */
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(15,42,74,.6);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:14px;backdrop-filter:blur(4px);}
+.loading-overlay.active{display:flex;}
+.spinner{width:46px;height:46px;border:4px solid rgba(255,255,255,.2);border-top-color:white;border-radius:50%;animation:spin .75s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{color:white;font-weight:600;font-size:.92rem;}
 
-  /* ── ANALYSIS TABLE ── */
-  .table-wrapper {
-    overflow-x: auto;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--gray-200);
-    margin-bottom: 20px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82rem;
-  }
-  thead tr {
-    background: var(--navy);
-    color: white;
-  }
-  thead th {
-    padding: 12px 14px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.78rem;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-  }
-  tbody tr { border-bottom: 1px solid var(--gray-100); }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:nth-child(even) { background: var(--gray-50); }
-  tbody tr:hover { background: var(--sky); }
-  tbody td {
-    padding: 11px 14px;
-    vertical-align: top;
-    line-height: 1.55;
-    color: var(--gray-800);
-  }
-  .td-element {
-    font-weight: 700;
-    color: var(--blue);
-    font-size: 0.8rem;
-  }
-  .td-cp { max-width: 200px; }
-  .td-kompetensi ul, .td-konten ul, .td-tp ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .td-kompetensi ul li::before,
-  .td-konten ul li::before {
-    content: "•";
-    color: var(--blue-light);
-    margin-right: 6px;
-    font-weight: bold;
-  }
-  .td-tp ul li { margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px dashed var(--gray-200); }
-  .td-tp ul li:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-  .tp-item { display: flex; gap: 8px; align-items: flex-start; }
-  .tp-bullet { color: var(--blue); font-weight: 700; flex-shrink: 0; font-size: 0.8rem; }
-  .td-kode { white-space: nowrap; }
-  .kode-badge {
-    display: inline-block;
-    background: var(--sky);
-    color: var(--blue);
-    border: 1px solid var(--sky-deep);
-    padding: 3px 8px;
-    border-radius: 50px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    margin-bottom: 3px;
-  }
+/* Toast */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--navy);color:white;padding:11px 18px;border-radius:10px;font-size:.84rem;font-weight:500;box-shadow:var(--shadow-lg);transform:translateY(80px);opacity:0;transition:all .32s cubic-bezier(.4,0,.2,1);z-index:2000;max-width:300px;display:flex;align-items:center;gap:9px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{background:#166534;}
+.toast.error{background:#991b1b;}
+.toast.info{background:#1e40af;}
 
-  /* ── ATP ── */
-  .atp-section {
-    background: var(--sky);
-    border: 1.5px solid var(--sky-deep);
-    border-radius: var(--radius);
-    padding: 20px 22px;
-    margin-bottom: 20px;
-  }
-  .atp-title {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--navy);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .atp-flow {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-  }
-  .atp-node {
-    background: white;
-    border: 1.5px solid var(--blue-light);
-    color: var(--blue);
-    padding: 7px 14px;
-    border-radius: 50px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    box-shadow: 0 2px 8px rgba(26,92,180,0.10);
-    transition: var(--transition);
-    cursor: default;
-  }
-  .atp-node:hover { background: var(--sky-deep); transform: translateY(-1px); }
-  .atp-arrow {
-    color: var(--blue-light);
-    font-size: 1.2rem;
-    font-weight: 300;
-  }
-  .atp-desc {
-    margin-top: 14px;
-    background: white;
-    border-radius: var(--radius-sm);
-    padding: 12px 16px;
-  }
-  .atp-desc-item {
-    display: flex;
-    gap: 10px;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--gray-100);
-    font-size: 0.82rem;
-  }
-  .atp-desc-item:last-child { border-bottom: none; }
-  .atp-code { color: var(--blue); font-weight: 700; min-width: 80px; flex-shrink: 0; }
-  .atp-text { color: var(--gray-800); line-height: 1.5; }
+/* Print */
+@media print{
+  header,.action-buttons,.export-bar,#inputPanel,.loading-overlay,.toast{display:none!important;}
+  .container{display:block;padding:0;}
+  #resultPanel{display:block!important;}
+  .card{box-shadow:none;border:none;}
+  body{background:white;}
+  .doc-header{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .analysis-table thead tr{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
 
-  /* ── EXPORT BUTTONS ── */
-  .export-bar {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    padding: 16px 22px;
-    background: var(--gray-50);
-    border-top: 1px solid var(--gray-100);
-  }
-
-  /* ── LOADING ── */
-  .loading-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(15,42,74,0.65);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 16px;
-    backdrop-filter: blur(4px);
-  }
-  .loading-overlay.active { display: flex; }
-  .spinner {
-    width: 48px; height: 48px;
-    border: 4px solid rgba(255,255,255,0.2);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text { color: white; font-weight: 600; font-size: 0.95rem; }
-
-  /* ── TOAST ── */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--navy);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-size: 0.86rem;
-    font-weight: 500;
-    box-shadow: var(--shadow-lg);
-    transform: translateY(80px);
-    opacity: 0;
-    transition: all 0.35s cubic-bezier(.4,0,.2,1);
-    z-index: 2000;
-    max-width: 320px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.success { background: #166534; }
-  .toast.error { background: #991b1b; }
-  .toast-icon { font-size: 1.1rem; }
-
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--gray-400);
-  }
-  .empty-icon { font-size: 3rem; margin-bottom: 12px; }
-  .empty-title { font-size: 1rem; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; }
-  .empty-desc { font-size: 0.83rem; line-height: 1.6; }
-
-  /* ── SECTION LABEL ── */
-  .section-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--gray-400);
-    margin-bottom: 8px;
-    margin-top: 18px;
-  }
-  .section-label:first-child { margin-top: 0; }
-
-  /* ── VALIDATION ── */
-  .form-control.error { border-color: #dc2626; background: #fff5f5; }
-  .error-msg { color: #dc2626; font-size: 0.75rem; margin-top: 4px; display: none; }
-  .error-msg.visible { display: block; }
-
-  /* ── PRINT ── */
-  @media print {
-    header, .action-buttons, .export-bar, #inputPanel, .loading-overlay, .toast { display: none !important; }
-    .container { display: block; padding: 0; }
-    #resultPanel { display: block !important; }
-    .card { box-shadow: none; border: none; }
-    body { background: white; }
-    .result-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    thead tr { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .container { grid-template-columns: 1fr; }
-    .header-badge { display: none; }
-  }
-  @media (max-width: 600px) {
-    .container { padding: 16px 12px 40px; gap: 16px; }
-    .card-body { padding: 16px; }
-    .card-header { padding: 14px 16px; }
-    .form-row { grid-template-columns: 1fr; }
-    .btn-lg { padding: 13px 20px; }
-    .identity-grid { grid-template-columns: 1fr; }
-    .identity-item:nth-child(even) { border-left: none; }
-    .result-header { padding: 18px 16px; }
-    .atp-section { padding: 16px; }
-    .export-bar { padding: 12px 16px; }
-  }
-  @media (max-width: 400px) {
-    .tp-options { grid-template-columns: repeat(2, 1fr); }
-    .action-row { flex-direction: column; }
-  }
-
-  /* ── PRINT TARGET ── */
-  #printTarget { display: none; }
+/* Responsive */
+@media(max-width:960px){
+  .container{grid-template-columns:1fr;}
+  .header-badge{display:none;}
+}
+@media(max-width:600px){
+  .container{padding:14px 12px 40px;gap:14px;}
+  .card-body,.card-header{padding:14px 15px;}
+  .form-row{grid-template-columns:1fr;}
+  .doc-header{padding:16px 16px;}
+  .identity-section,.analysis-section,.atp-section{padding-left:16px;padding-right:16px;}
+  .export-bar{padding:12px 14px;}
+}
+@media(max-width:400px){
+  .tp-options{grid-template-columns:repeat(2,1fr);}
+  .action-row{flex-direction:column;}
+}
 </style>
 </head>
 <body>
@@ -567,8 +222,8 @@
   <div class="header-inner">
     <div class="header-icon">📚</div>
     <div class="header-text">
-      <h1>Generator Analisis CP → TP & ATP</h1>
-      <p>Sesuai Panduan Pembelajaran dan Asesmen BSKAP Kemendikbudristek</p>
+      <h1>Generator Analisis CP → TP &amp; ATP</h1>
+      <p>Sesuai Panduan Pembelajaran dan Asesmen BSKAP · Kurikulum Merdeka</p>
     </div>
     <div class="header-badge">Kurikulum Merdeka</div>
   </div>
@@ -576,886 +231,749 @@
 
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
-  <div class="loading-text" id="loadingText">Menganalisis Capaian Pembelajaran…</div>
+  <div class="loading-text" id="loadingText">Menganalisis…</div>
 </div>
-
-<div class="toast" id="toast">
-  <span class="toast-icon" id="toastIcon">✅</span>
-  <span id="toastMsg">Berhasil!</span>
-</div>
+<div class="toast" id="toast"><span id="toastIcon">✅</span><span id="toastMsg"></span></div>
 
 <div class="container">
 
-  <!-- INPUT PANEL -->
-  <div id="inputPanel">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-header-icon">📝</div>
-        <h2>Data Identitas & Input CP</h2>
+<!-- ══ INPUT PANEL ══ -->
+<div id="inputPanel">
+<div class="card">
+  <div class="card-header">
+    <div class="card-header-icon">📝</div>
+    <h2>Data Identitas &amp; Input CP</h2>
+  </div>
+  <div class="card-body">
+
+    <div class="section-label">Identitas Guru &amp; Sekolah</div>
+
+    <div class="form-group">
+      <label>Nama Guru <span>*</span></label>
+      <input type="text" id="namaGuru" class="form-control" placeholder="Contoh: Budi Santoso, S.Pd.">
+      <div class="error-msg" id="errNamaGuru">Nama guru wajib diisi</div>
+    </div>
+    <div class="form-group">
+      <label>Mata Pelajaran <span>*</span></label>
+      <input type="text" id="mapel" class="form-control" placeholder="Contoh: Matematika">
+      <div class="error-msg" id="errMapel">Mata pelajaran wajib diisi</div>
+    </div>
+    <div class="form-group">
+      <label>Sekolah <span>*</span></label>
+      <input type="text" id="sekolah" class="form-control" placeholder="Contoh: SDN 01 Sukamaju">
+      <div class="error-msg" id="errSekolah">Nama sekolah wajib diisi</div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Fase <span>*</span></label>
+        <select id="fase" class="form-control">
+          <option value="">-- Pilih --</option>
+          <option value="Fase A">Fase A (Kls 1–2)</option>
+          <option value="Fase B">Fase B (Kls 3–4)</option>
+          <option value="Fase C">Fase C (Kls 5–6)</option>
+          <option value="Fase D">Fase D (Kls 7–9)</option>
+          <option value="Fase E">Fase E (Kls 10)</option>
+          <option value="Fase F">Fase F (Kls 11–12)</option>
+        </select>
+        <div class="error-msg" id="errFase">Fase wajib dipilih</div>
       </div>
-      <div class="card-body">
-
-        <div class="section-label">Identitas Guru &amp; Sekolah</div>
-
-        <div class="form-group">
-          <label>Nama Guru <span>*</span></label>
-          <input type="text" id="namaGuru" class="form-control" placeholder="Contoh: Budi Santoso, S.Pd.">
-          <div class="error-msg" id="errNamaGuru">Nama guru wajib diisi</div>
-        </div>
-
-        <div class="form-group">
-          <label>Mata Pelajaran <span>*</span></label>
-          <input type="text" id="mapel" class="form-control" placeholder="Contoh: Matematika">
-          <div class="error-msg" id="errMapel">Mata pelajaran wajib diisi</div>
-        </div>
-
-        <div class="form-group">
-          <label>Sekolah <span>*</span></label>
-          <input type="text" id="sekolah" class="form-control" placeholder="Contoh: SDN 01 Sukamaju">
-          <div class="error-msg" id="errSekolah">Nama sekolah wajib diisi</div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Fase <span>*</span></label>
-            <select id="fase" class="form-control">
-              <option value="">-- Pilih --</option>
-              <option value="Fase A">Fase A (Kelas 1–2)</option>
-              <option value="Fase B">Fase B (Kelas 3–4)</option>
-              <option value="Fase C">Fase C (Kelas 5–6)</option>
-              <option value="Fase D">Fase D (Kelas 7–9)</option>
-              <option value="Fase E">Fase E (Kelas 10)</option>
-              <option value="Fase F">Fase F (Kelas 11–12)</option>
-            </select>
-            <div class="error-msg" id="errFase">Fase wajib dipilih</div>
-          </div>
-          <div class="form-group">
-            <label>Kelas <span>*</span></label>
-            <select id="kelas" class="form-control">
-              <option value="">-- Pilih --</option>
-              <option value="1">Kelas 1</option>
-              <option value="2">Kelas 2</option>
-              <option value="3">Kelas 3</option>
-              <option value="4">Kelas 4</option>
-              <option value="5">Kelas 5</option>
-              <option value="6">Kelas 6</option>
-              <option value="7">Kelas 7</option>
-              <option value="8">Kelas 8</option>
-              <option value="9">Kelas 9</option>
-              <option value="10">Kelas 10</option>
-              <option value="11">Kelas 11</option>
-              <option value="12">Kelas 12</option>
-            </select>
-            <div class="error-msg" id="errKelas">Kelas wajib dipilih</div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Semester <span>*</span></label>
-          <select id="semester" class="form-control">
-            <option value="">-- Pilih --</option>
-            <option value="1">Semester 1</option>
-            <option value="2">Semester 2</option>
-          </select>
-          <div class="error-msg" id="errSemester">Semester wajib dipilih</div>
-        </div>
-
-        <div class="section-label">Data Capaian Pembelajaran</div>
-
-        <div class="form-group">
-          <label>Elemen CP <span>*</span></label>
-          <input type="text" id="elemen" class="form-control" placeholder="Contoh: Pemahaman Konsep / Bilangan / Geometri">
-          <div class="error-msg" id="errElemen">Elemen wajib diisi</div>
-        </div>
-
-        <div class="form-group">
-          <label>Capaian Pembelajaran (CP) <span>*</span></label>
-          <textarea id="cp" class="form-control" rows="5"
-            placeholder="Tuliskan teks CP secara lengkap sesuai dokumen resmi. Contoh:&#10;Peserta didik mampu memahami konsep bilangan cacah dan melakukan operasi penjumlahan serta pengurangan dalam konteks sehari-hari."></textarea>
-          <div class="error-msg" id="errCp">Capaian Pembelajaran wajib diisi</div>
-        </div>
-
-        <div class="form-group">
-          <label>Jumlah TP yang Dihasilkan</label>
-          <div class="tp-options">
-            <div class="tp-opt">
-              <input type="radio" name="jumlahTP" id="tp1" value="1">
-              <label for="tp1">1 TP</label>
-            </div>
-            <div class="tp-opt">
-              <input type="radio" name="jumlahTP" id="tp2" value="2">
-              <label for="tp2">2 TP</label>
-            </div>
-            <div class="tp-opt">
-              <input type="radio" name="jumlahTP" id="tp3" value="3" checked>
-              <label for="tp3">3 TP</label>
-            </div>
-            <div class="tp-opt">
-              <input type="radio" name="jumlahTP" id="tp4" value="4">
-              <label for="tp4">4 TP</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="action-buttons">
-          <button class="btn btn-primary btn-lg btn-full" onclick="generateAnalysis()">
-            ⚡ Generate Analisis
-          </button>
-          <div class="action-row">
-            <button class="btn btn-ghost" style="flex:1" onclick="resetForm()">🔄 Reset Form</button>
-            <button class="btn btn-ghost" style="flex:1" onclick="loadSample()">📄 Contoh Data</button>
-          </div>
-        </div>
-
+      <div class="form-group">
+        <label>Kelas <span>*</span></label>
+        <select id="kelas" class="form-control">
+          <option value="">-- Pilih --</option>
+          <option value="1">Kelas 1</option><option value="2">Kelas 2</option>
+          <option value="3">Kelas 3</option><option value="4">Kelas 4</option>
+          <option value="5">Kelas 5</option><option value="6">Kelas 6</option>
+          <option value="7">Kelas 7</option><option value="8">Kelas 8</option>
+          <option value="9">Kelas 9</option><option value="10">Kelas 10</option>
+          <option value="11">Kelas 11</option><option value="12">Kelas 12</option>
+        </select>
+        <div class="error-msg" id="errKelas">Kelas wajib dipilih</div>
       </div>
     </div>
-  </div>
-
-  <!-- RESULT PANEL -->
-  <div id="resultPanel">
-    <div class="card">
-
-      <!-- Empty State -->
-      <div id="emptyState" class="empty-state">
-        <div class="empty-icon">📊</div>
-        <div class="empty-title">Hasil Analisis akan Muncul di Sini</div>
-        <div class="empty-desc">Isi form di sebelah kiri lalu klik<br><strong>Generate Analisis</strong> untuk memulai.</div>
-      </div>
-
-      <!-- Actual Result -->
-      <div id="resultContent" style="display:none;">
-        <div class="result-header">
-          <div class="doc-title">ANALISIS CAPAIAN PEMBELAJARAN MENJADI TUJUAN PEMBELAJARAN</div>
-          <div class="doc-subtitle">Sesuai Panduan Pembelajaran dan Asesmen BSKAP — Kurikulum Merdeka</div>
-        </div>
-
-        <div class="card-body">
-
-          <!-- Identity -->
-          <div class="section-label">Identitas</div>
-          <div class="identity-grid" id="identityGrid"></div>
-
-          <!-- Table -->
-          <div class="section-label">Tabel Analisis CP → TP</div>
-          <div class="table-wrapper">
-            <table id="analysisTable">
-              <thead>
-                <tr>
-                  <th style="min-width:90px">Elemen</th>
-                  <th style="min-width:180px">Capaian Pembelajaran</th>
-                  <th style="min-width:150px">Kompetensi</th>
-                  <th style="min-width:130px">Konten</th>
-                  <th style="min-width:220px">Tujuan Pembelajaran</th>
-                  <th style="min-width:80px">Kode TP</th>
-                </tr>
-              </thead>
-              <tbody id="tableBody"></tbody>
-            </table>
-          </div>
-
-          <!-- ATP -->
-          <div class="section-label">Alur Tujuan Pembelajaran (ATP)</div>
-          <div class="atp-section" id="atpSection"></div>
-
-        </div>
-
-        <!-- Export Bar -->
-        <div class="export-bar">
-          <button class="btn btn-gold" onclick="exportPDF()">📄 Export PDF</button>
-          <button class="btn btn-primary" onclick="exportWord()">📝 Export Word</button>
-          <button class="btn btn-success" onclick="copyResult()">📋 Salin Hasil</button>
-          <button class="btn btn-outline" onclick="printDirect()">🖨️ Cetak</button>
-        </div>
-
-      </div>
-
+    <div class="form-group">
+      <label>Semester <span>*</span></label>
+      <select id="semester" class="form-control">
+        <option value="">-- Pilih --</option>
+        <option value="1">Semester 1</option>
+        <option value="2">Semester 2</option>
+      </select>
+      <div class="error-msg" id="errSemester">Semester wajib dipilih</div>
     </div>
-  </div>
 
+    <div class="section-label">Capaian Pembelajaran</div>
+
+    <div class="form-group">
+      <label>Elemen CP <span>*</span></label>
+      <input type="text" id="elemen" class="form-control" placeholder="Contoh: Bilangan / Geometri / Pemahaman">
+      <div class="error-msg" id="errElemen">Elemen wajib diisi</div>
+    </div>
+    <div class="form-group">
+      <label>Teks Capaian Pembelajaran <span>*</span></label>
+      <textarea id="cp" class="form-control" rows="5" placeholder="Tuliskan teks CP secara lengkap sesuai dokumen resmi.&#10;Contoh: Peserta didik mampu memahami konsep bilangan cacah dan melakukan operasi penjumlahan serta pengurangan dalam konteks sehari-hari."></textarea>
+      <div class="error-msg" id="errCp">Capaian Pembelajaran wajib diisi</div>
+    </div>
+    <div class="form-group">
+      <label>Jumlah TP yang Dihasilkan</label>
+      <div class="tp-options">
+        <div class="tp-opt"><input type="radio" name="jumlahTP" id="tp1" value="1"><label for="tp1">1 TP</label></div>
+        <div class="tp-opt"><input type="radio" name="jumlahTP" id="tp2" value="2"><label for="tp2">2 TP</label></div>
+        <div class="tp-opt"><input type="radio" name="jumlahTP" id="tp3" value="3" checked><label for="tp3">3 TP</label></div>
+        <div class="tp-opt"><input type="radio" name="jumlahTP" id="tp4" value="4"><label for="tp4">4 TP</label></div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn btn-primary btn-lg btn-full" onclick="generateAnalysis()">⚡ Generate Analisis</button>
+      <div class="action-row">
+        <button class="btn btn-ghost" style="flex:1" onclick="resetForm()">🔄 Reset</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="loadSample()">📄 Contoh Data</button>
+      </div>
+    </div>
+
+  </div>
 </div>
+</div><!-- /inputPanel -->
 
-<!-- Hidden print container -->
-<div id="printTarget"></div>
+<!-- ══ RESULT PANEL ══ -->
+<div id="resultPanel">
+<div class="card">
+
+  <!-- empty state -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">📊</div>
+    <div class="empty-title">Hasil Analisis akan Muncul di Sini</div>
+    <div class="empty-desc">Isi form di sebelah kiri, lalu klik<br><strong>⚡ Generate Analisis</strong> untuk memulai.</div>
+  </div>
+
+  <!-- result content -->
+  <div id="resultContent" style="display:none;">
+    <div class="result-doc">
+
+      <!-- Document header -->
+      <div class="doc-header">
+        <div class="doc-header-title">ANALISIS CAPAIAN PEMBELAJARAN MENJADI TUJUAN PEMBELAJARAN</div>
+        <div class="doc-header-sub">Sesuai Panduan Pembelajaran dan Asesmen BSKAP · Kurikulum Merdeka</div>
+      </div>
+
+      <!-- Identity -->
+      <div class="identity-section" style="padding-bottom:18px;">
+        <div class="identity-section-title">Identitas</div>
+        <table class="identity-table" id="identityTable"></table>
+      </div>
+
+      <!-- Analysis table -->
+      <div class="analysis-section">
+        <div class="analysis-section-title">Tabel Analisis Capaian Pembelajaran</div>
+        <div class="table-scroll">
+          <table class="analysis-table" id="analysisTable">
+            <thead>
+              <tr>
+                <th class="col-elemen">Elemen</th>
+                <th class="col-cp">Capaian Pembelajaran</th>
+                <th class="col-komp">Kompetensi</th>
+                <th class="col-konten">Konten</th>
+                <th class="col-tp">Tujuan Pembelajaran</th>
+                <th class="col-kode">Kode TP</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ATP -->
+      <div class="atp-section">
+        <div class="atp-section-title">Alur Tujuan Pembelajaran (ATP)</div>
+        <div class="atp-box" id="atpBox"></div>
+      </div>
+
+    </div><!-- /result-doc -->
+
+    <!-- Export bar -->
+    <div class="export-bar">
+      <button class="btn btn-word" onclick="exportWord()">📝 Export Word</button>
+      <button class="btn btn-pdf" onclick="exportPDF()">📄 Export PDF</button>
+      <button class="btn btn-success" onclick="copyResult()">📋 Salin</button>
+      <button class="btn btn-outline" onclick="printDirect()">🖨️ Cetak</button>
+    </div>
+
+  </div><!-- /resultContent -->
+</div>
+</div><!-- /resultPanel -->
+
+</div><!-- /container -->
 
 <script>
-// ═══════════════════════════════════════════
-//  KNOWLEDGE BASE – Kata Kerja Operasional (Bloom)
-// ═══════════════════════════════════════════
+// ═══════════════════════════════
+//  BLOOM TAXONOMY
+// ═══════════════════════════════
 const BLOOM = {
-  C1: ["menyebutkan","mengenali","mengidentifikasi","mendaftar","menunjukkan","menamai","mencocokan","mengingat"],
-  C2: ["menjelaskan","mendeskripsikan","merangkum","mengklasifikasikan","mengategorikan","membandingkan","menginterpretasikan","menerangkan"],
-  C3: ["menerapkan","menggunakan","menghitung","menyelesaikan","mendemonstrasikan","mengoperasikan","melaksanakan","mempraktikkan"],
-  C4: ["menganalisis","membedakan","menguraikan","memeriksa","memilah","menghubungkan","mengorganisasi","menemukan"],
-  C5: ["mengevaluasi","menilai","mengkritisi","mempertimbangkan","memvalidasi","menyimpulkan","membuktikan","mereview"],
-  C6: ["merancang","membuat","menciptakan","mengembangkan","menyusun","membangun","mengkombinasikan","memproduksi"]
+  C1:["menyebutkan","mengenali","mengidentifikasi","mendaftar","menunjukkan","menamai","mencocokkan","mengingat","menemukan","membaca"],
+  C2:["menjelaskan","mendeskripsikan","merangkum","mengklasifikasikan","mengategorikan","membandingkan","menginterpretasikan","menerangkan","mengubah","membedakan"],
+  C3:["menerapkan","menggunakan","menghitung","menyelesaikan","mendemonstrasikan","mengoperasikan","melaksanakan","mempraktikkan","menghubungkan","memilih"],
+  C4:["menganalisis","menguraikan","memeriksa","memilah","menghubungkan","mengorganisasi","menemukan","membandingkan","mengkritisi","menguji"],
+  C5:["mengevaluasi","menilai","mempertimbangkan","memvalidasi","menyimpulkan","membuktikan","mereview","mendukung","mengkritik","memilih"],
+  C6:["merancang","membuat","menciptakan","mengembangkan","menyusun","membangun","mengkombinasikan","memproduksi","merumuskan","merencanakan"]
 };
+const KKO_ALL=[...BLOOM.C1,...BLOOM.C2,...BLOOM.C3,...BLOOM.C4,...BLOOM.C5,...BLOOM.C6];
 
-const KKO_ALL = [...BLOOM.C1,...BLOOM.C2,...BLOOM.C3,...BLOOM.C4,...BLOOM.C5,...BLOOM.C6];
-
-// ═══════════════════════════════════════════
+// ═══════════════════════════════
 //  UTILITIES
-// ═══════════════════════════════════════════
-function showToast(msg, type = 'success') {
-  const t = document.getElementById('toast');
-  const icon = document.getElementById('toastIcon');
-  const msgEl = document.getElementById('toastMsg');
-  t.className = 'toast ' + type;
-  icon.textContent = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
-  msgEl.textContent = msg;
+// ═══════════════════════════════
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.className='toast '+type;
+  document.getElementById('toastIcon').textContent=type==='success'?'✅':type==='error'?'❌':'ℹ️';
+  document.getElementById('toastMsg').textContent=msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  setTimeout(()=>t.classList.remove('show'),3200);
 }
-
-function showLoading(text = 'Memproses…') {
-  document.getElementById('loadingText').textContent = text;
+function showLoading(txt='Memproses…'){
+  document.getElementById('loadingText').textContent=txt;
   document.getElementById('loadingOverlay').classList.add('active');
 }
-function hideLoading() {
-  document.getElementById('loadingOverlay').classList.remove('active');
-}
+function hideLoading(){document.getElementById('loadingOverlay').classList.remove('active');}
+function getVal(id){return document.getElementById(id).value.trim();}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 
-function getVal(id) {
-  return document.getElementById(id).value.trim();
-}
-
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-// ═══════════════════════════════════════════
+// ═══════════════════════════════
 //  VALIDATION
-// ═══════════════════════════════════════════
-function validateForm() {
-  const fields = [
-    { id: 'namaGuru', errId: 'errNamaGuru' },
-    { id: 'mapel', errId: 'errMapel' },
-    { id: 'sekolah', errId: 'errSekolah' },
-    { id: 'fase', errId: 'errFase' },
-    { id: 'kelas', errId: 'errKelas' },
-    { id: 'semester', errId: 'errSemester' },
-    { id: 'elemen', errId: 'errElemen' },
-    { id: 'cp', errId: 'errCp' },
+// ═══════════════════════════════
+function validateForm(){
+  const fields=[
+    {id:'namaGuru',err:'errNamaGuru'},{id:'mapel',err:'errMapel'},
+    {id:'sekolah',err:'errSekolah'},{id:'fase',err:'errFase'},
+    {id:'kelas',err:'errKelas'},{id:'semester',err:'errSemester'},
+    {id:'elemen',err:'errElemen'},{id:'cp',err:'errCp'},
   ];
-  let ok = true;
-  fields.forEach(f => {
-    const el = document.getElementById(f.id);
-    const err = document.getElementById(f.errId);
-    if (!el.value.trim()) {
-      el.classList.add('error');
-      err.classList.add('visible');
-      ok = false;
-    } else {
-      el.classList.remove('error');
-      err.classList.remove('visible');
-    }
+  let ok=true;
+  fields.forEach(f=>{
+    const el=document.getElementById(f.id),er=document.getElementById(f.err);
+    if(!el.value.trim()){el.classList.add('error');er.classList.add('visible');ok=false;}
+    else{el.classList.remove('error');er.classList.remove('visible');}
   });
   return ok;
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════
 //  ANALYSIS ENGINE
-// ═══════════════════════════════════════════
-
-// Extract verbs from CP text
-function extractKompetensi(cpText) {
-  const lower = cpText.toLowerCase();
-  const found = [];
-  KKO_ALL.forEach(kko => {
-    const regex = new RegExp(`\\b${kko}\\b`, 'gi');
-    if (regex.test(lower)) found.push(kko);
+// ═══════════════════════════════
+function extractKompetensi(cp){
+  const lower=cp.toLowerCase();
+  const found=[];
+  // Extract verbs from KKO
+  KKO_ALL.forEach(k=>{if(new RegExp('\\b'+k+'\\b').test(lower)&&!found.includes(k))found.push(k);});
+  // Extract "mampu X dan Y" patterns
+  const m=lower.match(/mampu\s+([\w\s]+?)(?=[,;.]|$)/g);
+  if(m)m.forEach(phrase=>{
+    phrase.replace('mampu ','').split(/\s+dan\s+|\s+serta\s+/).forEach(p=>{
+      const v=p.trim().split(/\s+/)[0];
+      if(v&&v.length>3&&!found.includes(v))found.push(v);
+    });
   });
-
-  // Also extract "mampu + verb" patterns
-  const mampu = lower.match(/mampu\s+([a-z]+(?:\s+dan\s+[a-z]+)*)/g);
-  if (mampu) {
-    mampu.forEach(m => {
-      const parts = m.replace('mampu ', '').split(/\s+dan\s+/);
-      parts.forEach(p => {
-        const v = p.trim();
-        if (v && !found.includes(v)) found.push(v);
-      });
-    });
+  if(found.length===0){
+    // fallback: take phrases after "mampu"
+    const fb=cp.match(/mampu\s+([^,.;]+)/gi)||[];
+    fb.forEach(f=>found.push(cap(f.replace(/mampu\s+/i,'').trim())));
   }
-
-  // If nothing found, extract noun-phrases after "mampu"
-  if (found.length === 0) {
-    const sentences = cpText.split(/[,;.]/);
-    sentences.forEach(s => {
-      const m = s.match(/mampu\s+([\w\s]+)/i);
-      if (m) found.push(capitalize(m[1].trim()));
-    });
-  }
-
-  // Deduplicate and capitalize
-  return [...new Set(found.map(capitalize))].slice(0, 6);
+  return [...new Set(found.map(cap))].slice(0,6);
 }
 
-// Extract nouns/content from CP
-function extractKonten(cpText) {
-  // Remove common verb words
-  const stopVerbs = new Set(KKO_ALL);
-  const stopWords = new Set([
-    'peserta','didik','mampu','dapat','dengan','dalam','dari','dan','atau','yang','untuk',
-    'pada','ke','di','ini','itu','juga','serta','telah','sudah','akan','bisa','harus',
-    'sesuai','secara','berbagai','hal','cara','melalui','menggunakan','sebagai','tentang',
-    'berupa','adalah','merupakan'
-  ]);
-
-  // Find potential content words (noun phrases)
-  const words = cpText.replace(/[.,;:]/g, '').split(/\s+/);
-  const konten = [];
-  let i = 0;
-  while (i < words.length) {
-    const w = words[i].toLowerCase();
-    if (!stopVerbs.has(w) && !stopWords.has(w) && w.length > 3) {
-      // Check next word for compound noun
-      const wCap = capitalize(words[i]);
-      if (i+1 < words.length) {
-        const next = words[i+1].toLowerCase();
-        if (!stopVerbs.has(next) && !stopWords.has(next) && next.length > 3 && !next.startsWith('me') && !next.startsWith('pe')) {
-          konten.push(capitalize(words[i]) + ' ' + words[i+1].toLowerCase());
-          i += 2; continue;
+function extractKonten(cp){
+  const stopW=new Set([...KKO_ALL,'peserta','didik','mampu','dapat','dengan','dalam','dari','dan','atau',
+    'yang','untuk','pada','ke','di','ini','itu','juga','serta','telah','sudah','akan','bisa','harus',
+    'sesuai','secara','berbagai','hal','cara','melalui','menggunakan','sebagai','tentang','berupa',
+    'adalah','merupakan','sehingga','agar','supaya','oleh','antara','setiap']);
+  const konten=[];
+  const words=cp.replace(/[.,;:]/g,' ').split(/\s+/);
+  let i=0;
+  while(i<words.length){
+    const w=words[i],wl=w.toLowerCase();
+    if(!stopW.has(wl)&&wl.length>3&&!/^(me|di|pe|ke|se|ter|ber)/.test(wl)){
+      // compound noun check
+      if(i+1<words.length){
+        const nl=words[i+1].toLowerCase();
+        if(!stopW.has(nl)&&nl.length>3&&!/^(me|di|pe)/.test(nl)){
+          konten.push(cap(w)+' '+words[i+1].toLowerCase());i+=2;continue;
         }
       }
-      if (!konten.includes(wCap)) konten.push(wCap);
+      const wc=cap(w);if(!konten.includes(wc))konten.push(wc);
     }
     i++;
   }
-
-  // Always add a few contextual content from elemen
-  const elemen = getVal('elemen');
-  if (elemen && !konten.includes(elemen)) konten.unshift(elemen);
-
-  return [...new Set(konten)].slice(0, 5);
+  const elemen=getVal('elemen');
+  if(elemen&&!konten.includes(elemen))konten.unshift(elemen);
+  return[...new Set(konten)].slice(0,5);
 }
 
-// Generate TP with proper KKO
-function generateTP(cpText, kompetensi, konten, jumlah) {
-  const kelas = parseInt(getVal('kelas')) || 3;
-  const mapel = getVal('mapel').toLowerCase();
+function generateTP(cp,kompetensi,konten,jumlah){
+  const kelas=parseInt(getVal('kelas'))||3;
+  const mapel=getVal('mapel').toLowerCase();
+  let levels;
+  if(kelas<=2)levels=['C1','C2'];
+  else if(kelas<=4)levels=['C1','C2','C3'];
+  else if(kelas<=6)levels=['C2','C3','C4'];
+  else if(kelas<=9)levels=['C3','C4','C5'];
+  else levels=['C4','C5','C6'];
 
-  // Determine Bloom level based on class
-  let bloomLevel;
-  if (kelas <= 2) bloomLevel = ['C1','C2'];
-  else if (kelas <= 4) bloomLevel = ['C1','C2','C3'];
-  else if (kelas <= 6) bloomLevel = ['C2','C3','C4'];
-  else if (kelas <= 9) bloomLevel = ['C3','C4','C5'];
-  else bloomLevel = ['C4','C5','C6'];
+  const ctx=mapel.includes('matematika')?'dalam kehidupan sehari-hari'
+    :mapel.includes('ipa')||mapel.includes('sains')?'melalui pengamatan dan percobaan'
+    :mapel.includes('bahasa')?'dalam teks yang dipelajari'
+    :mapel.includes('ips')||mapel.includes('sosial')?'dalam konteks sosial dan budaya'
+    :mapel.includes('pkn')||mapel.includes('ppkn')?'dalam kehidupan bermasyarakat'
+    :mapel.includes('seni')?'melalui eksplorasi dan kreasi'
+    :'dalam konteks pembelajaran';
 
-  const tpList = [];
+  const kontenTokens=konten.length>0?konten:['materi'];
+  const tpList=[];
 
-  // Sequence: always start from lower order → higher order
-  const sequence = ['C1','C2','C3','C4','C5','C6'];
-  const useLevels = sequence.filter(l => bloomLevel.includes(l));
+  for(let n=0;n<jumlah;n++){
+    const lIdx=Math.min(n,levels.length-1);
+    const level=levels[lIdx];
+    const verbs=BLOOM[level];
+    const k=kontenTokens[n%kontenTokens.length];
+    const k2=kontenTokens[(n+1)%kontenTokens.length];
+    let tp='';
 
-  // Build TP candidates pool
-  const verbPool = [];
-  useLevels.forEach(l => verbPool.push(...BLOOM[l]));
-
-  // Content tokens to use in TP
-  const kontenTokens = konten.length > 0 ? konten : ['materi'];
-  const mapelContext = mapel.includes('matematika') ? 'dalam kehidupan sehari-hari'
-    : mapel.includes('ipa') || mapel.includes('sains') ? 'melalui pengamatan dan percobaan'
-    : mapel.includes('bahasa') ? 'dalam teks yang dibaca'
-    : mapel.includes('ips') || mapel.includes('sosial') ? 'dalam konteks sosial budaya'
-    : mapel.includes('pkn') || mapel.includes('ppkn') ? 'dalam kehidupan bermasyarakat'
-    : mapel.includes('seni') ? 'melalui eksplorasi dan kreasi'
-    : 'dalam konteks pembelajaran';
-
-  // Extract domain from CP for better TP
-  const cpLower = cpText.toLowerCase();
-
-  // Generate TP based on jumlah requested
-  for (let n = 0; n < jumlah; n++) {
-    const bloomIdx = Math.min(n, useLevels.length - 1);
-    const level = useLevels[bloomIdx];
-    const verbs = BLOOM[level];
-    const verb = verbs[n % verbs.length];
-
-    // Pick konten in sequence
-    const k = kontenTokens[n % kontenTokens.length];
-    const nextK = kontenTokens[(n + 1) % kontenTokens.length];
-
-    let tp = '';
-    if (n === 0) {
-      // First TP: recognition/identification
-      const v = BLOOM.C1[n % BLOOM.C1.length];
-      tp = `${capitalize(v)} ${k.toLowerCase()} yang berkaitan dengan ${cpLower.includes('konsep') ? 'konsep dasar' : 'materi'} ${nextK.toLowerCase()}.`;
-    } else if (n === 1) {
-      // Second TP: explanation/description
-      const v = BLOOM.C2[n % BLOOM.C2.length];
-      tp = `${capitalize(v)} ${k.toLowerCase()} beserta karakteristiknya ${mapelContext}.`;
-    } else if (n === 2) {
-      // Third TP: application
-      const v = BLOOM.C3[n % BLOOM.C3.length];
-      tp = `${capitalize(v)} ${k.toLowerCase()} untuk menyelesaikan permasalahan ${mapelContext}.`;
+    // Use actual kompetensi if available
+    if(kompetensi.length>0){
+      const komp=kompetensi[n%kompetensi.length];
+      const lk=komp.toLowerCase();
+      const hasKKO=KKO_ALL.some(kko=>lk.startsWith(kko));
+      if(hasKKO){
+        tp=`${komp} secara tepat dan sistematis ${ctx}.`;
+      } else {
+        const v=verbs[n%verbs.length];
+        tp=`${cap(v)} ${komp.toLowerCase()} yang berkaitan dengan ${k.toLowerCase()} ${ctx}.`;
+      }
     } else {
-      // Fourth TP: analysis/evaluation/creation
-      const v = verbs[n % verbs.length];
-      tp = `${capitalize(v)} ${k.toLowerCase()} secara kreatif dan kritis ${mapelContext}.`;
+      // Generic fallback
+      const v=verbs[n%verbs.length];
+      if(n===0) tp=`${cap(BLOOM.C1[n%BLOOM.C1.length])} ${k.toLowerCase()} yang terdapat dalam ${k2.toLowerCase()} ${ctx}.`;
+      else if(n===1) tp=`${cap(BLOOM.C2[n%BLOOM.C2.length])} ${k.toLowerCase()} beserta karakteristiknya ${ctx}.`;
+      else if(n===2) tp=`${cap(BLOOM.C3[n%BLOOM.C3.length])} ${k.toLowerCase()} untuk menyelesaikan permasalahan ${ctx}.`;
+      else tp=`${cap(v)} ${k.toLowerCase()} secara kritis dan mandiri ${ctx}.`;
     }
-
     tpList.push(tp);
   }
-
-  // Refine TP using actual kompetensi from CP
-  if (kompetensi.length > 0 && jumlah > 0) {
-    for (let i = 0; i < Math.min(jumlah, kompetensi.length); i++) {
-      const kompIdx = i % kompetensi.length;
-      const komp = kompetensi[kompIdx];
-      const k = kontenTokens[i % kontenTokens.length];
-      const level = useLevels[Math.min(i, useLevels.length - 1)];
-      const verbs = BLOOM[level];
-      const verbIdx = i % verbs.length;
-
-      // If kompetensi already starts with KKO, use it directly
-      const lowerKomp = komp.toLowerCase();
-      const hasKKO = KKO_ALL.some(kko => lowerKomp.startsWith(kko));
-      if (hasKKO) {
-        tpList[i] = `${komp} secara tepat ${mapelContext}.`;
-      } else {
-        tpList[i] = `${capitalize(verbs[verbIdx])} ${komp.toLowerCase()} dalam konteks ${k.toLowerCase()} ${mapelContext}.`;
-      }
-    }
-  }
-
   return tpList;
 }
 
-// Generate TP code: E.K.S.N
-function generateKode(elemen, kelas, semester, nomor) {
-  const kodeElemen = elemen.charAt(0).toUpperCase();
-  return `${kodeElemen}.${kelas}.${semester}.${nomor}`;
+function generateKode(elemen,kelas,semester,n){
+  return `${elemen.charAt(0).toUpperCase()}.${kelas}.${semester}.${n}`;
 }
 
-// ═══════════════════════════════════════════
-//  MAIN GENERATE
-// ═══════════════════════════════════════════
-let lastResult = null;
+// ═══════════════════════════════
+//  GLOBAL STATE
+// ═══════════════════════════════
+let lastResult=null;
 
-async function generateAnalysis() {
-  if (!validateForm()) {
-    showToast('Lengkapi semua field yang wajib diisi', 'error');
-    return;
-  }
-
+// ═══════════════════════════════
+//  GENERATE
+// ═══════════════════════════════
+async function generateAnalysis(){
+  if(!validateForm()){showToast('Lengkapi semua field wajib','error');return;}
   showLoading('Menganalisis Capaian Pembelajaran…');
+  await delay(600);
 
-  // Simulate processing delay for UX
-  await new Promise(r => setTimeout(r, 700));
-
-  const data = {
-    nama: getVal('namaGuru'),
-    mapel: getVal('mapel'),
-    sekolah: getVal('sekolah'),
-    fase: getVal('fase'),
-    kelas: getVal('kelas'),
-    semester: getVal('semester'),
-    elemen: getVal('elemen'),
-    cp: getVal('cp'),
-    jumlahTP: parseInt(document.querySelector('input[name="jumlahTP"]:checked')?.value || 3),
+  const data={
+    nama:getVal('namaGuru'),mapel:getVal('mapel'),sekolah:getVal('sekolah'),
+    fase:getVal('fase'),kelas:getVal('kelas'),semester:getVal('semester'),
+    elemen:getVal('elemen'),cp:getVal('cp'),
+    jumlahTP:parseInt(document.querySelector('input[name="jumlahTP"]:checked')?.value||3),
   };
 
-  showLoading('Mengekstrak Kompetensi dan Konten…');
-  await new Promise(r => setTimeout(r, 400));
+  showLoading('Mengekstrak Kompetensi dan Konten…');await delay(350);
+  const kompetensi=extractKompetensi(data.cp);
+  const konten=extractKonten(data.cp);
 
-  const kompetensi = extractKompetensi(data.cp);
-  const konten = extractKonten(data.cp);
+  showLoading('Menurunkan Tujuan Pembelajaran…');await delay(400);
+  const tpList=generateTP(data.cp,kompetensi,konten,data.jumlahTP);
+  const kodeList=tpList.map((_,i)=>generateKode(data.elemen,data.kelas,data.semester,i+1));
 
-  showLoading('Menurunkan Tujuan Pembelajaran…');
-  await new Promise(r => setTimeout(r, 500));
-
-  const tpList = generateTP(data.cp, kompetensi, konten, data.jumlahTP);
-  const kodeList = tpList.map((_, i) =>
-    generateKode(data.elemen, data.kelas, data.semester, i + 1)
-  );
-
-  lastResult = { data, kompetensi, konten, tpList, kodeList };
-
+  lastResult={data,kompetensi,konten,tpList,kodeList};
   renderResult(lastResult);
   hideLoading();
-  showToast('Analisis berhasil dibuat!', 'success');
-
-  // Show result panel
-  const panel = document.getElementById('resultPanel');
-  panel.classList.add('visible');
-  setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  showToast('Analisis berhasil dibuat!','success');
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('resultContent').style.display='block';
+  setTimeout(()=>document.getElementById('resultPanel').scrollIntoView({behavior:'smooth',block:'start'}),80);
 }
 
-// ═══════════════════════════════════════════
-//  RENDER RESULT
-// ═══════════════════════════════════════════
-function renderResult({ data, kompetensi, konten, tpList, kodeList }) {
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('resultContent').style.display = 'block';
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
 
-  // Identity
-  const identityItems = [
-    ['Nama', data.nama],
-    ['Mata Pelajaran', data.mapel],
-    ['Sekolah', data.sekolah],
-    ['Fase', data.fase],
-    ['Kelas', 'Kelas ' + data.kelas],
-    ['Semester', 'Semester ' + data.semester],
+// ═══════════════════════════════
+//  RENDER
+// ═══════════════════════════════
+function renderResult({data,kompetensi,konten,tpList,kodeList}){
+  // Identity table
+  const idRows=[
+    ['Nama',data.nama],['Mata Pelajaran',data.mapel],
+    ['Sekolah',data.sekolah],['Fase',data.fase],
+    ['Kelas','Kelas '+data.kelas],['Semester','Semester '+data.semester],
   ];
-  const grid = document.getElementById('identityGrid');
-  grid.innerHTML = identityItems.map(([label, val]) => `
-    <div class="identity-item">
-      <span class="identity-label">${label}</span>
-      <span class="identity-colon">:</span>
-      <span class="identity-value">${val || '-'}</span>
-    </div>
-  `).join('');
-
-  // Table
-  const tbody = document.getElementById('tableBody');
-  // All TPs in one row spanning
-  const kompetensiHTML = kompetensi.length
-    ? `<ul>${kompetensi.map(k => `<li>${k}</li>`).join('')}</ul>`
-    : `<span style="color:var(--gray-400)">-</span>`;
-  const kontenHTML = konten.length
-    ? `<ul>${konten.map(k => `<li>${k}</li>`).join('')}</ul>`
-    : `<span style="color:var(--gray-400)">-</span>`;
-  const tpHTML = `<ul>${tpList.map((tp, i) => `
-    <li>
-      <div class="tp-item">
-        <span class="tp-bullet">${i+1}.</span>
-        <span>${tp}</span>
-      </div>
-    </li>`).join('')}</ul>`;
-  const kodeHTML = kodeList.map(k => `<div class="kode-badge">${k}</div>`).join('');
-
-  tbody.innerHTML = `
+  document.getElementById('identityTable').innerHTML=idRows.map(([l,v])=>`
     <tr>
-      <td class="td-element">${data.elemen}</td>
-      <td class="td-cp">${data.cp}</td>
-      <td class="td-kompetensi">${kompetensiHTML}</td>
-      <td class="td-konten">${kontenHTML}</td>
-      <td class="td-tp">${tpHTML}</td>
-      <td class="td-kode">${kodeHTML}</td>
-    </tr>
-  `;
+      <td class="id-label">${l}</td>
+      <td class="id-colon">:</td>
+      <td class="id-value">${v||'—'}</td>
+    </tr>`).join('');
+
+  // Analysis table body
+  const kompHTML=kompetensi.length
+    ?`<ul class="item-list">${kompetensi.map(k=>`<li><span class="item-dot">▸</span><span>${k}</span></li>`).join('')}</ul>`
+    :'<span style="color:var(--gray-400)">—</span>';
+  const kontenHTML=konten.length
+    ?`<ul class="item-list">${konten.map(k=>`<li><span class="item-dot">▸</span><span>${k}</span></li>`).join('')}</ul>`
+    :'<span style="color:var(--gray-400)">—</span>';
+  const tpHTML=`<ul class="tp-list">${tpList.map((tp,i)=>`
+    <li>
+      <span class="tp-num">${i+1}</span>
+      <span>${tp}</span>
+    </li>`).join('')}</ul>`;
+  const kodeHTML=`<div class="kode-list">${kodeList.map(k=>`<span class="kode-badge">${k}</span>`).join('')}</div>`;
+
+  document.getElementById('tableBody').innerHTML=`
+    <tr>
+      <td class="cell-elemen">${data.elemen}</td>
+      <td class="cell-cp">${data.cp}</td>
+      <td>${kompHTML}</td>
+      <td>${kontenHTML}</td>
+      <td>${tpHTML}</td>
+      <td>${kodeHTML}</td>
+    </tr>`;
 
   // ATP
-  const atpSection = document.getElementById('atpSection');
-  const flowHTML = kodeList.map((k, i) => `
-    <span class="atp-node" title="${tpList[i]}">${k}</span>
-    ${i < kodeList.length - 1 ? '<span class="atp-arrow">→</span>' : ''}
-  `).join('');
+  const flowHTML=kodeList.map((k,i)=>
+    `<span class="atp-node">${k}</span>${i<kodeList.length-1?'<span class="atp-arrow">→</span>':''}`
+  ).join('');
+  const descHTML=`<div class="atp-desc-list">${tpList.map((tp,i)=>`
+    <div class="atp-desc-row">
+      <div class="atp-desc-kode">${kodeList[i]}</div>
+      <div class="atp-desc-text">${tp}</div>
+    </div>`).join('')}</div>`;
 
-  const descHTML = tpList.map((tp, i) => `
-    <div class="atp-desc-item">
-      <span class="atp-code">${kodeList[i]}</span>
-      <span class="atp-text">${tp}</span>
-    </div>
-  `).join('');
-
-  atpSection.innerHTML = `
-    <div class="atp-title">🔀 Alur Tujuan Pembelajaran</div>
-    <div class="atp-flow">${flowHTML}</div>
-    <div class="atp-desc" style="margin-top:14px;">${descHTML}</div>
-  `;
+  document.getElementById('atpBox').innerHTML=`
+    <div class="atp-flow-row">${flowHTML}</div>
+    ${descHTML}`;
 }
 
-// ═══════════════════════════════════════════
-//  EXPORT PDF
-// ═══════════════════════════════════════════
-async function exportPDF() {
-  if (!lastResult) { showToast('Generate analisis terlebih dahulu', 'error'); return; }
-  showLoading('Membuat file PDF…');
-
-  const element = buildPrintHTML(lastResult);
-  const container = document.createElement('div');
-  container.innerHTML = element;
-  document.body.appendChild(container);
-
-  const opt = {
-    margin: [12, 10, 12, 10],
-    filename: 'Analisis_CP_TP_ATP.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-
-  try {
-    await html2pdf().set(opt).from(container).save();
-    showToast('PDF berhasil diunduh!', 'success');
-  } catch(e) {
-    showToast('Gagal membuat PDF. Coba cetak manual.', 'error');
-  } finally {
-    document.body.removeChild(container);
-    hideLoading();
-  }
-}
-
-function buildPrintHTML({ data, kompetensi, konten, tpList, kodeList }) {
-  const identityRows = [
-    ['Nama', data.nama],
-    ['Mata Pelajaran', data.mapel],
-    ['Sekolah', data.sekolah],
-    ['Fase', data.fase],
-    ['Kelas', 'Kelas ' + data.kelas],
-    ['Semester', 'Semester ' + data.semester],
-  ].map(([l,v]) => `<tr><td style="font-weight:600;width:140px;padding:5px 8px;border:1px solid #dde4ed;">${l}</td><td style="padding:5px 8px;border:1px solid #dde4ed;">: ${v}</td></tr>`).join('');
-
-  const tpRows = tpList.map((tp, i) => `<div style="margin-bottom:5px;"><strong>${kodeList[i]}:</strong> ${tp}</div>`).join('');
-
-  const atpFlow = kodeList.join(' → ');
-  const atpDesc = tpList.map((tp,i) => `<div style="padding:4px 0;border-bottom:1px dashed #dde4ed;font-size:11px;"><strong style="color:#1a5cb4">${kodeList[i]}</strong>: ${tp}</div>`).join('');
-
-  return `
-    <div style="font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:12px;color:#1e3349;padding:4px;">
-      <div style="text-align:center;padding:16px;background:linear-gradient(135deg,#0f2a4a,#1a5cb4);color:white;border-radius:8px;margin-bottom:16px;">
-        <div style="font-size:14px;font-weight:700;letter-spacing:0.5px;">ANALISIS CAPAIAN PEMBELAJARAN MENJADI TUJUAN PEMBELAJARAN</div>
-        <div style="font-size:10px;opacity:0.8;margin-top:4px;">Sesuai Panduan Pembelajaran dan Asesmen BSKAP — Kurikulum Merdeka</div>
-      </div>
-      <table style="margin-bottom:14px;border-collapse:collapse;width:100%;">${identityRows}</table>
-      <table style="width:100%;border-collapse:collapse;margin-bottom:16px;font-size:11px;">
-        <thead>
-          <tr style="background:#0f2a4a;color:white;">
-            <th style="padding:8px;text-align:left;border:1px solid #0f2a4a;">Elemen</th>
-            <th style="padding:8px;text-align:left;border:1px solid #0f2a4a;">Capaian Pembelajaran</th>
-            <th style="padding:8px;text-align:left;border:1px solid #0f2a4a;">Kompetensi</th>
-            <th style="padding:8px;text-align:left;border:1px solid #0f2a4a;">Konten</th>
-            <th style="padding:8px;text-align:left;border:1px solid #0f2a4a;">Tujuan Pembelajaran</th>
-            <th style="padding:8px;text-align:left;border:1px solid #0f2a4a;">Kode TP</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="padding:8px;border:1px solid #dde4ed;font-weight:700;color:#1a5cb4;vertical-align:top;">${data.elemen}</td>
-            <td style="padding:8px;border:1px solid #dde4ed;vertical-align:top;">${data.cp}</td>
-            <td style="padding:8px;border:1px solid #dde4ed;vertical-align:top;">${kompetensi.map(k=>'• '+k).join('<br>')}</td>
-            <td style="padding:8px;border:1px solid #dde4ed;vertical-align:top;">${konten.map(k=>'• '+k).join('<br>')}</td>
-            <td style="padding:8px;border:1px solid #dde4ed;vertical-align:top;">${tpRows}</td>
-            <td style="padding:8px;border:1px solid #dde4ed;vertical-align:top;">${kodeList.map(k=>`<span style="display:inline-block;background:#e8f2ff;color:#1a5cb4;padding:2px 6px;border-radius:50px;font-size:10px;font-weight:700;margin-bottom:2px;">${k}</span>`).join('<br>')}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div style="background:#e8f2ff;border:1.5px solid #d0e5ff;border-radius:8px;padding:14px;">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#0f2a4a;margin-bottom:8px;">🔀 Alur Tujuan Pembelajaran (ATP)</div>
-        <div style="font-size:13px;font-weight:700;color:#1a5cb4;margin-bottom:10px;">${atpFlow}</div>
-        <div style="background:white;border-radius:6px;padding:10px;">${atpDesc}</div>
-      </div>
-    </div>
-  `;
-}
-
-// ═══════════════════════════════════════════
+// ═══════════════════════════════
 //  EXPORT WORD
-// ═══════════════════════════════════════════
-async function exportWord() {
-  if (!lastResult) { showToast('Generate analisis terlebih dahulu', 'error'); return; }
-  if (typeof docx === 'undefined') {
-    showToast('Library docx belum termuat. Coba refresh halaman.', 'error');
-    return;
-  }
+// ═══════════════════════════════
+async function exportWord(){
+  if(!lastResult){showToast('Generate analisis terlebih dahulu','error');return;}
+  if(typeof docx==='undefined'){showToast('Library docx belum termuat, coba refresh','error');return;}
   showLoading('Membuat file Word…');
+  const {data,kompetensi,konten,tpList,kodeList}=lastResult;
 
-  const { data, kompetensi, konten, tpList, kodeList } = lastResult;
+  try{
+    const {
+      Document,Packer,Paragraph,Table,TableRow,TableCell,TextRun,
+      AlignmentType,WidthType,ShadingType,BorderStyle,
+      TableBorders,convertInchesToTwip,HeightRule
+    }=docx;
 
-  try {
-    const { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun, AlignmentType,
-      HeadingLevel, BorderStyle, ShadingType, WidthType } = docx;
+    const NAVY='0F2A4A', BLUE='1A5CB4', BLUE_LIGHT='4A9AF5';
+    const SKY='EAF3FF', LIGHT='F8FAFC', WHITE='FFFFFF';
 
-    const headerStyle = {
-      shading: { type: ShadingType.CLEAR, fill: '0f2a4a' }
+    const cellBorder={style:BorderStyle.SINGLE,size:6,color:'C8D8EE'};
+    const tableBorders={
+      top:cellBorder,bottom:cellBorder,left:cellBorder,right:cellBorder,
+      insideH:cellBorder,insideV:cellBorder
     };
 
-    // Identity rows
-    const identityData = [
-      ['Nama', data.nama], ['Mata Pelajaran', data.mapel],
-      ['Sekolah', data.sekolah], ['Fase', data.fase],
-      ['Kelas', 'Kelas ' + data.kelas], ['Semester', 'Semester ' + data.semester],
+    // Helper: create text run
+    const TR=(text,opts={})=>new TextRun({text:String(text||''),font:'Times New Roman',size:22,...opts});
+    // Helper: paragraph
+    const P=(children,opts={})=>new Paragraph({children:Array.isArray(children)?children:[children],...opts,spacing:{after:60,...(opts.spacing||{})}});
+    // Helper: bold paragraph
+    const BP=(text,opts={})=>P([TR(text,{bold:true,...opts})]);
+
+    // ── Page setup
+    const pageSetup={
+      page:{
+        size:{width:convertInchesToTwip(8.27),height:convertInchesToTwip(11.69)},
+        margin:{top:convertInchesToTwip(1),bottom:convertInchesToTwip(1),left:convertInchesToTwip(1.18),right:convertInchesToTwip(0.79)}
+      }
+    };
+
+    // ── Title section
+    const titleSection=[
+      P([TR('ANALISIS CAPAIAN PEMBELAJARAN MENJADI TUJUAN PEMBELAJARAN',{bold:true,size:26,color:NAVY})],
+        {alignment:AlignmentType.CENTER,spacing:{after:100}}),
+      P([TR('Sesuai Panduan Pembelajaran dan Asesmen BSKAP · Kurikulum Merdeka',{italics:true,size:20,color:'555555'})],
+        {alignment:AlignmentType.CENTER,spacing:{after:320}}),
     ];
 
-    const identityRows = identityData.map(([l, v]) => new TableRow({
-      children: [
-        new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: l, bold: true, size: 20 })] })], width: { size: 25, type: WidthType.PERCENTAGE } }),
-        new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: ':', size: 20 })] })], width: { size: 3, type: WidthType.PERCENTAGE } }),
-        new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: v, size: 20 })] })], width: { size: 72, type: WidthType.PERCENTAGE } }),
-      ]
-    }));
+    // ── Identity table (label | : | value)
+    const idData=[
+      ['Nama',data.nama],['Mata Pelajaran',data.mapel],
+      ['Sekolah',data.sekolah],['Fase',data.fase],
+      ['Kelas','Kelas '+data.kelas],['Semester','Semester '+data.semester],
+    ];
+    const idBorder={style:BorderStyle.SINGLE,size:4,color:'CCCCCC'};
+    const idBorders={top:idBorder,bottom:idBorder,left:idBorder,right:idBorder,insideH:idBorder,insideV:idBorder};
 
-    // Main table
-    const headerRow = new TableRow({
-      children: ['Elemen','Capaian Pembelajaran','Kompetensi','Konten','Tujuan Pembelajaran','Kode TP'].map(h =>
-        new TableCell({
-          children: [new Paragraph({ children: [new TextRun({ text: h, bold: true, color: 'FFFFFF', size: 20 })] })],
-          shading: { type: ShadingType.CLEAR, fill: '0f2a4a' }
-        })
-      )
+    const identityTable=new Table({
+      width:{size:100,type:WidthType.PERCENTAGE},
+      borders:idBorders,
+      rows:idData.map(([l,v])=>new TableRow({
+        children:[
+          new TableCell({
+            width:{size:25,type:WidthType.PERCENTAGE},
+            shading:{type:ShadingType.CLEAR,fill:LIGHT},
+            children:[P([TR(l,{bold:true,size:20})])],
+          }),
+          new TableCell({
+            width:{size:3,type:WidthType.PERCENTAGE},
+            children:[P([TR(':',{size:20})])],
+          }),
+          new TableCell({
+            width:{size:72,type:WidthType.PERCENTAGE},
+            children:[P([TR(v||'—',{size:20})])],
+          }),
+        ]
+      }))
     });
 
-    const dataRow = new TableRow({
-      children: [
-        new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: data.elemen, bold: true, color: '1a5cb4', size: 20 })] })] }),
-        new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: data.cp, size: 18 })] })] }),
-        new TableCell({ children: kompetensi.map(k => new Paragraph({ children: [new TextRun({ text: '• ' + k, size: 18 })] })) }),
-        new TableCell({ children: konten.map(k => new Paragraph({ children: [new TextRun({ text: '• ' + k, size: 18 })] })) }),
-        new TableCell({ children: tpList.map((tp, i) => new Paragraph({ children: [new TextRun({ text: (i+1) + '. ' + tp, size: 18 })] })) }),
-        new TableCell({ children: kodeList.map(k => new Paragraph({ children: [new TextRun({ text: k, bold: true, color: '1a5cb4', size: 18 })] })) }),
+    // ── Main analysis table header row
+    const thCell=(text,w)=>new TableCell({
+      width:{size:w,type:WidthType.PERCENTAGE},
+      shading:{type:ShadingType.CLEAR,fill:NAVY},
+      children:[P([TR(text,{bold:true,color:WHITE,size:20})])],
+    });
+    const headerRow=new TableRow({
+      tableHeader:true,
+      children:[
+        thCell('Elemen',10),
+        thCell('Capaian Pembelajaran',22),
+        thCell('Kompetensi',16),
+        thCell('Konten',14),
+        thCell('Tujuan Pembelajaran',28),
+        thCell('Kode TP',10),
       ]
     });
 
-    const doc = new Document({
-      sections: [{
-        properties: {},
-        children: [
-          new Paragraph({
-            children: [new TextRun({ text: 'ANALISIS CAPAIAN PEMBELAJARAN MENJADI TUJUAN PEMBELAJARAN', bold: true, size: 28, color: '0f2a4a' })],
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 200 },
+    // ── Main analysis table data row
+    const tdCell=(children,opts={})=>new TableCell({
+      ...opts,
+      children:Array.isArray(children)?children:[children],
+    });
+
+    const mkList=(items)=>items.map(it=>P([TR('▸  '+it,{size:20})],{spacing:{after:40}}));
+
+    const dataRow=new TableRow({
+      children:[
+        tdCell([P([TR(data.elemen,{bold:true,color:BLUE,size:20})])]),
+        tdCell([P([TR(data.cp,{italics:true,size:19})],{spacing:{after:0}})]),
+        tdCell(kompetensi.length?mkList(kompetensi):[P([TR('—',{size:20,color:'999999'})])]),
+        tdCell(konten.length?mkList(konten):[P([TR('—',{size:20,color:'999999'})])]),
+        tdCell(tpList.map((tp,i)=>new Paragraph({
+          children:[
+            TR(`${i+1}.  `,{bold:true,size:20,color:NAVY}),
+            TR(tp,{size:20}),
+          ],
+          spacing:{after:80}
+        }))),
+        tdCell(kodeList.map(k=>P([TR(k,{bold:true,color:BLUE,size:20})],{spacing:{after:50}}))),
+      ]
+    });
+
+    const analysisTable=new Table({
+      width:{size:100,type:WidthType.PERCENTAGE},
+      borders:tableBorders,
+      rows:[headerRow,dataRow],
+    });
+
+    // ── ATP section
+    const atpItems=[
+      BP('ALUR TUJUAN PEMBELAJARAN (ATP)',{size:22,color:NAVY}),
+      P([TR(kodeList.join('  →  '),{bold:true,size:22,color:BLUE})],{spacing:{after:160}}),
+    ];
+    const atpDescTable=new Table({
+      width:{size:100,type:WidthType.PERCENTAGE},
+      borders:tableBorders,
+      rows:tpList.map((tp,i)=>new TableRow({
+        children:[
+          new TableCell({
+            width:{size:12,type:WidthType.PERCENTAGE},
+            shading:{type:ShadingType.CLEAR,fill:SKY},
+            children:[P([TR(kodeList[i],{bold:true,color:BLUE,size:20})])],
           }),
-          new Paragraph({
-            children: [new TextRun({ text: 'Sesuai Panduan Pembelajaran dan Asesmen BSKAP — Kurikulum Merdeka', size: 18, color: '4a647c', italics: true })],
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 400 },
+          new TableCell({
+            width:{size:88,type:WidthType.PERCENTAGE},
+            children:[P([TR(tp,{size:20})])],
           }),
-          new Paragraph({
-            children: [new TextRun({ text: 'IDENTITAS', bold: true, size: 22, color: '0f2a4a' })],
-            spacing: { after: 150 },
-          }),
-          new Table({ rows: identityRows, width: { size: 100, type: WidthType.PERCENTAGE } }),
-          new Paragraph({ children: [], spacing: { after: 300 } }),
-          new Paragraph({
-            children: [new TextRun({ text: 'TABEL ANALISIS CP → TP', bold: true, size: 22, color: '0f2a4a' })],
-            spacing: { after: 150 },
-          }),
-          new Table({ rows: [headerRow, dataRow], width: { size: 100, type: WidthType.PERCENTAGE } }),
-          new Paragraph({ children: [], spacing: { after: 300 } }),
-          new Paragraph({
-            children: [new TextRun({ text: 'ALUR TUJUAN PEMBELAJARAN (ATP)', bold: true, size: 22, color: '0f2a4a' })],
-            spacing: { after: 150 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: kodeList.join(' → '), bold: true, size: 24, color: '1a5cb4' })],
-            spacing: { after: 200 },
-          }),
-          ...tpList.map((tp, i) => new Paragraph({
-            children: [
-              new TextRun({ text: kodeList[i] + ': ', bold: true, size: 20, color: '1a5cb4' }),
-              new TextRun({ text: tp, size: 20 }),
-            ],
-            spacing: { after: 100 },
-          })),
+        ]
+      }))
+    });
+
+    // ── Build document
+    const doc=new Document({
+      sections:[{
+        ...pageSetup,
+        children:[
+          ...titleSection,
+          BP('IDENTITAS',{size:22,color:NAVY}),
+          identityTable,
+          P([TR('')],{spacing:{after:280}}),
+          BP('TABEL ANALISIS CAPAIAN PEMBELAJARAN',{size:22,color:NAVY}),
+          analysisTable,
+          P([TR('')],{spacing:{after:280}}),
+          ...atpItems,
+          atpDescTable,
         ]
       }]
     });
 
-    const blob = await Packer.toBlob(doc);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'Analisis_CP_TP_ATP.docx'; a.click();
+    const blob=await Packer.toBlob(doc);
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='Analisis_CP_TP_ATP.docx';a.click();
     URL.revokeObjectURL(url);
-    showToast('File Word berhasil diunduh!', 'success');
-  } catch(e) {
+    showToast('File Word berhasil diunduh!','success');
+  }catch(e){
     console.error(e);
-    showToast('Gagal membuat Word: ' + e.message, 'error');
-  } finally {
-    hideLoading();
-  }
+    showToast('Gagal membuat Word: '+e.message,'error');
+  }finally{hideLoading();}
 }
 
-// ═══════════════════════════════════════════
-//  COPY RESULT
-// ═══════════════════════════════════════════
-function copyResult() {
-  if (!lastResult) { showToast('Tidak ada hasil untuk disalin', 'error'); return; }
-  const { data, kompetensi, konten, tpList, kodeList } = lastResult;
-
-  let text = `ANALISIS CAPAIAN PEMBELAJARAN MENJADI TUJUAN PEMBELAJARAN\n`;
-  text += `${'='.repeat(60)}\n`;
-  text += `Nama         : ${data.nama}\n`;
-  text += `Mata Pelajaran: ${data.mapel}\n`;
-  text += `Sekolah      : ${data.sekolah}\n`;
-  text += `Fase         : ${data.fase}\n`;
-  text += `Kelas        : ${data.kelas}\n`;
-  text += `Semester     : ${data.semester}\n\n`;
-  text += `ELEMEN: ${data.elemen}\n`;
-  text += `CP: ${data.cp}\n\n`;
-  text += `KOMPETENSI:\n${kompetensi.map(k => '  • ' + k).join('\n')}\n\n`;
-  text += `KONTEN:\n${konten.map(k => '  • ' + k).join('\n')}\n\n`;
-  text += `TUJUAN PEMBELAJARAN:\n`;
-  tpList.forEach((tp, i) => { text += `  ${kodeList[i]}: ${tp}\n`; });
-  text += `\nALUR TUJUAN PEMBELAJARAN (ATP):\n${kodeList.join(' → ')}\n`;
-
-  navigator.clipboard.writeText(text)
-    .then(() => showToast('Hasil berhasil disalin!', 'success'))
-    .catch(() => showToast('Gagal menyalin', 'error'));
+// ═══════════════════════════════
+//  EXPORT PDF
+// ═══════════════════════════════
+async function exportPDF(){
+  if(!lastResult){showToast('Generate analisis terlebih dahulu','error');return;}
+  showLoading('Membuat PDF…');
+  const el=document.getElementById('resultContent');
+  // Temporarily hide export bar
+  const bar=el.querySelector('.export-bar');
+  bar.style.display='none';
+  const opt={
+    margin:[10,8,10,8],
+    filename:'Analisis_CP_TP_ATP.pdf',
+    image:{type:'jpeg',quality:.97},
+    html2canvas:{scale:2,useCORS:true,logging:false},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+  };
+  try{
+    await html2pdf().set(opt).from(el).save();
+    showToast('PDF berhasil diunduh!','success');
+  }catch(e){showToast('Gagal buat PDF','error');}
+  finally{bar.style.display='';hideLoading();}
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════
+//  COPY
+// ═══════════════════════════════
+function copyResult(){
+  if(!lastResult){showToast('Tidak ada hasil','error');return;}
+  const{data,kompetensi,konten,tpList,kodeList}=lastResult;
+  let t='ANALISIS CAPAIAN PEMBELAJARAN MENJADI TUJUAN PEMBELAJARAN\n'+'='.repeat(60)+'\n';
+  t+=`Nama          : ${data.nama}\nMata Pelajaran: ${data.mapel}\nSekolah       : ${data.sekolah}\n`;
+  t+=`Fase          : ${data.fase}\nKelas         : ${data.kelas}\nSemester      : ${data.semester}\n\n`;
+  t+=`Elemen: ${data.elemen}\nCP: ${data.cp}\n\n`;
+  t+=`KOMPETENSI:\n${kompetensi.map(k=>'  ▸ '+k).join('\n')}\n\nKONTEN:\n${konten.map(k=>'  ▸ '+k).join('\n')}\n\n`;
+  t+=`TUJUAN PEMBELAJARAN:\n${tpList.map((tp,i)=>`  ${kodeList[i]}: ${tp}`).join('\n')}\n\n`;
+  t+=`ALUR TUJUAN PEMBELAJARAN (ATP):\n${kodeList.join(' → ')}\n`;
+  navigator.clipboard.writeText(t).then(()=>showToast('Disalin!','success')).catch(()=>showToast('Gagal menyalin','error'));
+}
+
+// ═══════════════════════════════
 //  PRINT
-// ═══════════════════════════════════════════
-function printDirect() {
-  if (!lastResult) { showToast('Generate analisis terlebih dahulu', 'error'); return; }
-  const html = buildPrintHTML(lastResult);
-  const win = window.open('', '_blank');
-  win.document.write(`
-    <!DOCTYPE html><html><head>
-    <meta charset="UTF-8">
-    <title>Analisis CP → TP ATP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-      body { margin: 20px; font-family: 'Plus Jakarta Sans', Arial, sans-serif; }
-      @media print { body { margin: 10mm; } }
-    </style>
-    </head><body>${html}<script>window.onload=()=>window.print();<\/script></body></html>
-  `);
-  win.document.close();
+// ═══════════════════════════════
+function printDirect(){
+  if(!lastResult){showToast('Generate analisis terlebih dahulu','error');return;}
+  const html=document.getElementById('resultContent').innerHTML;
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'Plus Jakarta Sans',sans-serif;margin:12mm;font-size:12px;}
+    .export-bar{display:none!important;}
+    .result-doc{color:#1e3349;}
+    .doc-header{background:#0f2a4a;color:white;padding:14px 18px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .doc-header-title{font-size:13px;font-weight:700;}
+    .doc-header-sub{font-size:10px;opacity:.8;margin-top:3px;}
+    .identity-section,.analysis-section,.atp-section{padding:12px 0;}
+    .identity-section-title,.analysis-section-title,.atp-section-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#1a5cb4;margin-bottom:8px;}
+    .identity-table{width:100%;border-collapse:collapse;font-size:11px;}
+    .identity-table td{padding:5px 8px;border:1px solid #dde4ed;}
+    .id-label{font-weight:600;width:130px;}
+    .id-colon{width:14px;text-align:center;}
+    .id-value{font-weight:600;color:#0f2a4a;}
+    .table-scroll{overflow:visible;}
+    .analysis-table{width:100%;border-collapse:collapse;font-size:10px;}
+    .analysis-table thead tr{background:#0f2a4a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .analysis-table thead th{padding:7px 8px;color:white;text-align:left;font-size:9px;border:1px solid #0f2a4a;}
+    .analysis-table tbody td{padding:7px 8px;border:1px solid #dde4ed;vertical-align:top;}
+    .cell-elemen{font-weight:700;color:#1a5cb4;}
+    .cell-cp{font-style:italic;}
+    .item-list{list-style:none;padding:0;margin:0;}
+    .item-list li{margin-bottom:3px;font-size:10px;}
+    .item-dot{color:#4a9af5;margin-right:4px;}
+    .tp-list{list-style:none;padding:0;margin:0;}
+    .tp-list li{margin-bottom:5px;padding-bottom:5px;border-bottom:1px dashed #dde4ed;font-size:10px;display:flex;gap:5px;}
+    .tp-num{background:#0f2a4a;color:white;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .kode-list{display:flex;flex-direction:column;gap:3px;}
+    .kode-badge{background:#eaf3ff;color:#1a5cb4;padding:2px 7px;border-radius:50px;font-size:9px;font-weight:700;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .atp-box{background:#eaf3ff;border:1px solid #cce0ff;border-radius:8px;padding:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .atp-flow-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px;}
+    .atp-node{background:white;border:1px solid #4a9af5;color:#1a5cb4;padding:4px 10px;border-radius:50px;font-size:9px;font-weight:700;}
+    .atp-arrow{color:#4a9af5;font-size:10px;}
+    .atp-desc-list{background:white;border-radius:6px;overflow:hidden;border:1px solid #cce0ff;}
+    .atp-desc-row{display:flex;border-bottom:1px solid #eaf3ff;}
+    .atp-desc-kode{background:#eaf3ff;padding:7px 10px;font-size:9px;font-weight:700;color:#1a5cb4;min-width:72px;border-right:1px solid #cce0ff;display:flex;align-items:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .atp-desc-text{padding:7px 12px;font-size:10px;color:#1e3349;}
+  </style></head><body>${html}<script>window.onload=()=>window.print();<\/script></body></html>`);
+  w.document.close();
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════
 //  RESET & SAMPLE
-// ═══════════════════════════════════════════
-function resetForm() {
-  ['namaGuru','mapel','sekolah','elemen','cp'].forEach(id => {
-    document.getElementById(id).value = '';
+// ═══════════════════════════════
+function resetForm(){
+  ['namaGuru','mapel','sekolah','elemen','cp'].forEach(id=>{
+    document.getElementById(id).value='';
     document.getElementById(id).classList.remove('error');
   });
-  ['fase','kelas','semester'].forEach(id => {
-    document.getElementById(id).value = '';
+  ['fase','kelas','semester'].forEach(id=>{
+    document.getElementById(id).value='';
     document.getElementById(id).classList.remove('error');
   });
-  document.querySelectorAll('.error-msg').forEach(el => el.classList.remove('visible'));
-  document.querySelector('input[name="jumlahTP"][value="3"]').checked = true;
-
-  document.getElementById('emptyState').style.display = 'flex';
-  document.getElementById('resultContent').style.display = 'none';
-  document.getElementById('resultPanel').classList.remove('visible');
-  lastResult = null;
-  showToast('Form berhasil direset', 'info');
+  document.querySelectorAll('.error-msg').forEach(el=>el.classList.remove('visible'));
+  document.querySelector('input[name="jumlahTP"][value="3"]').checked=true;
+  document.getElementById('emptyState').style.display='flex';
+  document.getElementById('resultContent').style.display='none';
+  lastResult=null;
+  showToast('Form direset','info');
 }
 
-function loadSample() {
-  document.getElementById('namaGuru').value = 'Budi Santoso, S.Pd.';
-  document.getElementById('mapel').value = 'Matematika';
-  document.getElementById('sekolah').value = 'SDN 01 Sukamaju';
-  document.getElementById('fase').value = 'Fase B';
-  document.getElementById('kelas').value = '3';
-  document.getElementById('semester').value = '1';
-  document.getElementById('elemen').value = 'Bilangan';
-  document.getElementById('cp').value = 'Peserta didik mampu memahami konsep bilangan cacah sampai 1.000, menentukan nilai tempat, serta melakukan operasi penjumlahan dan pengurangan dalam konteks permasalahan sehari-hari dengan menggunakan berbagai strategi.';
-  document.querySelector('input[name="jumlahTP"][value="4"]').checked = true;
-  showToast('Contoh data berhasil dimuat!', 'success');
+function loadSample(){
+  document.getElementById('namaGuru').value='Budi Santoso, S.Pd.';
+  document.getElementById('mapel').value='Matematika';
+  document.getElementById('sekolah').value='SDN 01 Sukamaju';
+  document.getElementById('fase').value='Fase B';
+  document.getElementById('kelas').value='3';
+  document.getElementById('semester').value='1';
+  document.getElementById('elemen').value='Bilangan';
+  document.getElementById('cp').value='Peserta didik mampu memahami konsep bilangan cacah sampai 1.000, menentukan nilai tempat, serta melakukan operasi penjumlahan dan pengurangan dalam konteks permasalahan sehari-hari dengan menggunakan berbagai strategi.';
+  document.querySelector('input[name="jumlahTP"][value="4"]').checked=true;
+  showToast('Contoh data dimuat!','success');
 }
 
-// ═══════════════════════════════════════════
-//  REAL-TIME VALIDATION
-// ═══════════════════════════════════════════
-['namaGuru','mapel','sekolah','elemen','cp','fase','kelas','semester'].forEach(id => {
-  document.getElementById(id).addEventListener('input', function() {
-    if (this.value.trim()) {
+// Real-time validation clear
+['namaGuru','mapel','sekolah','elemen','cp','fase','kelas','semester'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',function(){
+    if(this.value.trim()){
       this.classList.remove('error');
-      const err = document.getElementById('err' + id.charAt(0).toUpperCase() + id.slice(1));
-      if (err) err.classList.remove('visible');
+      const k=id.charAt(0).toUpperCase()+id.slice(1);
+      const er=document.getElementById('err'+k);
+      if(er)er.classList.remove('visible');
     }
   });
 });
-
-// Show result panel right away (empty state)
-document.getElementById('resultPanel').classList.add('visible');
 </script>
 </body>
 </html>
