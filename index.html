@@ -5,10 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Generator Analisis CP → TP & ATP | BSKAP Kurikulum Merdeka</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<!-- docx.js for Word export -->
-<script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
-<!-- html2pdf for PDF export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- JSZip untuk membuat file .docx dari XML -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 :root {
   --navy: #0f2a4a;
@@ -24,8 +22,7 @@
   --gray-400: #8fa3bb;
   --gray-600: #4a647c;
   --gray-800: #1e3349;
-  --success: #16a34a;
-  --success-bg: #dcfce7;
+
   --radius: 14px;
   --radius-sm: 8px;
   --shadow: 0 4px 24px rgba(15,42,74,0.10);
@@ -77,12 +74,19 @@ select.form-control{cursor:pointer;}
 .btn-outline:hover{background:var(--sky);}
 .btn-ghost{background:var(--gray-100);color:var(--gray-600);}
 .btn-ghost:hover{background:var(--gray-200);}
-.btn-word{background:linear-gradient(135deg,#1a56a0 0%,#1e6fcf 100%);color:white;box-shadow:0 4px 14px rgba(26,86,160,.32);}
-.btn-word:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,86,160,.42);}
-.btn-pdf{background:linear-gradient(135deg,#b91c1c 0%,#dc2626 100%);color:white;box-shadow:0 4px 14px rgba(185,28,28,.28);}
-.btn-pdf:hover{transform:translateY(-1px);}
-.btn-success{background:var(--success-bg);color:var(--success);}
-.btn-success:hover{background:#bbf7d0;}
+.btn-word{background:linear-gradient(135deg,#1a56a0 0%,#1e6fcf 100%);color:white;box-shadow:0 4px 18px rgba(26,86,160,.38);}
+.btn-word:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,86,160,.50);}
+.btn-word:active{transform:translateY(0);}
+.btn-word-xl{font-size:1rem;font-weight:700;padding:15px 32px;border-radius:12px;letter-spacing:.2px;gap:10px;}
+.btn-print{background:white;color:var(--gray-600);border:1.5px solid var(--gray-200);}
+.btn-print:hover{background:var(--gray-50);border-color:var(--gray-400);}
+
+/* Export bar */
+.export-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:16px 24px;background:linear-gradient(135deg,#eaf3ff 0%,#f0f7ff 100%);border-top:2px solid var(--sky-deep);}
+.export-bar-left{display:flex;flex-direction:column;gap:3px;}
+.export-bar-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--blue);opacity:.8;}
+.export-bar-desc{font-size:.75rem;color:var(--gray-600);}
+.export-bar-right{display:flex;align-items:center;gap:10px;}
 .btn-lg{padding:13px 22px;font-size:.92rem;border-radius:10px;}
 .btn-full{width:100%;}
 .action-buttons{display:flex;flex-direction:column;gap:9px;margin-top:18px;}
@@ -156,8 +160,7 @@ select.form-control{cursor:pointer;}
 .atp-desc-kode{background:var(--sky);padding:9px 12px;font-size:.75rem;font-weight:700;color:var(--blue);min-width:85px;display:flex;align-items:center;border-right:1px solid var(--sky-deep);}
 .atp-desc-text{padding:9px 14px;font-size:.8rem;color:var(--gray-800);line-height:1.5;}
 
-/* Export bar */
-.export-bar{display:flex;gap:9px;flex-wrap:wrap;padding:14px 20px;background:var(--gray-50);border-top:1px solid var(--gray-100);}
+
 
 /* Empty state */
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:70px 20px;color:var(--gray-400);text-align:center;}
@@ -382,10 +385,17 @@ select.form-control{cursor:pointer;}
 
     <!-- Export bar -->
     <div class="export-bar">
-      <button class="btn btn-word" onclick="exportWord()">📝 Export Word</button>
-      <button class="btn btn-pdf" onclick="exportPDF()">📄 Export PDF</button>
-      <button class="btn btn-success" onclick="copyResult()">📋 Salin</button>
-      <button class="btn btn-outline" onclick="printDirect()">🖨️ Cetak</button>
+      <div class="export-bar-left">
+        <div class="export-bar-label">📄 Dokumen Siap</div>
+        <div class="export-bar-desc">Unduh hasil analisis dalam format Microsoft Word</div>
+      </div>
+      <div class="export-bar-right">
+        <button class="btn btn-print btn-outline" onclick="printDirect()">🖨️ Cetak</button>
+        <button class="btn btn-word btn-word-xl" onclick="exportWord()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+          Unduh Word (.docx)
+        </button>
+      </div>
     </div>
 
   </div><!-- /resultContent -->
@@ -628,209 +638,256 @@ function renderResult({data,kompetensi,konten,tpList,kodeList}){
 }
 
 // ═══════════════════════════════
-//  EXPORT WORD — FUNGSI PENUH
+//  EXPORT WORD — XML OOXML MANDIRI
+//  Tidak bergantung library docx.js
 // ═══════════════════════════════
+function xmlEsc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function wRun(text, opts={}){
+  const rpr = [
+    opts.bold ? '<w:b/><w:bCs/>' : '',
+    opts.italic ? '<w:i/><w:iCs/>' : '',
+    opts.color ? `<w:color w:val="${opts.color}"/>` : '',
+    `<w:sz w:val="${opts.sz||22}"/><w:szCs w:val="${opts.sz||22}"/>`,
+    `<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>`,
+  ].join('');
+  return `<w:r><w:rPr>${rpr}</w:rPr><w:t xml:space="preserve">${xmlEsc(text)}</w:t></w:r>`;
+}
+
+function wPara(runs, opts={}){
+  const ppr = [
+    opts.align ? `<w:jc w:val="${opts.align}"/>` : '',
+    `<w:spacing w:before="${opts.before||0}" w:after="${opts.after||80}"/>`,
+    opts.shading ? `<w:shd w:val="clear" w:color="auto" w:fill="${opts.shading}"/>` : '',
+  ].join('');
+  const runsXml = Array.isArray(runs) ? runs.join('') : runs;
+  return `<w:p><w:pPr>${ppr}</w:pPr>${runsXml}</w:p>`;
+}
+
+function wCell(content, opts={}){
+  const tcpr = [
+    opts.width ? `<w:tcW w:w="${opts.width}" w:type="pct"/>` : '',
+    opts.fill ? `<w:shd w:val="clear" w:color="auto" w:fill="${opts.fill}"/>` : '',
+    `<w:tcBorders>
+      <w:top w:val="single" w:sz="6" w:color="C8D8EE"/>
+      <w:left w:val="single" w:sz="6" w:color="C8D8EE"/>
+      <w:bottom w:val="single" w:sz="6" w:color="C8D8EE"/>
+      <w:right w:val="single" w:sz="6" w:color="C8D8EE"/>
+    </w:tcBorders>`,
+    `<w:vAlign w:val="top"/>`,
+  ].join('');
+  const contentXml = Array.isArray(content) ? content.join('') : content;
+  return `<w:tc><w:tcPr>${tcpr}</w:tcPr>${contentXml}</w:tc>`;
+}
+
+function wRow(cells, opts={}){
+  const trpr = opts.header ? '<w:tblHeader/>' : '';
+  return `<w:tr><w:trPr>${trpr}</w:trPr>${cells.join('')}</w:tr>`;
+}
+
+function wTable(rows){
+  return `<w:tbl>
+    <w:tblPr>
+      <w:tblW w:w="5000" w:type="pct"/>
+      <w:tblBorders>
+        <w:top w:val="single" w:sz="6" w:color="C8D8EE"/>
+        <w:left w:val="single" w:sz="6" w:color="C8D8EE"/>
+        <w:bottom w:val="single" w:sz="6" w:color="C8D8EE"/>
+        <w:right w:val="single" w:sz="6" w:color="C8D8EE"/>
+        <w:insideH w:val="single" w:sz="6" w:color="C8D8EE"/>
+        <w:insideV w:val="single" w:sz="6" w:color="C8D8EE"/>
+      </w:tblBorders>
+    </w:tblPr>
+    ${rows.join('')}
+  </w:tbl>`;
+}
+
 async function exportWord(){
   if(!lastResult){showToast('Generate analisis terlebih dahulu','error');return;}
   showLoading('Membuat file Word…');
   const {data,kompetensi,konten,tpList,kodeList}=lastResult;
 
   try{
-    // Tunggu docx siap
-    let docxLib = null;
-    if(typeof docx !== 'undefined'){
-      docxLib = docx;
-    } else if(typeof window.docx !== 'undefined'){
-      docxLib = window.docx;
-    } else {
-      throw new Error('Library docx.js tidak ditemukan. Pastikan koneksi internet aktif dan coba refresh halaman.');
-    }
-
-    const {
-      Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun,
-      AlignmentType, WidthType, ShadingType, BorderStyle, HeightRule
-    } = docxLib;
-
-    const NAVY_COLOR = '0F2A4A';
-    const BLUE_COLOR = '1A5CB4';
-    const WHITE_COLOR = 'FFFFFF';
-    const SKY_COLOR = 'EAF3FF';
-    const LIGHT_COLOR = 'F8FAFC';
-
-    const borderDef = (color='C8D8EE', size=6) => ({style: BorderStyle.SINGLE, size, color});
-    const tableBorders = {
-      top: borderDef(), bottom: borderDef(),
-      left: borderDef(), right: borderDef(),
-      insideH: borderDef(), insideV: borderDef()
-    };
-    const idBorderDef = borderDef('CCCCCC', 4);
-    const idBorders = {
-      top: idBorderDef, bottom: idBorderDef,
-      left: idBorderDef, right: idBorderDef,
-      insideH: idBorderDef, insideV: idBorderDef
-    };
-
-    // Helper: buat TextRun
-    const TR = (text, opts={}) => new TextRun({
-      text: String(text || ''),
-      font: 'Times New Roman',
-      size: opts.size || 22,
-      bold: opts.bold || false,
-      italics: opts.italics || false,
-      color: opts.color || undefined,
-    });
-
-    // Helper: buat Paragraph
-    const mkP = (runs, opts={}) => new Paragraph({
-      children: Array.isArray(runs) ? runs : [runs],
-      alignment: opts.alignment || AlignmentType.LEFT,
-      spacing: { before: opts.spaceBefore||0, after: opts.spaceAfter||60 },
-    });
-
-    // Helper: TableCell dengan shading
-    const mkCell = (children, opts={}) => new TableCell({
-      width: opts.width ? {size: opts.width, type: WidthType.PERCENTAGE} : undefined,
-      shading: opts.fill ? {type: ShadingType.CLEAR, fill: opts.fill} : undefined,
-      verticalAlign: opts.vAlign || 'top',
-      children: Array.isArray(children) ? children : [children],
-    });
-
     // ── JUDUL
-    const titleParagraphs = [
-      mkP(
-        TR('ANALISIS CAPAIAN PEMBELAJARAN MENJADI TUJUAN PEMBELAJARAN', {bold:true, size:26, color:NAVY_COLOR}),
-        {alignment: AlignmentType.CENTER, spaceAfter: 80}
-      ),
-      mkP(
-        TR('Sesuai Panduan Pembelajaran dan Asesmen BSKAP · Kurikulum Merdeka', {italics:true, size:20, color:'555555'}),
-        {alignment: AlignmentType.CENTER, spaceAfter: 300}
-      ),
-      mkP(TR('IDENTITAS', {bold:true, size:22, color:NAVY_COLOR}), {spaceAfter:120}),
+    const judulXml = [
+      wPara(wRun('ANALISIS CAPAIAN PEMBELAJARAN MENJADI TUJUAN PEMBELAJARAN',{bold:true,sz:26,color:'0F2A4A'}),{align:'center',after:80}),
+      wPara(wRun('Sesuai Panduan Pembelajaran dan Asesmen BSKAP · Kurikulum Merdeka',{italic:true,sz:20,color:'555555'}),{align:'center',after:240}),
+      wPara(wRun('IDENTITAS',{bold:true,sz:22,color:'0F2A4A'}),{after:120}),
     ];
 
     // ── TABEL IDENTITAS
-    const idData = [
+    const idRows = [
       ['Nama', data.nama],
       ['Mata Pelajaran', data.mapel],
       ['Sekolah', data.sekolah],
       ['Fase', data.fase],
       ['Kelas', 'Kelas ' + data.kelas],
       ['Semester', 'Semester ' + data.semester],
-    ];
-
-    const identityTable = new Table({
-      width: {size:100, type:WidthType.PERCENTAGE},
-      borders: idBorders,
-      rows: idData.map(([label, value]) => new TableRow({
-        children: [
-          mkCell(mkP(TR(label, {bold:true, size:20})), {width:25, fill:LIGHT_COLOR}),
-          mkCell(mkP(TR(':', {size:20})), {width:3}),
-          mkCell(mkP(TR(value || '—', {size:20})), {width:72}),
-        ]
-      }))
-    });
+    ].map(([l,v]) => wRow([
+      wCell(wPara(wRun(l,{bold:true,sz:20}),{after:60}), {width:1250, fill:'F8FAFC'}),
+      wCell(wPara(wRun(':',{sz:20}),{after:60}), {width:150}),
+      wCell(wPara(wRun(v||'—',{sz:20}),{after:60}), {width:3600}),
+    ]));
+    const identityTableXml = wTable(idRows);
 
     // ── HEADER TABEL ANALISIS
-    const thCell = (text, widthPct) => mkCell(
-      mkP(TR(text, {bold:true, color:WHITE_COLOR, size:20}), {spaceAfter:40}),
-      {width: widthPct, fill: NAVY_COLOR}
-    );
-
-    const headerRow = new TableRow({
-      tableHeader: true,
-      children: [
-        thCell('Elemen', 10),
-        thCell('Capaian Pembelajaran', 22),
-        thCell('Kompetensi', 16),
-        thCell('Konten', 14),
-        thCell('Tujuan Pembelajaran', 28),
-        thCell('Kode TP', 10),
-      ]
-    });
+    const headerXml = wRow([
+      wCell(wPara(wRun('Elemen',{bold:true,sz:20,color:'FFFFFF'}),{after:40}),{width:500,fill:'0F2A4A'}),
+      wCell(wPara(wRun('Capaian Pembelajaran',{bold:true,sz:20,color:'FFFFFF'}),{after:40}),{width:1100,fill:'0F2A4A'}),
+      wCell(wPara(wRun('Kompetensi',{bold:true,sz:20,color:'FFFFFF'}),{after:40}),{width:800,fill:'0F2A4A'}),
+      wCell(wPara(wRun('Konten',{bold:true,sz:20,color:'FFFFFF'}),{after:40}),{width:700,fill:'0F2A4A'}),
+      wCell(wPara(wRun('Tujuan Pembelajaran',{bold:true,sz:20,color:'FFFFFF'}),{after:40}),{width:1400,fill:'0F2A4A'}),
+      wCell(wPara(wRun('Kode TP',{bold:true,sz:20,color:'FFFFFF'}),{after:40}),{width:500,fill:'0F2A4A'}),
+    ],{header:true});
 
     // ── DATA TABEL ANALISIS
-    const mkBulletList = (items) => items.map(item =>
-      mkP([TR('▸  ', {size:20, color: '4A9AF5'}), TR(item, {size:20})], {spaceAfter:40})
+    const kompParas = kompetensi.length
+      ? kompetensi.map(k => wPara([wRun('▸  ',{sz:20,color:'4A9AF5'}),wRun(k,{sz:20})],{after:40}))
+      : [wPara(wRun('—',{sz:20,color:'999999'}),{after:40})];
+
+    const kontenParas = konten.length
+      ? konten.map(k => wPara([wRun('▸  ',{sz:20,color:'4A9AF5'}),wRun(k,{sz:20})],{after:40}))
+      : [wPara(wRun('—',{sz:20,color:'999999'}),{after:40})];
+
+    const tpParas = tpList.map((tp,i) =>
+      wPara([wRun(`${i+1}.  `,{bold:true,sz:20,color:'0F2A4A'}),wRun(tp,{sz:20})],{after:80})
     );
 
-    const tpParagraphs = tpList.map((tp, i) =>
-      mkP([
-        TR(`${i+1}.  `, {bold:true, size:20, color:NAVY_COLOR}),
-        TR(tp, {size:20})
-      ], {spaceAfter:80})
+    const kodeParas = kodeList.map(k =>
+      wPara(wRun(k,{bold:true,sz:20,color:'1A5CB4'}),{after:50})
     );
 
-    const kodeParagraphs = kodeList.map(k =>
-      mkP(TR(k, {bold:true, color:BLUE_COLOR, size:20}), {spaceAfter:50})
-    );
+    const dataXml = wRow([
+      wCell(wPara(wRun(data.elemen,{bold:true,sz:20,color:'1A5CB4'}),{after:60}),{width:500}),
+      wCell(wPara(wRun(data.cp,{italic:true,sz:19}),{after:0}),{width:1100}),
+      wCell(kompParas,{width:800}),
+      wCell(kontenParas,{width:700}),
+      wCell(tpParas,{width:1400}),
+      wCell(kodeParas,{width:500}),
+    ]);
 
-    const dataRow = new TableRow({
-      children: [
-        mkCell(mkP(TR(data.elemen, {bold:true, color:BLUE_COLOR, size:20})), {width:10}),
-        mkCell(mkP(TR(data.cp, {italics:true, size:19}), {spaceAfter:0}), {width:22}),
-        mkCell(kompetensi.length ? mkBulletList(kompetensi) : [mkP(TR('—', {size:20, color:'999999'}))], {width:16}),
-        mkCell(konten.length ? mkBulletList(konten) : [mkP(TR('—', {size:20, color:'999999'}))], {width:14}),
-        mkCell(tpParagraphs, {width:28}),
-        mkCell(kodeParagraphs, {width:10}),
-      ]
-    });
+    const analysisTableXml = wTable([headerXml, dataXml]);
 
-    const analysisTable = new Table({
-      width: {size:100, type:WidthType.PERCENTAGE},
-      borders: tableBorders,
-      rows: [headerRow, dataRow],
-    });
-
-    // ── BAGIAN ATP
-    const atpFlow = kodeList.join('  →  ');
-    const atpSection = [
-      mkP(TR(''), {spaceAfter:280}),
-      mkP(TR('ALUR TUJUAN PEMBELAJARAN (ATP)', {bold:true, size:22, color:NAVY_COLOR}), {spaceAfter:100}),
-      mkP(TR(atpFlow, {bold:true, size:22, color:BLUE_COLOR}), {spaceAfter:160}),
+    // ── ATP
+    const atpFlow = kodeList.join('  \u2192  ');
+    const atpParas = [
+      wPara(wRun(''),{after:240}),
+      wPara(wRun('ALUR TUJUAN PEMBELAJARAN (ATP)',{bold:true,sz:22,color:'0F2A4A'}),{after:100}),
+      wPara(wRun(atpFlow,{bold:true,sz:22,color:'1A5CB4'}),{after:160}),
     ];
 
-    const atpDescTable = new Table({
-      width: {size:100, type:WidthType.PERCENTAGE},
-      borders: tableBorders,
-      rows: tpList.map((tp, i) => new TableRow({
-        children: [
-          mkCell(mkP(TR(kodeList[i], {bold:true, color:BLUE_COLOR, size:20})), {width:12, fill:SKY_COLOR}),
-          mkCell(mkP(TR(tp, {size:20})), {width:88}),
-        ]
-      }))
-    });
+    const atpDescRows = tpList.map((tp,i) => wRow([
+      wCell(wPara(wRun(kodeList[i],{bold:true,sz:20,color:'1A5CB4'}),{after:60}),{width:600,fill:'EAF3FF'}),
+      wCell(wPara(wRun(tp,{sz:20}),{after:60}),{width:4400}),
+    ]));
+    const atpTableXml = wTable(atpDescRows);
 
-    // ── BUILD DOKUMEN
-    const doc = new Document({
-      sections: [{
-        properties: {
-          page: {
-            size: {
-              width: 12240,   // 8.5 inci dalam twips (1 inci = 1440 twips)
-              height: 15840,  // 11 inci
-            },
-            margin: {
-              top: 1440,      // 1 inci
-              bottom: 1440,
-              left: 1701,     // 1.18 inci
-              right: 1138,    // 0.79 inci
-            }
-          }
-        },
-        children: [
-          ...titleParagraphs,
-          identityTable,
-          mkP(TR(''), {spaceAfter:280}),
-          mkP(TR('TABEL ANALISIS CAPAIAN PEMBELAJARAN', {bold:true, size:22, color:NAVY_COLOR}), {spaceAfter:120}),
-          analysisTable,
-          ...atpSection,
-          atpDescTable,
-        ]
-      }]
-    });
+    // ── GABUNG SEMUA KE document.xml
+    const bodyContent = [
+      ...judulXml,
+      identityTableXml,
+      wPara(wRun(''),{after:240}),
+      wPara(wRun('TABEL ANALISIS CAPAIAN PEMBELAJARAN',{bold:true,sz:22,color:'0F2A4A'}),{after:120}),
+      analysisTableXml,
+      ...atpParas,
+      atpTableXml,
+      // Halaman akhir wajib ada paragraph kosong
+      wPara(wRun(''),{after:0}),
+    ].join('\n');
 
-    // ── DOWNLOAD
-    const blob = await Packer.toBlob(doc);
+    const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"
+  xmlns:cx="http://schemas.microsoft.com/office/drawing/2014/chartex"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:aink="http://schemas.microsoft.com/office/drawing/2016/ink"
+  xmlns:am3d="http://schemas.microsoft.com/office/drawing/2017/model3d"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:oel="http://schemas.microsoft.com/office/2019/extlst"
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+  xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
+  xmlns:v="urn:schemas-microsoft-com:vml"
+  xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing"
+  xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+  xmlns:w10="urn:schemas-microsoft-com:office:word"
+  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+  xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml"
+  xmlns:w16cex="http://schemas.microsoft.com/office/word/2018/wordml/cex"
+  xmlns:w16cid="http://schemas.microsoft.com/office/word/2016/wordml/cid"
+  xmlns:w16="http://schemas.microsoft.com/office/word/2018/wordml"
+  xmlns:w16sdtdh="http://schemas.microsoft.com/office/word/2020/wordml/sdtdatahash"
+  xmlns:w16se="http://schemas.microsoft.com/office/word/2015/wordml/symex"
+  xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup"
+  xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk"
+  xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml"
+  xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape"
+  mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh wp14">
+  <w:body>
+    ${bodyContent}
+    <w:sectPr>
+      <w:pgSz w:w="12240" w:h="15840"/>
+      <w:pgMar w:top="1440" w:right="1138" w:bottom="1440" w:left="1701" w:header="720" w:footer="720" w:gutter="0"/>
+    </w:sectPr>
+  </w:body>
+</w:document>`;
+
+    const relsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`;
+
+    const stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults>
+    <w:rPrDefault>
+      <w:rPr>
+        <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>
+        <w:sz w:val="22"/><w:szCs w:val="22"/>
+      </w:rPr>
+    </w:rPrDefault>
+  </w:docDefaults>
+</w:styles>`;
+
+    const appXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties">
+  <Application>Generator CP-TP-ATP</Application>
+</Properties>`;
+
+    const coreXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
+  xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <dc:title>Analisis CP-TP-ATP</dc:title>
+  <dc:creator>${xmlEsc(data.nama)}</dc:creator>
+</cp:coreProperties>`;
+
+    const contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+  <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>
+  <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
+</Types>`;
+
+    const packageRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
+  <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>
+</Relationships>`;
+
+    // ── BUAT ZIP (format .docx)
+    const zip = new JSZip();
+    zip.file('[Content_Types].xml', contentTypesXml);
+    zip.file('_rels/.rels', packageRelsXml);
+    zip.file('word/document.xml', documentXml);
+    zip.file('word/styles.xml', stylesXml);
+    zip.file('word/_rels/document.xml.rels', relsXml);
+    zip.file('docProps/app.xml', appXml);
+    zip.file('docProps/core.xml', coreXml);
+
+    const blob = await zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -838,52 +895,15 @@ async function exportWord(){
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    showToast('File Word berhasil diunduh!', 'success');
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    showToast('File Word berhasil diunduh!','success');
 
   } catch(e){
     console.error('Export Word error:', e);
-    showToast('Gagal membuat Word: ' + e.message, 'error');
+    showToast('Gagal membuat Word: '+e.message,'error');
   } finally {
     hideLoading();
   }
-}
-
-// ═══════════════════════════════
-//  EXPORT PDF
-// ═══════════════════════════════
-async function exportPDF(){
-  if(!lastResult){showToast('Generate analisis terlebih dahulu','error');return;}
-  showLoading('Membuat PDF…');
-  const el=document.getElementById('resultDoc');
-  const opt={
-    margin:[10,8,10,8],
-    filename:`Analisis_CP_TP_ATP_${lastResult.data.mapel}_Kls${lastResult.data.kelas}.pdf`,
-    image:{type:'jpeg',quality:.97},
-    html2canvas:{scale:2,useCORS:true,logging:false},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
-  };
-  try{
-    await html2pdf().set(opt).from(el).save();
-    showToast('PDF berhasil diunduh!','success');
-  }catch(e){showToast('Gagal buat PDF','error');}
-  finally{hideLoading();}
-}
-
-// ═══════════════════════════════
-//  COPY
-// ═══════════════════════════════
-function copyResult(){
-  if(!lastResult){showToast('Tidak ada hasil','error');return;}
-  const{data,kompetensi,konten,tpList,kodeList}=lastResult;
-  let t='ANALISIS CAPAIAN PEMBELAJARAN MENJADI TUJUAN PEMBELAJARAN\n'+'='.repeat(60)+'\n';
-  t+=`Nama          : ${data.nama}\nMata Pelajaran: ${data.mapel}\nSekolah       : ${data.sekolah}\n`;
-  t+=`Fase          : ${data.fase}\nKelas         : ${data.kelas}\nSemester      : ${data.semester}\n\n`;
-  t+=`Elemen: ${data.elemen}\nCP: ${data.cp}\n\n`;
-  t+=`KOMPETENSI:\n${kompetensi.map(k=>'  ▸ '+k).join('\n')}\n\nKONTEN:\n${konten.map(k=>'  ▸ '+k).join('\n')}\n\n`;
-  t+=`TUJUAN PEMBELAJARAN:\n${tpList.map((tp,i)=>`  ${kodeList[i]}: ${tp}`).join('\n')}\n\n`;
-  t+=`ALUR TUJUAN PEMBELAJARAN (ATP):\n${kodeList.join(' → ')}\n`;
-  navigator.clipboard.writeText(t).then(()=>showToast('Disalin!','success')).catch(()=>showToast('Gagal menyalin','error'));
 }
 
 // ═══════════════════════════════
