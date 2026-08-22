@@ -335,7 +335,8 @@ select.form-control{cursor:pointer;}
     </div>
 
     <div class="action-buttons">
-      <button class="btn btn-primary btn-lg btn-full" onclick="generateAnalysis()">⚡ Generate Analisis</button>
+      <button class="btn btn-primary btn-lg btn-full" onclick="generateAnalysis(false)">⚡ Generate Analisis (Rule Engine)</button>
+      <button class="btn btn-word btn-lg btn-full" style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%);color:white;margin-top:2px;" onclick="generateAnalysis(true)">🤖 Analisis Presisi AI Gemini</button>
       <div class="action-row">
         <button class="btn btn-ghost" style="flex:1" onclick="resetForm()">🔄 Reset</button>
         <button class="btn btn-ghost" style="flex:1" onclick="loadSample()">📄 Contoh Data</button>
@@ -508,7 +509,7 @@ function showLoading(txt='Memproses…'){
 }
 function hideLoading(){document.getElementById('loadingOverlay').classList.remove('active');}
 function getVal(id){return document.getElementById(id).value.trim();}
-function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function cap(s){if(!s)return''; return s.charAt(0).toUpperCase()+s.slice(1);}
 function delay(ms){return new Promise(r=>setTimeout(r,ms));}
 
 // ═══════════════════════════════
@@ -531,7 +532,7 @@ function validateForm(){
 }
 
 // ═══════════════════════════════
-//  ANALYSIS ENGINE
+//  ANALYSIS ENGINE (DIPERBARUI)
 // ═══════════════════════════════
 function extractKompetensi(cp){
   const lower=cp.toLowerCase();
@@ -552,71 +553,126 @@ function extractKompetensi(cp){
 }
 
 function extractKonten(cp){
-  const stopW=new Set([...KKO_ALL,'peserta','didik','mampu','dapat','dengan','dalam','dari','dan','atau',
-    'yang','untuk','pada','ke','di','ini','itu','juga','serta','telah','sudah','akan','bisa','harus',
-    'sesuai','secara','berbagai','hal','cara','melalui','menggunakan','sebagai','tentang','berupa',
-    'adalah','merupakan','sehingga','agar','supaya','oleh','antara','setiap']);
-  const konten=[];
-  const words=cp.replace(/[.,;:]/g,' ').split(/\s+/);
-  let i=0;
-  while(i<words.length){
-    const w=words[i],wl=w.toLowerCase();
-    if(!stopW.has(wl)&&wl.length>3&&!/^(me|di|pe|ke|se|ter|ber)/.test(wl)){
-      if(i+1<words.length){
-        const nl=words[i+1].toLowerCase();
-        if(!stopW.has(nl)&&nl.length>3&&!/^(me|di|pe)/.test(nl)){
-          konten.push(cap(w)+' '+words[i+1].toLowerCase());i+=2;continue;
-        }
+  const stopWords = new Set([
+    'peserta','didik','mampu','dapat','dengan','dalam','dari','dan','atau',
+    'yang','untuk','pada','ke','di','ini','itu','juga','serta','telah','sudah',
+    'akan','bisa','harus','sesuai','secara','berbagai','hal','cara','melalui',
+    'menggunakan','sebagai','tentang','berupa','adalah','merupakan','sehingga',
+    'agar','supaya','oleh','antara','setiap','maupun','guna','tersebut','satu'
+  ]);
+
+  const verbList = new Set(KKO_ALL.map(v => v.toLowerCase()));
+
+  // Split CP menjadi klausa topik berdasarkan tanda baca dan kata hubung utama
+  const clauses = cp.split(/[,;.]|\b(?:serta|dan|melalui|seperti|meliputi|terdiri\s+dari|mencakup)\b/i);
+  const rawKonten = [];
+
+  clauses.forEach(clause => {
+    let text = clause.trim();
+    if (!text) return;
+
+    // Bersihkan awalan pengantar seperti "peserta didik mampu"
+    text = text.replace(/^(peserta\s+didik\s+)?(mampu|dapat)\s+/i, '');
+
+    let words = text.split(/\s+/);
+    
+    // Jika kata pertama adalah kata kerja KKO, abaikan kata kerjanya untuk mengambil materi setelahnya
+    if (words.length > 0) {
+      let firstWord = words[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (verbList.has(firstWord) || /^mem?|meng?|men?|menge?|memp?/.test(firstWord)) {
+        words.shift();
       }
-      const wc=cap(w);if(!konten.includes(wc))konten.push(wc);
     }
-    i++;
+
+    // Bangun frasa kata benda utuh (Noun Phrase)
+    let currentPhrase = [];
+    words.forEach(w => {
+      let cleanW = w.replace(/[^a-zA-Z0-9-]/g, '');
+      let lowerW = cleanW.toLowerCase();
+
+      if (!cleanW || stopWords.has(lowerW) || verbList.has(lowerW)) {
+        if (currentPhrase.length > 0) {
+          let phraseStr = currentPhrase.join(' ');
+          if (phraseStr.length >= 3) rawKonten.push(phraseStr);
+          currentPhrase = [];
+        }
+      } else {
+        currentPhrase.push(cleanW);
+      }
+    });
+
+    if (currentPhrase.length > 0) {
+      let phraseStr = currentPhrase.join(' ');
+      if (phraseStr.length >= 3) rawKonten.push(phraseStr);
+    }
+  });
+
+  // Bersihkan dan gabungkan frasa yang valid
+  let cleaned = [];
+  rawKonten.forEach(ph => {
+    let words = ph.split(/\s+/).filter(w => w.length > 1 && !/^\d+$/.test(w));
+    if (words.length > 0) {
+      let formatted = words.map(w => cap(w.toLowerCase())).join(' ');
+      if (formatted.length >= 3 && !cleaned.some(c => c.toLowerCase() === formatted.toLowerCase())) {
+        cleaned.push(formatted);
+      }
+    }
+  });
+
+  // Jika tidak ditemukan, gunakan nama Elemen sebagai materi dasar
+  const elemen = getVal('elemen');
+  if (cleaned.length === 0 && elemen) {
+    cleaned.push(cap(elemen));
   }
-  const elemen=getVal('elemen');
-  if(elemen&&!konten.includes(elemen))konten.unshift(elemen);
-  return[...new Set(konten)].slice(0,5);
+
+  return cleaned.slice(0, 5);
 }
 
 function generateTP(cp,kompetensi,konten,jumlah){
-  const kelas=parseInt(getVal('kelas'))||3;
-  const mapel=getVal('mapel').toLowerCase();
+  const kelas = parseInt(getVal('kelas')) || 3;
+  const mapel = getVal('mapel').toLowerCase();
+  
   let levels;
-  if(kelas<=2)levels=['C1','C2'];
-  else if(kelas<=4)levels=['C1','C2','C3'];
-  else if(kelas<=6)levels=['C2','C3','C4'];
-  else if(kelas<=9)levels=['C3','C4','C5'];
-  else levels=['C4','C5','C6'];
-  const ctx=mapel.includes('matematika')?'dalam kehidupan sehari-hari'
-    :mapel.includes('ipa')||mapel.includes('sains')?'melalui pengamatan dan percobaan'
-    :mapel.includes('bahasa')?'dalam teks yang dipelajari'
-    :mapel.includes('ips')||mapel.includes('sosial')?'dalam konteks sosial dan budaya'
-    :mapel.includes('pkn')||mapel.includes('ppkn')?'dalam kehidupan bermasyarakat'
-    :mapel.includes('seni')?'melalui eksplorasi dan kreasi'
-    :'dalam konteks pembelajaran';
-  const kontenTokens=konten.length>0?konten:['materi'];
-  const tpList=[];
-  for(let n=0;n<jumlah;n++){
-    const lIdx=Math.min(n,levels.length-1);
-    const level=levels[lIdx];
-    const verbs=BLOOM[level];
-    const k=kontenTokens[n%kontenTokens.length];
-    const k2=kontenTokens[(n+1)%kontenTokens.length];
-    let tp='';
-    if(kompetensi.length>0){
-      const komp=kompetensi[n%kompetensi.length];
-      const lk=komp.toLowerCase();
-      const hasKKO=KKO_ALL.some(kko=>lk.startsWith(kko));
-      if(hasKKO){tp=`${komp} secara tepat dan sistematis ${ctx}.`;}
-      else{const v=verbs[n%verbs.length];tp=`${cap(v)} ${komp.toLowerCase()} yang berkaitan dengan ${k.toLowerCase()} ${ctx}.`;}
-    } else {
-      const v=verbs[n%verbs.length];
-      if(n===0)tp=`${cap(BLOOM.C1[n%BLOOM.C1.length])} ${k.toLowerCase()} yang terdapat dalam ${k2.toLowerCase()} ${ctx}.`;
-      else if(n===1)tp=`${cap(BLOOM.C2[n%BLOOM.C2.length])} ${k.toLowerCase()} beserta karakteristiknya ${ctx}.`;
-      else if(n===2)tp=`${cap(BLOOM.C3[n%BLOOM.C3.length])} ${k.toLowerCase()} untuk menyelesaikan permasalahan ${ctx}.`;
-      else tp=`${cap(v)} ${k.toLowerCase()} secara kritis dan mandiri ${ctx}.`;
+  if(kelas <= 2) levels = ['C1', 'C2', 'C1', 'C2'];
+  else if(kelas <= 4) levels = ['C1', 'C2', 'C3', 'C3'];
+  else if(kelas <= 6) levels = ['C2', 'C3', 'C4', 'C4'];
+  else if(kelas <= 9) levels = ['C3', 'C4', 'C5', 'C5'];
+  else levels = ['C4', 'C5', 'C6', 'C6'];
+
+  const ctx = mapel.includes('matematika') ? 'dalam pemecahan masalah kehidupan sehari-hari'
+    : mapel.includes('ipa') || mapel.includes('sains') ? 'melalui pengamatan dan penyelidikan ilmiah'
+    : mapel.includes('bahasa') ? 'dalam ragam teks dan konteks komunikasi'
+    : mapel.includes('ips') || mapel.includes('sosial') ? 'dalam konteks kehidupan bermasyarakat'
+    : mapel.includes('pkn') || mapel.includes('ppkn') ? 'dalam kehidupan berbangsa dan bernegara'
+    : mapel.includes('perkantoran') || mapel.includes('mplb') ? 'sesuai standar operasional prosedur kerja'
+    : mapel.includes('informatika') || mapel.includes('komputer') ? 'dengan memanfaatkan teknologi digital'
+    : 'dalam konteks pembelajaran nyata';
+
+  const kontenTokens = konten.length > 0 ? konten : [getVal('elemen') || 'materi pembelajaran'];
+  const tpList = [];
+
+  for(let n = 0; n < jumlah; n++){
+    const level = levels[n % levels.length];
+    const verbs = BLOOM[level];
+    
+    // Pilih KKO aktif
+    let verb = verbs[n % verbs.length];
+    if(kompetensi.length > n){
+      const k = kompetensi[n].toLowerCase();
+      verb = (k.startsWith('me') || k.startsWith('pe') || k.startsWith('ber')) ? k : verbs[n % verbs.length];
     }
+
+    // Ambil topik materi spesifik untuk TP ini
+    const currentKonten = kontenTokens[n % kontenTokens.length];
+
+    // Susun kalimat TP standar Kurikulum Merdeka
+    let tp = `Peserta didik mampu ${verb.toLowerCase()} ${currentKonten.toLowerCase()} ${ctx}.`;
+    
+    // Format huruf kapital awal kalimat
+    tp = cap(tp.replace(/\s+/g, ' '));
     tpList.push(tp);
   }
+
   return tpList;
 }
 
@@ -630,28 +686,102 @@ function generateKode(elemen,kelas,semester,n){
 let lastResult=null;
 
 // ═══════════════════════════════
-//  GENERATE
+//  GENERATE (DENGAN SUPPORT AI & FALLBACK RULE ENGINE)
 // ═══════════════════════════════
-async function generateAnalysis(){
+async function generateAnalysis(useAI = false){
   if(!validateForm()){showToast('Lengkapi semua field wajib','error');return;}
-  showLoading('Menganalisis Capaian Pembelajaran…');
-  await delay(600);
+  
   const data={
     nama:getVal('namaGuru'),mapel:getVal('mapel'),sekolah:getVal('sekolah'),
     fase:getVal('fase'),kelas:getVal('kelas'),semester:getVal('semester'),
     elemen:getVal('elemen'),cp:getVal('cp'),
     jumlahTP:parseInt(document.querySelector('input[name="jumlahTP"]:checked')?.value||3),
   };
-  showLoading('Mengekstrak Kompetensi dan Konten…');await delay(350);
-  const kompetensi=extractKompetensi(data.cp);
-  const konten=extractKonten(data.cp);
-  showLoading('Menurunkan Tujuan Pembelajaran…');await delay(400);
-  const tpList=generateTP(data.cp,kompetensi,konten,data.jumlahTP);
-  const kodeList=tpList.map((_,i)=>generateKode(data.elemen,data.kelas,data.semester,i+1));
-  lastResult={data,kompetensi,konten,tpList,kodeList};
+
+  if(useAI){
+    showLoading('🤖 Menghubungkan ke AI Gemini untuk Analisis Presisi…');
+    try {
+      const systemPrompt = `Anda adalah pakar Kurikulum Merdeka Kemendikbudristek BSKAP. Tugas Anda adalah menganalisis Capaian Pembelajaran (CP) menjadi Kompetensi (KKO), Konten/Materi utama (bukan potongan kata acak), dan Tujuan Pembelajaran (TP) yang runtut, operasional, dan berkualitas tinggi.`;
+      
+      const userQuery = `Lakukan analisis CP Kurikulum Merdeka berikut:
+Mata Pelajaran: ${data.mapel}
+Fase/Kelas: ${data.fase} / Kelas ${data.kelas}
+Elemen: ${data.elemen}
+Teks CP: "${data.cp}"
+Jumlah TP yang diminta: ${data.jumlahTP}
+
+Instruksi Khusus:
+1. "kompetensi": daftar Kata Kerja Operasional (KKO) utama yang ada di CP (misal: "Memahami", "Menganalisis", "Menentukan").
+2. "konten": daftar topik/materi pokok utuh yang terkandung dalam CP (misal: "Konsep Bilangan Cacah", "Operasi Penjumlahan dan Pengurangan"). DILARANG memotong frasa materi menjadi kata acak.
+3. "tpList": buat ${data.jumlahTP} Tujuan Pembelajaran utuh dalam kalimat "Peserta didik mampu [KKO] [Konten] [Konteks]". Kalimat harus mengalir secara alamiah dan pedogogis.`;
+
+      const apiKey = "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      const payload = {
+        contents: [{ parts: [{ text: userQuery }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "OBJECT",
+            properties: {
+              kompetensi: { type: "ARRAY", items: { type: "STRING" } },
+              konten: { type: "ARRAY", items: { type: "STRING" } },
+              tpList: { type: "ARRAY", items: { type: "STRING" } }
+            },
+            required: ["kompetensi", "konten", "tpList"]
+          }
+        }
+      };
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if(!response.ok) throw new Error("Gagal merespon dari API AI");
+
+      const resultJson = await response.json();
+      const rawText = resultJson.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      if(rawText){
+        const parsed = JSON.parse(rawText);
+        const kompetensi = parsed.kompetensi.map(cap);
+        const konten = parsed.konten.map(cap);
+        const tpList = parsed.tpList;
+        const kodeList = tpList.map((_,i)=>generateKode(data.elemen,data.kelas,data.semester,i+1));
+
+        lastResult = { data, kompetensi, konten, tpList, kodeList };
+        renderResult(lastResult);
+        hideLoading();
+        showToast('✨ Analisis Presisi AI Gemini berhasil dibuat!','success');
+        document.getElementById('emptyState').style.display='none';
+        document.getElementById('resultContent').style.display='block';
+        setTimeout(()=>document.getElementById('resultPanel').scrollIntoView({behavior:'smooth',block:'start'}),80);
+        return;
+      }
+    } catch (err) {
+      console.warn("Gagal menggunakan AI, beralih ke Smart Rule Engine:", err);
+      showToast('Gagal menghubungi AI, menggunakan Smart Rule Engine','info');
+    }
+  }
+
+  // Fallback / Smart Rule Engine
+  showLoading('Menganalisis Capaian Pembelajaran dengan Smart Rule Engine…');
+  await delay(400);
+  const kompetensi = extractKompetensi(data.cp);
+  const konten = extractKonten(data.cp);
+  showLoading('Menurunkan Tujuan Pembelajaran…');
+  await delay(350);
+  const tpList = generateTP(data.cp, kompetensi, konten, data.jumlahTP);
+  const kodeList = tpList.map((_,i)=>generateKode(data.elemen,data.kelas,data.semester,i+1));
+  
+  lastResult = { data, kompetensi, konten, tpList, kodeList };
   renderResult(lastResult);
   hideLoading();
-  showToast('Analisis berhasil dibuat!','success');
+  showToast('Analisis berhasil dibuat dengan Rule Engine yang diperbarui!','success');
   document.getElementById('emptyState').style.display='none';
   document.getElementById('resultContent').style.display='block';
   setTimeout(()=>document.getElementById('resultPanel').scrollIntoView({behavior:'smooth',block:'start'}),80);
